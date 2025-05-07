@@ -6,6 +6,7 @@ export function RegistroTutor(){
             <p className='titulo1'>Registrarse</p>
             <p className='titulo2'>Como Tutor</p>
             <FormularioRegistro/>
+
         </div>
     )
 }

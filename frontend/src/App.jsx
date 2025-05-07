@@ -10,9 +10,12 @@ import { Tutor} from './paginas/sesion/Tutor';
 import { PerfilEstudiante } from './paginas/sesion/Perfil';
 import { RegistroEstudiante } from './paginas/sesion/RegistroEstudiante';
 import { RegistroAdministrador} from './paginas/sesion/RegistroAdmin';
-import { RegistroTutor } from './paginas/sesion/RegistroTutor';
 import { RegistroCajero } from './paginas/sesion/RegistroCajero';
+import { RegistroTutor } from './paginas/sesion/RegistroTutor';
+
 import { Competiciones } from './paginas/competiciones/Competiciones';
+import { Area } from './paginas/competiciones/Area';
+
 
 
 
@@ -34,6 +37,8 @@ function App() {
       <Route path='/registro-cajero' element={<RegistroCajero/>}></Route>
       <Route path='/registro-tutor' element={<RegistroTutor/>}></Route>
       <Route path='/competiciones' element={<Competiciones/>}></Route>
+      <Route path='/area' element={<Area/>}></Route>
+
 
       </Routes>
     </BrowserRouter>

@@ -6,6 +6,7 @@ export function RegistroAdministrador(){
             <p className='titulo1'>Registrarse</p>
             <p className='titulo2'>Como Administrador</p>
             <FormularioRegistro/>
+            
         </div>
     )
 }

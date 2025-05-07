@@ -8,7 +8,7 @@ export function Cajero(){
             <Formulario/>
             <p className='parrafoFinal'>En caso de no tener una cuenta por favor
                 <span><a href="registro-cajero" className='enlace'> Registrate</a></span> 
-            </p>
+            </p>    
         </div>
     )
 }
