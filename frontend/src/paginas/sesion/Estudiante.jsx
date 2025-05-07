@@ -7,7 +7,7 @@ export function Estudiante(){
             <p className='titulo2'>Como Estudiante</p>
             <Formulario/>
             <p className='parrafoFinal'>En caso de no tener una cuenta por favor
-                <span><a href="#" className='enlace'> Registrate</a></span> 
+                <span><a href="registro" className='enlace'> Registrate</a></span> 
             </p>
         </div>
     )

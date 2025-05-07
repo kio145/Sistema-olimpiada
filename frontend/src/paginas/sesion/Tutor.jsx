@@ -1,13 +1,13 @@
 import '../../css/Inicio.css';
 import { Formulario } from './Formulario';
-export function Cajero(){
+export function Tutor(){
     return (
         <div>
             <p className='titulo1'>Iniciar Sesion</p>
-            <p className='titulo2'>Como Cajero</p>
+            <p className='titulo2'>Como Tutor</p>
             <Formulario/>
             <p className='parrafoFinal'>En caso de no tener una cuenta por favor
-                <span><a href="registro-cajero" className='enlace'> Registrate</a></span> 
+                <span><a href="registro-tutor" className='enlace'> Registrate</a></span> 
             </p>
         </div>
     )
