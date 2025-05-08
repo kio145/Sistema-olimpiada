@@ -2,17 +2,25 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdministradorController;
+use App\Http\Controllers\CajeroController;
+use App\Http\Controllers\TutorController;
+use App\Http\Controllers\CompetidorController;
+use App\Http\Controllers\CompetenciaController;
+use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\BoletaPagoController;
 
-use App\Http\Controllers\Api\competidorController;
-//listar todos los competidores
-Route::get('/competidor', [competidorController::class, 'listar']);
-//obtener un competidor
-Route::get('/competidor/{id}', [competidorController::class, 'show']);
-//crear un competidor
-Route::post('/competidor',[competidorController::class, 'crear']);
-//editar todos los datos de un competidor
-Route::put('/competidor/{id}', [competidorController::class, 'update']);
-//editar algunos datos de un competidor 
-Route::patch('/competidor/{id}', [competidorController::class, 'updatePartial']);
-//eliminar un competidor
-Route::delete('/competidor/{id}',[competidorController::class,'eliminar']);
+Route::apiResource('administradores', AdministradorController::class);
+Route::apiResource('cajeros', CajeroController::class);
+Route::apiResource('tutores', TutorController::class);
+Route::apiResource('competidores', CompetidorController::class);
+Route::apiResource('competencias', CompetenciaController::class);
+Route::apiResource('reportes', ReporteController::class);
+Route::apiResource('boletas-pago', BoletaPagoController::class);
+
+
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
