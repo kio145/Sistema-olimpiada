@@ -1,60 +1,135 @@
 import '../../css/Formulario.css';
-import { Lock , Mail ,Eye, EyeOff} from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '@/api/api'; // Ajusta la ruta si es diferente
 
-export function FormularioRegistro(){
-    const [correo, setCorreo] = useState('');
-    const [contrasenia, setContrasenia] = useState('');
-    const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
-    const navegacion = useNavigate();
+export function FormularioRegistro() {
+  const [form, setForm] = useState({
+    idadmi: '',
+    nombreadmi: '',
+    apellidoadmi: '',
+    correoadmi: '',
+    passwordadmi: '',
+    passwordadmi_confirmation: '',
+    imagenadmi: ''
+  });
+  const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    const iniciar = (event) => {
-        event.preventDefault(); 
-        console.log(correo);
-        console.log(contrasenia);
-        navegacion(`/perfil-estudiante?correo=${encodeURIComponent(correo)}&contrasenia=${encodeURIComponent(contrasenia)}`);
-    };
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
 
-    return (
-        <div>
-            <form onSubmit={iniciar} className='formulario'>
-                <div className='campo' id='entrada'>
-                    <label htmlFor="nombre" id='texto'> Nombre de Usuario</label>
-                    <input type="text" name="nombre" id="nombre"  onChange={(e) => setNombre(e.target.value)}/>
-                </div>
-                <div className='campo' id='entrada'>
-                    <label htmlFor="correo" id='texto'> Correo Electronico</label>
-                    <input type="email" name="correo" id="correo"  onChange={(e) => setCorreo(e.target.value)}/>
-                </div>
-                <div  className='campo' id='entrada'>
-                    <label htmlFor="password" id='texto'> Contrasena</label>
-                    <div className='contenedor-contrasenia'>
-                        <input name="password" id="password" 
-                            type={mostrarContrasenia ? 'text' : 'password'}
-                            onChange={(e) => setContrasenia(e.target.value)}/> 
-                        <span className='icono-mostrar-contrasenia'
-                            onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-                                {mostrarContrasenia ? <EyeOff color='#777'/> : <Eye color='#777'/> } 
-                        </span>
-                    </div>
-                </div>
-                <div  className='campo' id='entrada'>
-                    <label htmlFor="password" id='texto'> Confirmar Contrasena</label>
-                    <div className='contenedor-contrasenia'>
-                        <input name="password" id="password" 
-                            type={mostrarContrasenia ? 'text' : 'password'}
-                            onChange={(e) => setContrasenia(e.target.value)}/> 
-                        <span className='icono-mostrar-contrasenia'
-                            onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-                                {mostrarContrasenia ? <EyeOff color='#777'/> : <Eye color='#777'/> } 
-                        </span>
-                    </div>
-                </div>
-                <div  className='campo' id='boton'>
-                    <button type="submit">Registrarse</button>
-                </div>
-            </form>
+  const handleSubmit = async e => {
+    e.preventDefault();
+    console.log('Payload que envío:', form);
+    if (form.passwordadmi !== form.passwordadmi_confirmation) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+    try {
+      const res = await api.post('/administradores', form);
+      console.log('Registro exitoso:', res.data);
+      navigate('/login');
+    } catch (err) {
+      console.error(err.response?.data);
+      setError(err.response?.data?.message || 'Error al registrar');
+    }
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit} className='formulario'>
+        <div className='campo'>
+          <label htmlFor='idadmi'>ID Administrador</label>
+          <input
+            type='number'
+            name='idadmi'
+            id='idadmi'
+            value={form.idadmi}
+            onChange={handleChange}
+            required
+          />
         </div>
-    )
+
+        <div className='campo'>
+          <label htmlFor='nombreadmi'>Nombre</label>
+          <input
+            type='text'
+            name='nombreadmi'
+            id='nombreadmi'
+            value={form.nombreadmi}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className='campo'>
+          <label htmlFor='apellidoadmi'>Apellido</label>
+          <input
+            type='text'
+            name='apellidoadmi'
+            id='apellidoadmi'
+            value={form.apellidoadmi}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className='campo'>
+          <label htmlFor='correoadmi'>Correo Electrónico</label>
+          <input
+            type='email'
+            name='correoadmi'
+            id='correoadmi'
+            value={form.correoadmi}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className='campo'>
+          <label htmlFor='passwordadmi'>Contraseña</label>
+          <div className='contenedor-contrasenia'>
+            <input
+              name='passwordadmi'
+              id='passwordadmi'
+              type={mostrarContrasenia ? 'text' : 'password'}
+              value={form.passwordadmi}
+              onChange={handleChange}
+              required
+            />
+            <span onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
+              {mostrarContrasenia ? <EyeOff /> : <Eye />}
+            </span>
+          </div>
+        </div>
+
+        <div className='campo'>
+          <label htmlFor='passwordadmi_confirmation'>Confirmar Contraseña</label>
+          <div className='contenedor-contrasenia'>
+            <input
+              name='passwordadmi_confirmation'
+              id='passwordadmi_confirmation'
+              type={mostrarContrasenia ? 'text' : 'password'}
+              value={form.passwordadmi_confirmation}
+              onChange={handleChange}
+              required
+            />
+            <span onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
+              {mostrarContrasenia ? <EyeOff /> : <Eye />}
+            </span>
+          </div>
+        </div>
+
+        <div className='campo' id='boton'>
+          <button type='submit'>Registrarse</button>
+        </div>
+        {error && <p className='error'>{error}</p>}
+      </form>
+    </div>
+  );
 }
