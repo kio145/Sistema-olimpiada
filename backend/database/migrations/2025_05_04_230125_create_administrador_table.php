@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('correoadmi', 100);
             $table->string('imagenadmi', 100)->nullable();
             $table->timestamps();          
+            $table->string('usuarioadmi', 50);
+            $table->string('contraseniaadmi', 50);
         });
     }
 

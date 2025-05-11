@@ -22,6 +22,8 @@ class Administrador extends Model
         'apellidoadmi',
         'correoadmi',
         'imagenadmi',
+        'usuarioadmi',
+        'contraseniaadmi',
     ];
 
     public function competencias(): HasMany

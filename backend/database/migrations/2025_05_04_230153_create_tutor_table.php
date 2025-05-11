@@ -21,6 +21,8 @@ return new class extends Migration
             $table->integer('citutor');
             $table->binary('imagentutor')->nullable();
             $table->timestamps();
+            $table->string('usuariotutor', 50);
+            $table->string('contraseniatutor', 50);
           });
     }
 

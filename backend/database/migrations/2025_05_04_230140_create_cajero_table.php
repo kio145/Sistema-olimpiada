@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('apellidocajero', 70);
             $table->string('imagencajero', 100)->nullable();
             $table->timestamps();
+            $table->string('usuariocajero', 50);
+            $table->string('contraseniacajero', 50);
          });
     }
 

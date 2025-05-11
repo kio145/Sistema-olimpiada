@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('provincia', 50);
             $table->string('imagencompetidor', 100)->nullable();
             $table->timestamps();
+            $table->string('usuariocompetidor', 50);
+            $table->string('contraseniacompetidor', 50);
          });
     }
 

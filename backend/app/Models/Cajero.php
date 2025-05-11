@@ -21,6 +21,8 @@ class Cajero extends Model
         'nombrecajero',
         'apellidocajero',
         'imagencajero',
+        'usuariocajero',
+        'contraseniacajero',
     ];
 
     public function boletasPago(): HasMany

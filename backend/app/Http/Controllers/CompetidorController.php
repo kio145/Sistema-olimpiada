@@ -27,6 +27,8 @@ class CompetidorController extends Controller
             'departamento'        => 'required|string|max:50',
             'provincia'           => 'required|string|max:50',
             'imagencompetidor'    => 'nullable|string|max:100',
+            'usuariocompetidor'    => 'required|string|max:50',
+            'contraseniacompetidor'    => 'required|string|max:50',
         ]);
 
         $competidor = Competidor::create($data);
@@ -53,6 +55,9 @@ class CompetidorController extends Controller
             'departamento'        => 'sometimes|string|max:50',
             'provincia'           => 'sometimes|string|max:50',
             'imagencompetidor'    => 'nullable|string|max:100',
+            'usuariocompetidor'    => 'sometimes|string|max:50',
+            'contraseniacompetidor'    => 'sometimes|string|max:50',
+
         ]);
 
         $competidor = Competidor::findOrFail($idcompetidor);

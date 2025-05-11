@@ -20,6 +20,8 @@ class AdministradorController extends Controller
             'apellidoadmi' => 'required|string|max:70',
             'correoadmi'   => 'required|email|max:100',
             'imagenadmi'   => 'nullable|string|max:100',
+            'usuarioadmi'   => 'required|string|max:50',
+            'contraseniaadmi'   => 'required|string|max:50',
         ]);
 
         $admin = Administrador::create($data);
@@ -39,6 +41,8 @@ class AdministradorController extends Controller
             'apellidoadmi' => 'sometimes|string|max:70',
             'correoadmi'   => 'sometimes|email|max:100',
             'imagenadmi'   => 'nullable|string|max:100',
+            'usuarioadmi'   => 'sometimes|string|max:50',
+            'contraseniaadmi'   => 'sometimes|string|max:50',
         ]);
 
         $admin = Administrador::findOrFail($idadmi);

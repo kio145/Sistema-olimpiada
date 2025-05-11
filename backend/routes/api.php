@@ -20,6 +20,8 @@ Route::apiResource('boletas-pago', BoletaPagoController::class);
 
 
 
+
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');

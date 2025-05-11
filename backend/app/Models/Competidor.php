@@ -30,6 +30,8 @@ class Competidor extends Model
         'departamento',
         'provincia',
         'imagencompetidor',
+        'usuariocompetidor',
+        'contraseniacompetidor',
     ];
 
     public function tutores(): BelongsToMany
