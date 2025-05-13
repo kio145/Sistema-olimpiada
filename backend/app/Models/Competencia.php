@@ -20,20 +20,20 @@ class Competencia extends Model
     protected $fillable = [
         'idcompetencia',
         'idadmi',
-        'nombrecompetencia',
+        'areacompetencia',
         'nivelcompetencia',
         'preciocompetencia',
         'estadocompetencia',
-        'fechainiciocompetencia',
+        'fechainicompetencia',
         'fechafincompetencia',
         'fechainiinscripcion',
         'fechafininscripcion',
         'fechainipago',
-        'fechainicompetencia',
-        'descripcion',
-        'imagencompetencia',
+        'fechafinpago',
         'fechainivalidacion',
         'fechafinvalidacion',
+        'descripcion',
+        'imagencompetencia',
     ];
 
     public function administrador(): BelongsTo
