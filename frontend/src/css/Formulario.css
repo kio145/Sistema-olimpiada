@@ -59,3 +59,19 @@ button:hover{
     right: 110px;
     cursor: pointer;
 }
+
+.campoRegistro{
+    display: flex;
+    align-items: center;
+    padding: 2%;
+    max-width: 400px;
+}
+.formularioRegistro{
+    width: 50%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding-left: 10%;
+    padding-right: 10%;
+    align-self: auto;
+}

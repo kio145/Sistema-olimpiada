@@ -1,4 +1,5 @@
 import '../../css/Inicio.css';
+
 import { Formulario } from './Formulario';
 export function Estudiante(){
     return (
@@ -7,7 +8,14 @@ export function Estudiante(){
             <p className='titulo2'>Como Estudiante</p>
             <Formulario/>
             <p className='parrafoFinal'>En caso de no tener una cuenta por favor
-                <span><a href="registro" className='enlace'> Registrate</a></span> 
+                
+                   <ul>
+                        <a href="registro" className="opcion">Registrarse</a>
+                    <ul className="submenu">
+                    <li><a href="/regsitro">Estudiante</a></li>
+                    <li><a href="/registro-tutor">Tutor</a></li>
+                    </ul>
+                   </ul>
             </p>
         </div>
     )

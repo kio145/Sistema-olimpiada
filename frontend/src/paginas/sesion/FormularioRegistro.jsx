@@ -18,16 +18,16 @@ export function FormularioRegistro(){
 
     return (
         <div>
-            <form onSubmit={iniciar} className='formulario'>
-                <div className='campo' id='entrada'>
+            <form onSubmit={iniciar} className='formularioRegistro'>
+                <div className='campoRegistro' id='entrada'>
                     <label htmlFor="nombre" id='texto'> Nombre de Usuario</label>
                     <input type="text" name="nombre" id="nombre"  onChange={(e) => setNombre(e.target.value)}/>
                 </div>
-                <div className='campo' id='entrada'>
+                <div className='campoRegistro' id='entrada'>
                     <label htmlFor="correo" id='texto'> Correo Electronico</label>
                     <input type="email" name="correo" id="correo"  onChange={(e) => setCorreo(e.target.value)}/>
                 </div>
-                <div  className='campo' id='entrada'>
+                <div  className='campoRegistro' id='entrada'>
                     <label htmlFor="password" id='texto'> Contrasena</label>
                     <div className='contenedor-contrasenia'>
                         <input name="password" id="password" 
@@ -39,7 +39,7 @@ export function FormularioRegistro(){
                         </span>
                     </div>
                 </div>
-                <div  className='campo' id='entrada'>
+                <div  className='campoRegistro' id='entrada'>
                     <label htmlFor="password" id='texto'> Confirmar Contrasena</label>
                     <div className='contenedor-contrasenia'>
                         <input name="password" id="password" 

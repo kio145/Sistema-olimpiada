@@ -66,4 +66,20 @@
     font-size: medium;
     cursor: pointer;
   }
+  .imagen-perfil-preview {
+    margin: 10px 0;
+  }
+  .imagen-perfil {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+  }
+  input[type="file"] {
+    margin-top: 10px;
+  }
+  .centrado {
+    text-align: center;
+  }
   

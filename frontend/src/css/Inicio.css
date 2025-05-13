@@ -47,3 +47,100 @@
     font-family: 'Arial';
     text-align: center;
 }
+
+.mensaje-exito {
+    max-width: 600px;
+    margin: 40px auto;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+  }
+  
+  .mensaje-exito h2 {
+    color: #3d8ac2;
+    margin-bottom: 0;
+  }
+  
+  .mensaje-exito h4 {
+    font-weight: bold;
+    margin-top: 0;
+    color: #555;
+  }
+  
+  .mensaje-exito hr {
+    margin: 20px auto;
+    border: 0;
+    border-top: 1px solid #ccc;
+    width: 80%;
+  }
+  
+  .mensaje-exito ol {
+    text-align: left;
+    margin: 20px auto;
+    display: inline-block;
+    color: #333;
+  }
+  
+  .advertencia {
+    margin: 20px auto;
+    font-size: 14px;
+    font-style: italic;
+    color: #a00;
+  }
+  
+  .gracias {
+    color: #3d8ac2;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 30px;
+  }
+  
+  .btn-regresar {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #3d8ac2;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-regresar:hover {
+    background-color: #3377aa;
+  }
+  .menu-boton{
+    display: flex;
+    position: relative;
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    top: 100%; /* aparece debajo */
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+    min-width: 150px;
+    list-style-type: none;
+}
+  
+.submenu li a {
+    display: block;
+    padding: 8px 12px;
+    color: #333;
+    text-decoration: none;
+}
+ 
+.submenu li a:hover {
+    background-color: #f0f0f0;
+    text-decoration: none;
+    color: #359bdf;
+}
+  
+.menu-boton:hover .submenu {
+    display: block;
+}
