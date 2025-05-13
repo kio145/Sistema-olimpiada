@@ -19,20 +19,20 @@ return new class extends Migration
                   ->on('administrador')  
                   ->restrictOnDelete()
                   ->restrictOnUpdate();      
-            $table->string('nombrecompetencia', 100);
+            $table->string('areacompetencia', 100);
             $table->string('nivelcompetencia', 50);
             $table->integer('preciocompetencia');
             $table->string('estadocompetencia', 100);
-            $table->date('fechainiciocompetencia');
+            $table->date('fechainicompetencia');
             $table->date('fechafincompetencia');
             $table->date('fechainiinscripcion');
             $table->date('fechafininscripcion');
             $table->date('fechainipago');
-            $table->date('fechainicompetencia');
-            $table->string('descripcion', 250)->nullable();
-            $table->binary('imagencompetencia')->nullable();
+            $table->date('fechafinpago');
             $table->date('fechainivalidacion');
             $table->date('fechafinvalidacion');
+            $table->string('descripcion', 250)->nullable();
+            $table->binary('imagencompetencia')->nullable();
             $table->timestamps();
          });
     }

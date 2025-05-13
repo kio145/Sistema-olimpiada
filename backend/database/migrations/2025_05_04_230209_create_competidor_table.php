@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('competidor', function (Blueprint $table) {
             $table->integer('idcompetidor')->unsigned()->primary();
+            $table->string('usuariocompetidor', 50);
             $table->string('nombrecompetidor', 50);
             $table->string('apellidocompetidor', 70);
             $table->string('emailcompetidor', 100);
             $table->integer('cicompetidor');
             $table->date('fechanacimiento');
-            $table->integer('telefonocompetidor');
             $table->string('colegio', 100);
             $table->string('curso', 50);
             $table->string('departamento', 50);
