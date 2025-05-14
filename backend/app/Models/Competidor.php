@@ -13,7 +13,6 @@ class Competidor extends Model
 
     protected $table = 'competidor';
     protected $primaryKey = 'idcompetidor';
-    public $incrementing = false;
     protected $keyType = 'int';
     public $timestamps = true;
 

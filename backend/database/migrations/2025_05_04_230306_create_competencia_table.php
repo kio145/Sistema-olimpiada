@@ -6,19 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('competencia', function (Blueprint $table) {
-            $table->integer('idcompetencia')->unsigned()->primary();
-            $table->integer('idadmi')->unsigned();
-            $table->foreign('idadmi')
-                  ->references('idadmi')
-                  ->on('administrador')  
+            $table->id('idcompetencia'); 
+            
+            $table->foreignId('idadmi')
+                  ->constrained('administrador', 'idadmi')
                   ->restrictOnDelete()
-                  ->restrictOnUpdate();      
+                  ->restrictOnUpdate();
+                  
             $table->string('nombrecompetencia', 100);
             $table->string('nivelcompetencia', 50);
             $table->integer('preciocompetencia');
@@ -34,12 +31,9 @@ return new class extends Migration
             $table->date('fechainivalidacion');
             $table->date('fechafinvalidacion');
             $table->timestamps();
-         });
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('competencia');

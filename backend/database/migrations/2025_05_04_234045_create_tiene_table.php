@@ -6,32 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tiene', function (Blueprint $table) {
-            $table->integer('idtutor')->unsigned();
-            $table->integer('idcompetidor')->unsigned();
+            $table->foreignId('idtutor')
+                  ->constrained('tutor', 'idtutor')
+                  ->restrictOnDelete()
+                  ->restrictOnUpdate();
+
+            $table->foreignId('idcompetidor')
+                  ->constrained('competidor', 'idcompetidor')
+                  ->restrictOnDelete()
+                  ->restrictOnUpdate();
+
             $table->primary(['idtutor', 'idcompetidor']);
-            $table->foreign('idtutor')
-                  ->references('idtutor')
-                  ->on('tutor')
-                  ->restrictOnDelete()
-                  ->restrictOnUpdate();
-            $table->foreign('idcompetidor')
-                  ->references('idcompetidor')
-                  ->on('competidor')
-                  ->restrictOnDelete()
-                  ->restrictOnUpdate();
+
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tiene');
