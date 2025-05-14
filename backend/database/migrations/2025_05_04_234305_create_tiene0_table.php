@@ -12,19 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tiene0', function (Blueprint $table) {
-            $table->integer('idcompetidor')->unsigned();
-            $table->integer('idcompetencia')->unsigned();
-            $table->primary(['idcompetidor', 'idcompetencia']);
-            $table->foreign('idcompetidor')
-                  ->references('idcompetidor')->on('competidor')
-                  ->restrictOnDelete()
-                  ->restrictOnUpdate();
-            $table->foreign('idcompetencia')
-                  ->references('idcompetencia')->on('competencia')
-                  ->restrictOnDelete()
-                  ->restrictOnUpdate();
-            $table->timestamps();
-          });
+    // Usa unsignedBigInteger en lugar de integer()->unsigned()
+    $table->unsignedBigInteger('idcompetidor');
+    $table->unsignedBigInteger('idcompetencia');
+
+    $table->primary(['idcompetidor', 'idcompetencia']);
+
+    $table->foreign('idcompetidor')
+          ->references('idcompetidor')->on('competidor')
+          ->restrictOnDelete()
+          ->restrictOnUpdate();
+
+    $table->foreign('idcompetencia')
+          ->references('idcompetencia')->on('competencia')
+          ->restrictOnDelete()
+          ->restrictOnUpdate();
+
+    $table->timestamps();
+});
+
     }
 
     /**
