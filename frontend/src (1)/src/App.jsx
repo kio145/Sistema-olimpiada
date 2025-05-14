@@ -8,7 +8,6 @@ import { Admin } from './paginas/sesion/Admin';
 import { Cajero } from './paginas/sesion/Cajero';
 import { Tutor} from './paginas/sesion/Tutor';
 import { PerfilEstudiante } from './paginas/sesion/Perfil';
-import { EditarPerfil } from './paginas/sesion/EditarPerfil';
 import { RegistroEstudiante } from './paginas/sesion/RegistroEstudiante';
 import { RegistroAdministrador} from './paginas/sesion/RegistroAdmin';
 import { RegistroCajero } from './paginas/sesion/RegistroCajero';
@@ -16,8 +15,6 @@ import { RegistroTutor } from './paginas/sesion/RegistroTutor';
 import { Competiciones } from './paginas/competiciones/Competiciones';
 import { Area } from './paginas/competiciones/Area';
 import { Inscripcion } from './paginas/competiciones/Inscripcion';
-import { Confirmacion } from './paginas/competiciones/Confirmacion';
-
 
 
 
@@ -35,7 +32,6 @@ function App() {
       <Route path='/sesion-admin' element={<Admin/>}/>
       <Route path='/sesion-tutor' element={<Tutor/>}/>
       <Route path='/perfil-estudiante' element={<PerfilEstudiante/>}></Route>
-      <Route path='/editar-perfil' element={<EditarPerfil/>}></Route>
       <Route path='/registro' element={<RegistroEstudiante/>}></Route>
       <Route path='/registro-admin' element={<RegistroAdministrador/>}></Route>
       <Route path='/registro-cajero' element={<RegistroCajero/>}></Route>
@@ -43,8 +39,6 @@ function App() {
       <Route path='/competiciones' element={<Competiciones/>}></Route>
       <Route path='/area' element={<Area/>}></Route>
       <Route path='/inscripcion' element={<Inscripcion/>}></Route>
-      <Route path='/confirmacion' element={<Confirmacion/>}></Route>
-
 
 
       </Routes>
