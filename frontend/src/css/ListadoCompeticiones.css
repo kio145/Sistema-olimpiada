@@ -1,0 +1,65 @@
+.contenedor-competiciones {
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+  }
+  
+  .busqueda-nueva {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .busqueda-nueva input {
+    flex: 1;
+    padding: 8px;
+    min-width: 300px;
+  }
+  .buscar-btn{
+    max-width: 50px;
+  }
+  .busqueda-nueva input {
+    padding: 0.5rem;
+    width: 250px;
+  }
+  
+  .busqueda-nueva button {
+    margin-left: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .nueva-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    max-width: 600px;
+  }
+  
+  .tabla-competiciones {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .tabla-competiciones th, .tabla-competiciones td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .accion {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  
+  .volver {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
