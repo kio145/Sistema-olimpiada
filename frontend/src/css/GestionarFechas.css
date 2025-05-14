@@ -1,0 +1,101 @@
+.contenedor-fechas {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .tabla-fechas {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .tabla-fechas th, .tabla-fechas td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .tabla-fechas th {
+    background-color: #e8f1ff;
+  }
+  
+  .editar-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .volver {
+    margin-top: 20px;
+  }
+  .modal-gestion {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    z-index: 9999; /* asegúrate de que esté al frente */
+  }
+  
+  .modal-contenido {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+  .modal-gestion, .modal-gestion * {
+    box-sizing: border-box;
+  }
+  
+  
+  .modal-fechas {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 10px;
+  }
+  
+  .modal-fechas div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  
+  .modal-fechas label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .modal-botones {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .modal-botones button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .modal-botones button:first-child {
+    background-color: #ccc;
+  }
+  
+  .modal-botones button:last-child {
+    background-color: #0d6efd;
+    color: white;
+  }
+  
+  

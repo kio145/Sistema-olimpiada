@@ -1,0 +1,116 @@
+.boleta-container {
+    max-width: 900px; /* antes: 700px */
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  
+  h2 {
+    color: #3d8ac2;
+  }
+  
+  .sub-text {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .busqueda {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .busqueda input {
+    flex: 1;
+    min-width: 300px; /* fuerza un ancho base mayor */
+    padding: 6px;
+  }
+  
+  
+  .busqueda button {
+    background-color: #3d8ac2;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .tutor-info {
+    margin: 15px 0;
+  }
+  
+  .tutor-info input {
+    width: 100%;
+    padding: 6px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .tabla-estudiantes {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+  }
+  
+  .tabla-estudiantes th,
+  .tabla-estudiantes td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .tabla-estudiantes th {
+    background-color: #e6f1fa;
+  }
+  
+  .totales {
+    text-align: right;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  .pago {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .pago label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .pago input {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .pago > div {
+    flex: 1;
+    margin: 0 10px;
+  }
+  
+  .boton-aceptar {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .boton-aceptar button {
+    background-color: #3d8ac2;
+    color: white;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .pago-link{
+    color: white;
+  }
+  

@@ -1,0 +1,129 @@
+.validar-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .titulo {
+    font-size: 22px;
+    font-weight: bold;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+    color: #1e3a8a;
+  }
+  
+  .card {
+    background-color: #fffbea;
+    border: 2px solid #facc15;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .seccion {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .lista {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+  }
+  
+  .lista li {
+    margin-bottom: 5px;
+  }
+  
+  .validacion {
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  .validacion p {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  .botones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .btn {
+    padding: 10px 25px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    font-size: 14px;
+  }
+  
+  .btn-aceptar {
+    background-color: #2563eb;
+  }
+  
+  .btn-aceptar:hover {
+    background-color: #1d4ed8;
+  }
+  
+  .btn-rechazar {
+    background-color: #dc2626;
+  }
+  
+  .btn-rechazar:hover {
+    background-color: #b91c1c;
+  }
+  
+  .volver {
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  .btn-volver {
+    background-color: #e5e7eb;
+    color: #111827;
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  
+  .btn-volver:hover {
+    background-color: #d1d5db;
+  }
+  
+  .nota {
+    margin-top: 20px;
+    font-size: 12px;
+    text-align: center;
+    color: #6b7280;
+  }
+  .card-aceptada {
+    background-color: #fffbea;
+    border: 2px solid darkgreen;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .card-rechazada {
+    background-color: #fffbea;
+    border: 2px solid red;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .ruta-tutor{
+    color: white;
+  }
