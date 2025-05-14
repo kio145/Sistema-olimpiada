@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('telefonotutor');
             $table->string('correotutor', 100);
             $table->integer('citutor');
+            $table->string('passwordtutor', 100);
             $table->binary('imagentutor')->nullable();
             $table->timestamps();
           });

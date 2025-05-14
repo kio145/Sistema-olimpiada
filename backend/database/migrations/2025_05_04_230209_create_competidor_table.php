@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('curso', 50);
             $table->string('departamento', 50);
             $table->string('provincia', 50);
+            $table->string('passwordcompetidor', 100);
             $table->string('imagencompetidor', 100)->nullable();
             $table->timestamps();
          });
