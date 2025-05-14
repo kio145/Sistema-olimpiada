@@ -15,7 +15,6 @@ class CompetenciaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idcompetencia'         => 'required|integer|unique:competencia,idcompetencia',
             'idadmi'                => 'required|integer|exists:administrador,idadmi',
             'areacompetencia'     => 'required|string|max:100',
             'nivelcompetencia'      => 'required|string|max:50',

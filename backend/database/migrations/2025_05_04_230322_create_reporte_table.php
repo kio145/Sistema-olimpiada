@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reporte', function (Blueprint $table) {
-            $table->integer('idreporte')->primary();
+            $table->increments('idreporte');
             $table->integer('idadmi')->unsigned();
             $table->foreign('idadmi')
                   ->references('idadmi')

@@ -17,7 +17,6 @@ class AdministradorController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idadmi'       => 'required|integer|unique:administrador,idadmi',
             'nombreadmi'   => 'required|string|max:50',
             'apellidoadmi' => 'required|string|max:70',
             'correoadmi'   => 'required|email|max:100',

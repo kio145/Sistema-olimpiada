@@ -15,7 +15,6 @@ class CompetidorController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idcompetidor'        => 'required|integer|unique:competidor,idcompetidor',
             'usuariocompetidor'    => 'required|string|max:50',
             'nombrecompetidor'    => 'required|string|max:50',
             'apellidocompetidor'  => 'required|string|max:70',
