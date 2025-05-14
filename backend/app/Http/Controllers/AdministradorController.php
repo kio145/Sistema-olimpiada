@@ -20,7 +20,7 @@ class AdministradorController extends Controller
             'nombreadmi'   => 'required|string|max:50',
             'apellidoadmi' => 'required|string|max:70',
             'correoadmi'   => 'required|email|max:100',
-            'passwordadmi' => 'required|string|min:6|confirmed',
+            'passwordadmi' => 'required|string|min:6',
             'imagenadmi'   => 'nullable|string|max:100',
         ]);
 
