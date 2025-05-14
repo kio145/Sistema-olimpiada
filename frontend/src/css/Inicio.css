@@ -1,0 +1,159 @@
+.contenedorInicio{
+    margin-top: 1%;
+    margin-left: 6%;
+    margin-right: 6%;
+}
+.contenedorImagen{
+    width: 50%;
+    margin-right:0px;
+    float:left;
+    padding:50px 0px;
+    text-align: center;
+}
+.contenedorTexto{
+    width: 50%;
+    margin-right:0px;
+    float:left;
+    padding:50px 0px;
+}
+/*PARA LOS TEXTOS*/
+.titulo1{
+    font-size:xx-large;
+    color: #359bdf;
+    font:bold;
+    text-align: center;
+    margin-bottom: 0%;
+}
+.titulo2{
+    text-align: center;
+    font-size: large;
+    margin-top: 0%;
+    font: bolder;
+}
+.titulo3{
+    font-size: x-large;
+    font: bolder;
+}
+.parrafo{
+    text-align: justify;
+    font-family: 'Arial';
+}
+.enlace{
+    color: #359bdf;
+}
+/*Esta clase es de los inicios de sesion*/
+.parrafoFinal{
+    text-align: justify;
+    font-family: 'Arial';
+    text-align: center;
+}
+
+.mensaje-exito {
+    max-width: 600px;
+    margin: 40px auto;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+  }
+  
+  .mensaje-exito h2 {
+    color: #3d8ac2;
+    margin-bottom: 0;
+  }
+  
+  .mensaje-exito h4 {
+    font-weight: bold;
+    margin-top: 0;
+    color: #555;
+  }
+  
+  .mensaje-exito hr {
+    margin: 20px auto;
+    border: 0;
+    border-top: 1px solid #ccc;
+    width: 80%;
+  }
+  
+  .mensaje-exito ol {
+    text-align: left;
+    margin: 20px auto;
+    display: inline-block;
+    color: #333;
+  }
+  
+  .advertencia {
+    margin: 20px auto;
+    font-size: 14px;
+    font-style: italic;
+    color: #a00;
+  }
+  
+  .gracias {
+    color: #3d8ac2;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 30px;
+  }
+  
+  .btn-regresar {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #3d8ac2;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-regresar:hover {
+    background-color: #3377aa;
+  }
+  .menu-boton{
+    display: flex;
+    position: relative;
+}
+
+
+  
+.submenu li a {
+    display: block;
+    padding: 8px 12px;
+    color: #333;
+    text-decoration: none;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 150px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.opcion {
+  cursor: pointer;
+  color: #359bdf;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 5px;
+}
+.centrado {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.parrafoFinal {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
