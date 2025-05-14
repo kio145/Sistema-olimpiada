@@ -26,6 +26,7 @@ class Tutor extends Model
         'correotutor',
         'citutor',
         'imagentutor',
+        'passwordtutor',
     ];
 
     public function competidores(): BelongsToMany

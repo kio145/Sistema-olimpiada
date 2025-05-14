@@ -19,6 +19,8 @@ class CajeroController extends Controller
             'nombrecajero'   => 'required|string|max:50',
             'apellidocajero' => 'required|string|max:70',
             'imagencajero'   => 'nullable|string|max:100',
+            'passwordcajero'   => 'required|string|max:50',
+            
         ]);
 
         $cajero = Cajero::create($data);
@@ -37,6 +39,7 @@ class CajeroController extends Controller
             'nombrecajero'   => 'sometimes|string|max:50',
             'apellidocajero' => 'sometimes|string|max:70',
             'imagencajero'   => 'nullable|string|max:100',
+            'passwordcajero'   => 'sometimes|string|max:50',
         ]);
 
         $cajero = Cajero::findOrFail($idcajero);

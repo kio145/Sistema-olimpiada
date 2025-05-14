@@ -23,6 +23,8 @@ class TutorController extends Controller
             'correotutor'    => 'required|email|max:100',
             'citutor'        => 'required|integer',
             'imagentutor'    => 'nullable',
+            'passwordtutor'  => 'required|string|max:70',
+            
         ]);
 
         $tutor = Tutor::create($data);
@@ -45,6 +47,7 @@ class TutorController extends Controller
             'correotutor'    => 'sometimes|email|max:100',
             'citutor'        => 'sometimes|integer',
             'imagentutor'    => 'nullable',
+            'passwordtutor'  => 'sometimes|string|max:70',
         ]);
 
         $tutor = Tutor::findOrFail($idtutor);
