@@ -17,8 +17,19 @@ import { Competiciones } from './paginas/competiciones/Competiciones';
 import { Area } from './paginas/competiciones/Area';
 import { Inscripcion } from './paginas/competiciones/Inscripcion';
 import { Confirmacion } from './paginas/competiciones/Confirmacion';
-
-
+import { VistaCajero } from './paginas/sesion/VistaCajero';
+import { VistaAdmin } from './paginas/sesion/VistaAdmin';
+import { VistaTutor } from './paginas/sesion/VistaTutor';
+import { Boleta } from './paginas/sesion/Boleta';
+import { Pago } from './paginas/sesion/Pago';
+import { ListadoPostulantes } from './paginas/sesion/ListadoPostulantes';
+import { ListadoPagos } from './paginas/sesion/ListadoPagos';
+import { ListadoCompeticiones } from './paginas/sesion/ListadoCompeticiones';
+import { NuevaCompetencia } from './paginas/sesion/NuevaCompetencia';
+import { GestionarFechas } from './paginas/sesion/GestionarFechas';
+import { ValidarInscripcion } from './paginas/sesion/ValidarInscripcion';
+import { InscripcionValidada } from './paginas/sesion/InscripcionValidada';
+import { InscripcionRechazada } from './paginas/sesion/InscripcionRechazada';
 
 
 
@@ -44,7 +55,34 @@ function App() {
       <Route path='/area' element={<Area/>}></Route>
       <Route path='/inscripcion' element={<Inscripcion/>}></Route>
       <Route path='/confirmacion' element={<Confirmacion/>}></Route>
+      <Route path='/vista-cajero' element={<VistaCajero/>}></Route>
+      <Route path='/vista-tutor' element={<VistaTutor/>}></Route>
+      <Route path='/generar-boleta' element={<Boleta/>}></Route>
+      <Route path='/pago-boleta' element={<Pago/>}></Route>
+      <Route path="/vista-admin/listado-postulantes" element={<ListadoPostulantes />} />
+      <Route path="/vista-admin/listado-pagos" element={<ListadoPagos />} />
+      <Route path="/vista-admin/listado-competiciones" element={<ListadoCompeticiones />} />
+      <Route path="nueva-competencia" element={<NuevaCompetencia />} />
+      <Route path="/gestionar-fechas" element={<GestionarFechas />} />
+      <Route path="/validar-inscripcion" element={<ValidarInscripcion />} />
+      <Route path="/inscripcion-aceptada" element={<InscripcionValidada />} />
+      <Route path="/inscripcion-rechazada" element={<InscripcionRechazada />} />
 
+
+      <Route path="/vista-admin" element={
+      <VistaAdmin 
+        usuario={{
+          nombre: 'Cecilia Gutierrez Torrico',
+          iniciales: 'CGT',
+          cerrarSesion: () => {
+            localStorage.removeItem("token");
+            window.location.href = "/inicio";
+          }
+        }}
+        etapaActual="Inscripciones"
+        fechaHora="00/00/00 00:00"
+      />
+    } />
 
 
       </Routes>

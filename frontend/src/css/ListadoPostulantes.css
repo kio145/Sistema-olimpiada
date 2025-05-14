@@ -1,0 +1,88 @@
+.listado-container {
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .busqueda-postulante input {
+    padding: 0.5rem;
+    max-width: 500px;
+  }
+  
+  .busqueda-postulante button {
+    margin-left: 0.5rem;
+    padding: 0.5rem;
+  }
+  .busqueda-pago input {
+    padding: 0.5rem;
+    max-width: 500px;
+  }
+  
+  .busqueda-pago button {
+    margin-left: 0.5rem;
+    padding: 0.5rem;
+  }
+  .buscar-btn{
+    max-width: 50px;
+  }
+  .tabla-postulantes {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+    box-shadow: 0 0 5px #ccc;
+  }
+  
+  .tabla-pagoss th, .tabla-pagos td {
+    border: 1px solid #ccc;
+    padding: 0.6rem;
+    text-align: center;
+  }
+  .tabla-pagos {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+    box-shadow: 0 0 5px #ccc;
+  }
+  
+  .tabla-postulantes th, .tabla-postulantes td {
+    border: 1px solid #ccc;
+    padding: 0.6rem;
+    text-align: center;
+  }
+  .acciones-exportar{
+    align-items: rigth;
+  }
+  .accion {
+    margin: 0 0.2rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 1rem;
+  }
+
+  .pdf {
+    margin-top: 10px;
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    margin-right: 1rem;
+    max-width: 100px;
+  }
+  
+  .excel {
+    background-color: #27ae60;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    max-width: 100px;
+  }
+  
+  .volver button {
+    margin-top: 2rem;
+    padding: 0.6rem 1rem;
+    background-color: #3498db;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  

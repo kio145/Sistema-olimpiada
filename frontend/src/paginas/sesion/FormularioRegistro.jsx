@@ -1,135 +1,83 @@
-import '../../css/Formulario.css';
-import { Eye, EyeOff } from 'lucide-react';
+import '../../css/FormularioRegistro.css';
+import { Lock, Mail, Eye, EyeOff, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '@/api/api'; // Ajusta la ruta si es diferente
 
 export function FormularioRegistro() {
-  const [form, setForm] = useState({
-    idadmi: '',
-    nombreadmi: '',
-    apellidoadmi: '',
-    correoadmi: '',
-    passwordadmi: '',
-    passwordadmi_confirmation: '',
-    imagenadmi: ''
-  });
+  const [nombre, setNombre] = useState('');
+  const [correo, setCorreo] = useState('');
+  const [contrasenia, setContrasenia] = useState('');
+  const [confirmarContrasenia, setConfirmarContrasenia] = useState('');
   const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  };
+  const navegacion = useNavigate();
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    console.log('Payload que envío:', form);
-    if (form.passwordadmi !== form.passwordadmi_confirmation) {
-      setError('Las contraseñas no coinciden');
-      return;
-    }
-    try {
-      const res = await api.post('/administradores', form);
-      console.log('Registro exitoso:', res.data);
-      navigate('/login');
-    } catch (err) {
-      console.error(err.response?.data);
-      setError(err.response?.data?.message || 'Error al registrar');
-    }
+  const iniciar = (event) => {
+    event.preventDefault();
+    console.log(nombre, correo, contrasenia, confirmarContrasenia);
+    navegacion(`/perfil-estudiante?correo=${encodeURIComponent(correo)}&contrasenia=${encodeURIComponent(contrasenia)}`);
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className='formulario'>
-        <div className='campo'>
-          <label htmlFor='idadmi'>ID Administrador</label>
+    <form onSubmit={iniciar} className="formulario-registro">
+        <div className="campo">
+        <label htmlFor="nombre">Nombre de Usuario</label>
+        <div className="input-icono">
+          <User size={18} />
           <input
-            type='number'
-            name='idadmi'
-            id='idadmi'
-            value={form.idadmi}
-            onChange={handleChange}
+            type="text"
+            id="nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
             required
           />
         </div>
+      </div>
 
-        <div className='campo'>
-          <label htmlFor='nombreadmi'>Nombre</label>
+      <div className="campo">
+        <label htmlFor="correo">Correo Electrónico</label>
+        <div className="input-icono">
+          <Mail size={18} />
           <input
-            type='text'
-            name='nombreadmi'
-            id='nombreadmi'
-            value={form.nombreadmi}
-            onChange={handleChange}
+            type="email"
+            id="correo"
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
             required
           />
         </div>
+      </div>
 
-        <div className='campo'>
-          <label htmlFor='apellidoadmi'>Apellido</label>
+      <div className="campo">
+        <label htmlFor="contrasenia">Contraseña</label>
+        <div className="input-icono">
+          <Lock size={18} />
           <input
-            type='text'
-            name='apellidoadmi'
-            id='apellidoadmi'
-            value={form.apellidoadmi}
-            onChange={handleChange}
+            type={mostrarContrasenia ? 'text' : 'password'}
+            id="contrasenia"
+            value={contrasenia}
+            onChange={(e) => setContrasenia(e.target.value)}
             required
           />
         </div>
+      </div>
 
-        <div className='campo'>
-          <label htmlFor='correoadmi'>Correo Electrónico</label>
+      <div className="campo">
+        <label htmlFor="confirmar">Confirmar Contraseña</label>
+        <div className="input-icono">
+          <Lock size={18} />
           <input
-            type='email'
-            name='correoadmi'
-            id='correoadmi'
-            value={form.correoadmi}
-            onChange={handleChange}
+            type={mostrarContrasenia ? 'text' : 'password'}
+            id="confirmar"
+            value={confirmarContrasenia}
+            onChange={(e) => setConfirmarContrasenia(e.target.value)}
             required
           />
         </div>
+      </div>
 
-        <div className='campo'>
-          <label htmlFor='passwordadmi'>Contraseña</label>
-          <div className='contenedor-contrasenia'>
-            <input
-              name='passwordadmi'
-              id='passwordadmi'
-              type={mostrarContrasenia ? 'text' : 'password'}
-              value={form.passwordadmi}
-              onChange={handleChange}
-              required
-            />
-            <span onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-              {mostrarContrasenia ? <EyeOff /> : <Eye />}
-            </span>
-          </div>
-        </div>
-
-        <div className='campo'>
-          <label htmlFor='passwordadmi_confirmation'>Confirmar Contraseña</label>
-          <div className='contenedor-contrasenia'>
-            <input
-              name='passwordadmi_confirmation'
-              id='passwordadmi_confirmation'
-              type={mostrarContrasenia ? 'text' : 'password'}
-              value={form.passwordadmi_confirmation}
-              onChange={handleChange}
-              required
-            />
-            <span onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-              {mostrarContrasenia ? <EyeOff /> : <Eye />}
-            </span>
-          </div>
-        </div>
-
-        <div className='campo' id='boton'>
-          <button type='submit'>Registrarse</button>
-        </div>
-        {error && <p className='error'>{error}</p>}
-      </form>
-    </div>
+      <button type="submit" className="boton-registrar">Registrarse</button>
+    </form>
   );
 }

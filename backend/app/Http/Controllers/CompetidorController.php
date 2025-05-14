@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Competidor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 
 class CompetidorController extends Controller
 {
@@ -30,8 +32,10 @@ class CompetidorController extends Controller
             
         ]);
 
-        $competidor = Competidor::create($data);
-        return response()->json($competidor, 201);
+         $data['passwordcompetidor'] = Hash::make($data['passwordcompetidor']);
+
+    $competidor = Competidor::create($data);
+    return response()->json($competidor, 201);
     }
 
     public function show($idcompetidor)
