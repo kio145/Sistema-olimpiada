@@ -1,60 +1,82 @@
-import '../../css/Formulario.css';
-import { Lock , Mail ,Eye, EyeOff} from 'lucide-react';
+import '../../css/FormularioRegistro.css';
+import { Lock, Mail, Eye, EyeOff, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export function FormularioRegistro(){
-    const [correo, setCorreo] = useState('');
-    const [contrasenia, setContrasenia] = useState('');
-    const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
-    const navegacion = useNavigate();
+export function FormularioRegistro() {
+  const [nombre, setNombre] = useState('');
+  const [correo, setCorreo] = useState('');
+  const [contrasenia, setContrasenia] = useState('');
+  const [confirmarContrasenia, setConfirmarContrasenia] = useState('');
+  const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
 
-    const iniciar = (event) => {
-        event.preventDefault(); 
-        console.log(correo);
-        console.log(contrasenia);
-        navegacion(`/perfil-estudiante?correo=${encodeURIComponent(correo)}&contrasenia=${encodeURIComponent(contrasenia)}`);
-    };
+  const navegacion = useNavigate();
 
-    return (
-        <div>
-            <form onSubmit={iniciar} className='formularioRegistro'>
-                <div className='campoRegistro' id='entrada'>
-                    <label htmlFor="nombre" id='texto'> Nombre de Usuario</label>
-                    <input type="text" name="nombre" id="nombre"  onChange={(e) => setNombre(e.target.value)}/>
-                </div>
-                <div className='campoRegistro' id='entrada'>
-                    <label htmlFor="correo" id='texto'> Correo Electronico</label>
-                    <input type="email" name="correo" id="correo"  onChange={(e) => setCorreo(e.target.value)}/>
-                </div>
-                <div  className='campoRegistro' id='entrada'>
-                    <label htmlFor="password" id='texto'> Contrasena</label>
-                    <div className='contenedor-contrasenia'>
-                        <input name="password" id="password" 
-                            type={mostrarContrasenia ? 'text' : 'password'}
-                            onChange={(e) => setContrasenia(e.target.value)}/> 
-                        <span className='icono-mostrar-contrasenia'
-                            onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-                                {mostrarContrasenia ? <EyeOff color='#777'/> : <Eye color='#777'/> } 
-                        </span>
-                    </div>
-                </div>
-                <div  className='campoRegistro' id='entrada'>
-                    <label htmlFor="password" id='texto'> Confirmar Contrasena</label>
-                    <div className='contenedor-contrasenia'>
-                        <input name="password" id="password" 
-                            type={mostrarContrasenia ? 'text' : 'password'}
-                            onChange={(e) => setContrasenia(e.target.value)}/> 
-                        <span className='icono-mostrar-contrasenia'
-                            onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-                                {mostrarContrasenia ? <EyeOff color='#777'/> : <Eye color='#777'/> } 
-                        </span>
-                    </div>
-                </div>
-                <div  className='campo' id='boton'>
-                    <button type="submit">Registrarse</button>
-                </div>
-            </form>
+  const iniciar = (event) => {
+    event.preventDefault();
+    console.log(nombre, correo, contrasenia, confirmarContrasenia);
+    navegacion(`/perfil-estudiante?correo=${encodeURIComponent(correo)}&contrasenia=${encodeURIComponent(contrasenia)}`);
+  };
+
+  return (
+    <form onSubmit={iniciar} className="formulario-registro">
+        <div className="campo">
+        <label htmlFor="nombre">Nombre de Usuario</label>
+        <div className="input-icono">
+          <User size={18} />
+          <input
+            type="text"
+            id="nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
         </div>
-    )
+      </div>
+
+      <div className="campo">
+        <label htmlFor="correo">Correo Electrónico</label>
+        <div className="input-icono">
+          <Mail size={18} />
+          <input
+            type="email"
+            id="correo"
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="campo">
+        <label htmlFor="contrasenia">Contraseña</label>
+        <div className="input-icono">
+          <Lock size={18} />
+          <input
+            type={mostrarContrasenia ? 'text' : 'password'}
+            id="contrasenia"
+            value={contrasenia}
+            onChange={(e) => setContrasenia(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="campo">
+        <label htmlFor="confirmar">Confirmar Contraseña</label>
+        <div className="input-icono">
+          <Lock size={18} />
+          <input
+            type={mostrarContrasenia ? 'text' : 'password'}
+            id="confirmar"
+            value={confirmarContrasenia}
+            onChange={(e) => setConfirmarContrasenia(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+
+      <button type="submit" className="boton-registrar">Registrarse</button>
+    </form>
+  );
 }

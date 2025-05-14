@@ -31,7 +31,7 @@ export function Formulario(){
                             onChange={(e) => setContrasenia(e.target.value)}/> 
                         <span className='icono-mostrar-contrasenia'
                             onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-                                {mostrarContrasenia ? <EyeOff color='#777'/> : <Eye color='#777'/> } 
+                                {mostrarContrasenia } 
                         </span>
                     </div>
                 </div>
