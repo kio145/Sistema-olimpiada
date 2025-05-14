@@ -21,6 +21,7 @@ class Administrador extends Model
         'nombreadmi',
         'apellidoadmi',
         'correoadmi',
+        'passwordadmi',
         'imagenadmi',
     ];
 

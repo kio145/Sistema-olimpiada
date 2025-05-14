@@ -20,6 +20,7 @@ class Cajero extends Model
         'idcajero',
         'nombrecajero',
         'apellidocajero',
+        
         'imagencajero',
     ];
 

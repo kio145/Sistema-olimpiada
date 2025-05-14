@@ -15,6 +15,7 @@ return new class extends Migration
             $table->integer('idcajero')->unsigned()->primary();
             $table->string('nombrecajero', 50);
             $table->string('apellidocajero', 70);
+            $table->string('passwordcajero', 100);
             $table->string('imagencajero', 100)->nullable();
             $table->timestamps();
          });
