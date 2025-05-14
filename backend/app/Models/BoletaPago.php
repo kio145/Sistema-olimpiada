@@ -12,7 +12,7 @@ class BoletaPago extends Model
 
     protected $table = 'boleta_pago';
     protected $primaryKey = 'idboleta';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
 

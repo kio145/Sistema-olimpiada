@@ -13,7 +13,7 @@ class Tutor extends Model
 
     protected $table = 'tutor';
     protected $primaryKey = 'idtutor';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
 

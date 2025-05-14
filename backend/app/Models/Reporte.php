@@ -12,7 +12,7 @@ class Reporte extends Model
 
     protected $table = 'reporte';
     protected $primaryKey = 'idreporte';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
 

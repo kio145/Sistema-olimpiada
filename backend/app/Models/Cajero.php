@@ -12,7 +12,7 @@ class Cajero extends Model
 
     protected $table = 'cajero';
     protected $primaryKey = 'idcajero';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
 

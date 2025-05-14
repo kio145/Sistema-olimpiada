@@ -15,7 +15,6 @@ class ReporteController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idreporte'    => 'required|integer|unique:reporte,idreporte',
             'idadmi'       => 'required|integer|exists:administrador,idadmi',
             'tiporeporte'  => 'required|string|max:50',
             'fechareporte' => 'required|date',
