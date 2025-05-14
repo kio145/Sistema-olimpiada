@@ -40,96 +40,45 @@ export function FormularioRegistro() {
     }
   };
 
-  return (
-    <div>
-      <form onSubmit={handleSubmit} className='formulario'>
-        <div className='campo'>
-          <label htmlFor='idadmi'>ID Administrador</label>
-          <input
-            type='number'
-            name='idadmi'
-            id='idadmi'
-            value={form.idadmi}
-            onChange={handleChange}
-            required
-          />
+    return (
+        <div>
+            <form onSubmit={iniciar} className='formularioRegistro'>
+                <div className='campoRegistro' id='entrada'>
+                    <label htmlFor="nombre" id='texto'> Nombre de Usuario</label>
+                    <input type="text" name="nombre" id="nombre"  onChange={(e) => setNombre(e.target.value)}/>
+                </div>
+                <div className='campoRegistro' id='entrada'>
+                    <label htmlFor="correo" id='texto'> Correo Electronico</label>
+                    <input type="email" name="correo" id="correo"  onChange={(e) => setCorreo(e.target.value)}/>
+                </div>
+                <div  className='campoRegistro' id='entrada'>
+                    <label htmlFor="password" id='texto'> Contrasena</label>
+                    <div className='contenedor-contrasenia'>
+                        <input name="password" id="password" 
+                            type={mostrarContrasenia ? 'text' : 'password'}
+                            onChange={(e) => setContrasenia(e.target.value)}/> 
+                        <span className='icono-mostrar-contrasenia'
+                            onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
+                                {mostrarContrasenia ? <EyeOff color='#777'/> : <Eye color='#777'/> } 
+                        </span>
+                    </div>
+                </div>
+                <div  className='campoRegistro' id='entrada'>
+                    <label htmlFor="password" id='texto'> Confirmar Contrasena</label>
+                    <div className='contenedor-contrasenia'>
+                        <input name="password" id="password" 
+                            type={mostrarContrasenia ? 'text' : 'password'}
+                            onChange={(e) => setContrasenia(e.target.value)}/> 
+                        <span className='icono-mostrar-contrasenia'
+                            onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
+                                {mostrarContrasenia ? <EyeOff color='#777'/> : <Eye color='#777'/> } 
+                        </span>
+                    </div>
+                </div>
+                <div  className='campo' id='boton'>
+                    <button type="submit">Registrarse</button>
+                </div>
+            </form>
         </div>
-
-        <div className='campo'>
-          <label htmlFor='nombreadmi'>Nombre</label>
-          <input
-            type='text'
-            name='nombreadmi'
-            id='nombreadmi'
-            value={form.nombreadmi}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className='campo'>
-          <label htmlFor='apellidoadmi'>Apellido</label>
-          <input
-            type='text'
-            name='apellidoadmi'
-            id='apellidoadmi'
-            value={form.apellidoadmi}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className='campo'>
-          <label htmlFor='correoadmi'>Correo Electrónico</label>
-          <input
-            type='email'
-            name='correoadmi'
-            id='correoadmi'
-            value={form.correoadmi}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className='campo'>
-          <label htmlFor='passwordadmi'>Contraseña</label>
-          <div className='contenedor-contrasenia'>
-            <input
-              name='passwordadmi'
-              id='passwordadmi'
-              type={mostrarContrasenia ? 'text' : 'password'}
-              value={form.passwordadmi}
-              onChange={handleChange}
-              required
-            />
-            <span onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-              {mostrarContrasenia ? <EyeOff /> : <Eye />}
-            </span>
-          </div>
-        </div>
-
-        <div className='campo'>
-          <label htmlFor='passwordadmi_confirmation'>Confirmar Contraseña</label>
-          <div className='contenedor-contrasenia'>
-            <input
-              name='passwordadmi_confirmation'
-              id='passwordadmi_confirmation'
-              type={mostrarContrasenia ? 'text' : 'password'}
-              value={form.passwordadmi_confirmation}
-              onChange={handleChange}
-              required
-            />
-            <span onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-              {mostrarContrasenia ? <EyeOff /> : <Eye />}
-            </span>
-          </div>
-        </div>
-
-        <div className='campo' id='boton'>
-          <button type='submit'>Registrarse</button>
-        </div>
-        {error && <p className='error'>{error}</p>}
-      </form>
-    </div>
-  );
+    )
 }
