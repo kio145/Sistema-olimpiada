@@ -12,7 +12,7 @@ class Administrador extends Model
 
     protected $table = 'administrador';
     protected $primaryKey = 'idadmi';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
 

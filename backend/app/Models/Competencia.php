@@ -13,7 +13,7 @@ class Competencia extends Model
 
     protected $table = 'competencia';
     protected $primaryKey = 'idcompetencia';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
 

@@ -15,7 +15,6 @@ class TutorController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idtutor'        => 'required|integer|unique:tutor,idtutor',
             'nombretutor'    => 'required|string|max:50',
             'apellidotutor'  => 'required|string|max:70',
             'tipotutor'      => 'required|string|max:50',
