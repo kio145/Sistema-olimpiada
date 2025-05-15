@@ -80,7 +80,7 @@
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+ 
   .card-admin {
     display: flex;
     gap: 15px;

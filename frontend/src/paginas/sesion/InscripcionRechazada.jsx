@@ -67,7 +67,6 @@ export function InscripcionRechazada(){
           <div className="volver">
             <button className="btn-volver"><a href="vista-tutor" className="ruta-tutor">🔙 Regresar a menú de tutor</a></button>
           </div>
-    
         </div>
       );
     };

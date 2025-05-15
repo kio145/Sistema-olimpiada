@@ -32,7 +32,7 @@ export function Competiciones() {
             <a href="/area">Más información</a>
           </div>
         </div>
-  
+ 
         <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
@@ -41,7 +41,7 @@ export function Competiciones() {
             <a href="/area">Más información</a>
           </div>
         </div>
-  
+ 
         <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">

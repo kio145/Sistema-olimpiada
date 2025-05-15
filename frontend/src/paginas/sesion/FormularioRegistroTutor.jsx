@@ -2,7 +2,6 @@ import '../../css/FormularioIns.css';
 import { Lock , Mail ,Eye, EyeOff} from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 export function FormularioRegistroTutor (){
     const [formulario, setFormulario] = useState({
         nombres: '',
