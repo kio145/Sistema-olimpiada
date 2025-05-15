@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Administrador;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 
 class AdministradorController extends Controller
 {
@@ -15,15 +17,16 @@ class AdministradorController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idadmi'       => 'required|integer|unique:administrador,idadmi',
             'nombreadmi'   => 'required|string|max:50',
             'apellidoadmi' => 'required|string|max:70',
             'correoadmi'   => 'required|email|max:100',
+            'passwordadmi' => 'required|string|min:6',
             'imagenadmi'   => 'nullable|string|max:100',
         ]);
 
+        $data['passwordadmi'] = Hash::make($data['passwordadmi']);
         $admin = Administrador::create($data);
-        return response()->json($admin, 201);
+                return response()->json($admin, 201);
     }
 
     public function show($idadmi)

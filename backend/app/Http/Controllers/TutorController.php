@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tutor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class TutorController extends Controller
 {
@@ -15,15 +16,13 @@ class TutorController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idtutor'        => 'required|integer|unique:tutor,idtutor',
             'nombretutor'    => 'required|string|max:50',
             'apellidotutor'  => 'required|string|max:70',
-            'tipotutor'      => 'required|string|max:50',
-            'telefonotutor'  => 'required|integer',
-            'correotutor'    => 'required|email|max:100',
-            'citutor'        => 'required|integer',
-            'imagentutor'    => 'nullable',
+            'correotutor'    => 'required|email|unique:tutor,correotutor|max:100',
+            'passwordtutor'  => 'required|string|min:6|confirmed',
+            
         ]);
+         $data['passwordtutor'] = Hash::make($data['passwordtutor']);
 
         $tutor = Tutor::create($data);
         return response()->json($tutor, 201);
@@ -45,6 +44,7 @@ class TutorController extends Controller
             'correotutor'    => 'sometimes|email|max:100',
             'citutor'        => 'sometimes|integer',
             'imagentutor'    => 'nullable',
+            'passwordtutor'  => 'sometimes|string|max:70',
         ]);
 
         $tutor = Tutor::findOrFail($idtutor);

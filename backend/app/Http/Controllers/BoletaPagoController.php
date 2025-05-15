@@ -15,7 +15,6 @@ class BoletaPagoController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idboleta'        => 'required|integer|unique:boleta_pago,idboleta',
             'idcajero'        => 'required|integer|exists:cajero,idcajero',
             'id_competidor'   => 'required|integer|exists:competidor,idcompetidor',
             'fecha_emision'   => 'required|date',
