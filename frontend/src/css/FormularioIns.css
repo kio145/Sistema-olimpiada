@@ -3,7 +3,7 @@
     margin: 0 auto;
     padding: 30px;
     border-radius: 10px;
-    font-family: Arial, sans-serif;
+    font-family: 'Times New Roman', Times, serif;
     box-sizing: border-box;
   }
   
@@ -107,4 +107,10 @@
   .enviar-form-registro{
     min-width: 500px;
     color: white;
+  }
+  .editar-perfil{
+    font-family: 'Times New Roman', Times, serif;
+  }
+  .btn-tutor{
+    min-width: 150px;
   }

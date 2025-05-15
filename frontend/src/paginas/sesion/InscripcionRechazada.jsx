@@ -67,11 +67,6 @@ export function InscripcionRechazada(){
           <div className="volver">
             <button className="btn-volver"><a href="vista-tutor" className="ruta-tutor">🔙 Regresar a menú de tutor</a></button>
           </div>
-    
-          <p className="nota">
-            Por favor, revise cuidadosamente los datos proporcionados por el estudiante. 
-            Si toda la información es correcta, haga clic en el botón “Sí” para confirmar.
-          </p>
         </div>
       );
     };

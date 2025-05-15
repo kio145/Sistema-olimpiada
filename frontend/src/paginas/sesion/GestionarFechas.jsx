@@ -67,9 +67,10 @@ export function GestionarFechas() {
       {mostrarModal && (
         <div className="modal-gestion">
           <div className="modal-contenido">
-            <h3>¿Seguro de cambiar las fechas?</h3>
+          
+          <div className="modal-header">¿Seguro de cambiar las fechas?</div>
+          
             <p>Estás editando las fechas de: <strong>{fechas[indiceEditando].etapa}</strong></p>
-
             <div className="modal-fechas">
               <div>
                 <label>Fecha de Inicio</label>

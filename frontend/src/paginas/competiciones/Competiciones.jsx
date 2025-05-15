@@ -24,7 +24,7 @@ export function Competiciones() {
       <button class="btn-filtrar">Aplicar filtros</button>
   
       <div class="cards-grid">
-        <div class="card">
+        <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
             <h3>Robotica</h3>
@@ -32,8 +32,8 @@ export function Competiciones() {
             <a href="/area">Más información</a>
           </div>
         </div>
-  
-        <div class="card">
+ 
+        <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
             <h3>Robotica</h3>
@@ -41,8 +41,8 @@ export function Competiciones() {
             <a href="/area">Más información</a>
           </div>
         </div>
-  
-        <div class="card">
+ 
+        <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
             <h3>Robotica</h3>
@@ -51,7 +51,7 @@ export function Competiciones() {
           </div>
         </div>
   
-        <div class="card">
+        <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
             <h3>Robotica</h3>

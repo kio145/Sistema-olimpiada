@@ -1,5 +1,7 @@
 import '../../css/FormularioIns.css';
+import { Lock , Mail ,Eye, EyeOff} from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 export function FormularioRegistroTutor (){
     const [formulario, setFormulario] = useState({
         nombres: '',
@@ -71,7 +73,7 @@ export function FormularioRegistroTutor (){
             </select>
             </div>
             </div>
-            <button type="submit" className="submit-btn"><a href="vista-tutor" className='enviar-form-registro'>Registrarse</a></button>
+            <button type="submit" className="submit-btn btn-tutor"><a href="vista-tutor" className='enviar-form-registro'>Registrarse</a></button>
           </form>
         </div>
     )

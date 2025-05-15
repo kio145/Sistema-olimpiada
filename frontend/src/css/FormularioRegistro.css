@@ -61,6 +61,9 @@
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    max-width: 200px;
+    display: block;
+    margin: 20px auto 0;
   }
   
   .boton-registrar:hover {

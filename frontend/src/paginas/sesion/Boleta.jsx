@@ -124,14 +124,15 @@ export function Boleta() {
       )}
       {mostrarModal && (
         <div className="modal-overlay">
-          <div className="modal-contenido">
-            <h3>Fecha Invalida</h3>
-            <p>El periodo de pago ha terminado, usted no puede pagar</p>
-            <button onClick={() => setMostrarModal(false)}>Aceptar</button>
+          <div className="modal">
+            <div className="modal-header">Fecha inválida</div>
+            <div className="modal-body">
+              <p>El periodo de pago ha terminado, usted no puede pagar.</p>
+              <button onClick={() => setMostrarModal(false)}>Aceptar</button>
+            </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }

@@ -24,6 +24,7 @@
     border: none;
     cursor: pointer;
     font-size: 16px;
+    color: black;
   }
   
   .volver {
@@ -33,69 +34,93 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* fondo oscuro translúcido */
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
   
-    z-index: 9999; /* asegúrate de que esté al frente */
+  .modal-gestion .modal-header {
+    text-align: center;
+    padding-bottom: 10px;
+  }
+  
+  .modal-gestion h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #3d8ac2;
+  }
+  
+  .modal-gestion p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
   }
   
   .modal-contenido {
     background: white;
-    padding: 25px 30px;
+    padding: 20px 30px;
     border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
   }
-  .modal-gestion, .modal-gestion * {
-    box-sizing: border-box;
-  }
-  
   
   .modal-fechas {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 10px;
-  }
-  
-  .modal-fechas div {
-    flex: 1;
-    display: flex;
     flex-direction: column;
-    align-items: start;
+    gap: 15px;
+    margin: 20px 0;
   }
   
   .modal-fechas label {
+    font-size: 14px;
+    color: #333;
     margin-bottom: 5px;
-    font-weight: bold;
+    display: block;
+  }
+  
+  .modal-fechas input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 14px;
   }
   
   .modal-botones {
-    margin-top: 25px;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
   }
   
   .modal-botones button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
     cursor: pointer;
+    border: none;
+    transition: background 0.3s ease;
   }
   
   .modal-botones button:first-child {
-    background-color: #ccc;
+    background-color: #ddd;
+    color: #333;
   }
   
   .modal-botones button:last-child {
-    background-color: #0d6efd;
+    background-color: #3d8ac2;
     color: white;
   }
   
+  .modal-botones button:first-child:hover {
+    background-color: #ccc;
+  }
   
+  .modal-botones button:last-child:hover {
+    background-color: #2c6da5;
+  }

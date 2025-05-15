@@ -1,6 +1,6 @@
 export function Nuevo(){
-    var nombre = 'un nombre'
+    var nombre = 'User'
     return(
-        <p>html {nombre}</p>
+        <p>{nombre}</p>
     )
 }

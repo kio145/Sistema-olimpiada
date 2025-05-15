@@ -27,4 +27,18 @@
   .boleta-detalle th {
     background-color: #f2f2f2;
   }
-  
+  .btn-pago {
+    background-color: #3d8ac2;
+    color: white;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    max-width: 350px;
+    margin-top: 15px;
+  }  
+  .titulo-pago{
+    display: flex;
+    justify-content: center;
+  }
