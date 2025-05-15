@@ -20,7 +20,7 @@ export function Pago() {
 
   return (
     <div className="pago-container">
-      <h2>Pago realizado con éxito</h2>
+      <h2 className='titulo-pago'>Pago realizado con éxito</h2>
       <p>La siguiente Boleta de Pago fue emitida</p>
       <hr />
       <div className="boleta-detalle">
@@ -50,8 +50,7 @@ export function Pago() {
         <p><strong>Monto pagado:</strong> {monto} Bs</p>
         <p><strong>Cambio entregado:</strong> {cambio} Bs</p>
       </div>
-
-      <button onClick={() => navigate('/vista-cajero')}>Regresar a menú de cajero</button>
+      <button className='btn-pago' onClick={() => navigate('/vista-cajero')} >Regresar a menú de cajero</button>
     </div>
   );
 }

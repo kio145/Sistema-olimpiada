@@ -1,5 +1,6 @@
-import React from "react";
 import "../../css/ValidarInscripcion.css";
+import React, { useState } from "react";
+
 
 export function ValidarInscripcion(){
     const datosCompetidor = {
@@ -29,6 +30,9 @@ export function ValidarInscripcion(){
           alert("❌ Inscripción rechazada");
         }
       };
+      const [mostrarModal, setMostrarModal] = useState(false);
+      const [razonRechazo, setRazonRechazo] = useState('');
+
     
       return (
         <div className="validar-container">
@@ -62,7 +66,12 @@ export function ValidarInscripcion(){
             <p>¿Usted valida esta inscripción?</p>
             <div className="botones">
               <button className="btn btn-aceptar" onClick={() => validarInscripcion("si")}>Sí</button>
-              <button className="btn btn-rechazar" onClick={() => validarInscripcion("no")}>No</button>
+                 <button
+                    className="btn btn-rechazar"
+                    onClick={() => setMostrarModal(true)}
+                    >
+                    No
+                </button>
             </div>
           </div>
     
@@ -74,6 +83,32 @@ export function ValidarInscripcion(){
             Por favor, revise cuidadosamente los datos proporcionados por el estudiante. 
             Si toda la información es correcta, haga clic en el botón “Sí” para confirmar.
           </p>
+          {mostrarModal && (
+  <div className="modal-overlay">
+    <div className="modal-contenido">
+      <h3>¿Seguro de rechazar esta inscripción?</h3>
+      <p>Por favor, escribe las razones por las cuales rechazas esta inscripción:</p>
+      <textarea
+        rows="4"
+        value={razonRechazo}
+        onChange={(e) => setRazonRechazo(e.target.value)}
+        placeholder="Escribe la razón aquí..."
+      ></textarea>
+      <div className="modal-botones">
+        <button onClick={() => setMostrarModal(false)}>No</button>
+        <button onClick={() => {
+          if (razonRechazo.trim() === '') {
+            alert('Por favor, ingrese una razón.');
+            return;
+          }
+          alert("❌ Inscripción rechazada\nMotivo: " + razonRechazo);
+          setMostrarModal(false);
+        }}>Sí, enviar</button>
+      </div>
+    </div>
+  </div>
+)}
+
         </div>
       );
     };

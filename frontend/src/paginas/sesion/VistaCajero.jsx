@@ -34,7 +34,7 @@ export function VistaCajero() {
                 </div>
         </div>
       </div>
-
+  <hr />
       <div className="boleta">
         <button className="btn-generar"><a href="generar-boleta" className='generar-boleta-link'>Generar Boleta</a> </button>
       </div>

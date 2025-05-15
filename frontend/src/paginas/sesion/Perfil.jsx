@@ -44,7 +44,7 @@ export function PerfilEstudiante(){
             </div>
 
             <div className="acciones-competencia">
-                <button className="btn-buscar">Buscar más competiciones</button>
+                <button className="btn-buscar"><a href="/competiciones" className='btn-buscar'>Buscar más competiciones</a> </button>
                 <p className="nota">Recuerde que como máximo, puede inscribirse a dos competiciones</p>
             </div>
             </div>

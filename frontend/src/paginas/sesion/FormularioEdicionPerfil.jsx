@@ -1,6 +1,7 @@
-import '../../css/FormularioIns.css';
+import '../../css/FormularioEdicion.css';
 import { Lock, Mail, User, Image, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import imagenCuadro from '/imagenInicio.JPG';
 
 export function FormularioEdicionPerfil() {
   const [nombreUsuario, setNombreUsuario] = useState('');
@@ -26,18 +27,20 @@ export function FormularioEdicionPerfil() {
 
   return (
     <form className='formulario' onSubmit={aplicarCambios}>
-      <h2>Editar Perfil</h2>
+      <h2 className='titulo-editar'>Editar Perfil</h2>
       
       <div className='campo centrado'>
-        <label htmlFor="imagen">Cambiar imagen de perfil</label>
-        <div className="imagen-perfil-preview">
-          <img
-            src={imagenPerfil || 'https://via.placeholder.com/80'}
-            alt="Perfil"
-            className="imagen-perfil"
-          />
-        </div>
-        <input type="file" accept="image/*" onChange={manejarImagen} />
+      <label htmlFor="imagen">Cambiar imagen de perfil</label>
+      <div className="fila-imagen">
+        
+          <div className="imagen-perfil-preview">
+            <img src={imagenCuadro || 'https://via.placeholder.com/80'}
+              alt="Perfil"
+              className="imagen-perfil"
+            />
+          </div>
+          <input type="file" accept="image/*" onChange={manejarImagen} />
+        </div>        
       </div>
 
       <div className='campo'>
