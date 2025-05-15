@@ -28,6 +28,9 @@ class Tutor extends Model
         'imagentutor',
         'passwordtutor',
     ];
+    protected $hidden = [
+        'passwordcompetidor',
+    ];
 
     public function competidores(): BelongsToMany
     {
