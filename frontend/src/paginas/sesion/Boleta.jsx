@@ -133,6 +133,8 @@ export function Boleta() {
           </div>
         </div>
       )}
+
+
     </div>
   );
 }

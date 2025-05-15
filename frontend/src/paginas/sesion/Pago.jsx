@@ -50,6 +50,7 @@ export function Pago() {
         <p><strong>Monto pagado:</strong> {monto} Bs</p>
         <p><strong>Cambio entregado:</strong> {cambio} Bs</p>
       </div>
+
       <button className='btn-pago' onClick={() => navigate('/vista-cajero')} >Regresar a menú de cajero</button>
     </div>
   );

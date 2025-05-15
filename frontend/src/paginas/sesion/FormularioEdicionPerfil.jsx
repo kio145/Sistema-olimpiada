@@ -3,6 +3,7 @@ import { Lock, Mail, User, Image, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import imagenCuadro from '/imagenInicio.JPG';
 
+
 export function FormularioEdicionPerfil() {
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [correo, setCorreo] = useState('');
