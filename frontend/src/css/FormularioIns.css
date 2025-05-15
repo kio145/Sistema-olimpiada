@@ -34,7 +34,9 @@
     gap: 20px;
     flex-wrap: wrap;
   }
-  
+  .enviar-form{
+    color: white;
+  }
   .campo {
     display: flex;
     flex-direction: column;
@@ -51,7 +53,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: none; /* quitar sombra */
-    width: 100%;
+
     box-sizing: border-box;
   }
   
@@ -59,12 +61,28 @@
     background-color: #359bdf;
     color: white;
     border-radius: 8px;
-    padding: 4%;
-    width: 60%;
+    margin: 0 auto;
+    font: bolder;
+    cursor: pointer;
+    max-width: 100px;
+    padding: 2%;
+  }
+  .regresar-btn{
+    border-color: black;
+    max-width: 150px;
+    background-color: #359bdf;
+    border-radius: 8px;
+    padding: 2%;
+    width: 80%;
     margin: 0 auto;
     font: bolder;
     font-size: medium;
     cursor: pointer;
+    min-width: 190px;
+  }
+  .regresar{
+    color:white;
+
   }
   .imagen-perfil-preview {
     margin: 10px 0;
@@ -75,6 +93,9 @@
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #ccc;
+  }
+  input{
+    width: 100%;
   }
   input[type="file"] {
     margin-top: 10px;

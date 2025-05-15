@@ -23,6 +23,7 @@ class Competidor extends Model
         'nombrecompetidor',
         'apellidocompetidor',
         'emailcompetidor',
+        'passwordcompetidor',
         'cicompetidor',
         'fechanacimiento',
         'colegio',
@@ -33,6 +34,9 @@ class Competidor extends Model
         'passwordcompetidor',
     ];
 
+    protected $hidden = [
+        'passwordcompetidor',
+    ];
     public function tutores(): BelongsToMany
     {
         return $this->belongsToMany(Tutor::class, 'tiene', 'idcompetidor', 'idtutor');

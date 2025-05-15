@@ -1,39 +1,45 @@
-import '../../css/Formulario.css';
-import { Eye, EyeOff } from 'lucide-react';
+// src/components/FormularioCompetidor.jsx
+import '../../css/FormularioRegistro.css';
+import { Lock, Mail, Eye, EyeOff, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '@/api/api'; // Ajusta la ruta si es diferente
+import api from '@/api/api';
 
 export function FormularioRegistro() {
   const [form, setForm] = useState({
-    idadmi: '',
-    nombreadmi: '',
-    apellidoadmi: '',
-    correoadmi: '',
-    passwordadmi: '',
-    passwordadmi_confirmation: '',
-    imagenadmi: ''
+    nombrecompetidor: '',
+    apellidocompetidor: '',
+    emailcompetidor: '',
+    passwordcompetidor: '',
+    passwordcompetidor_confirmation: ''
   });
-  const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
+  const [mostrar, setMostrar] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = e => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log('Payload que envío:', form);
-    if (form.passwordadmi !== form.passwordadmi_confirmation) {
+    setError('');
+    if (form.passwordcompetidor !== form.passwordcompetidor_confirmation) {
       setError('Las contraseñas no coinciden');
       return;
     }
     try {
-      const res = await api.post('/administradores', form);
-      console.log('Registro exitoso:', res.data);
-      navigate('/login');
+      // POST a /competidores con sólo nombre, email y password
+      const res = await api.post('/competidores', {
+        idcompetidor: form.idcompetidor, 
+        nombrecompetidor:     form.nombrecompetidor,
+        apellidocompetidor:   form.apellidocompetidor,
+        emailcompetidor:      form.emailcompetidor,
+        passwordcompetidor:   form.passwordcompetidor,
+        passwordcompetidor_confirmation: form.passwordcompetidor_confirmation
+      });
+      console.log('Registrado:', res.data);
+      navigate('/login-competidor');
     } catch (err) {
       console.error(err.response?.data);
       setError(err.response?.data?.message || 'Error al registrar');
@@ -41,95 +47,86 @@ export function FormularioRegistro() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className='formulario'>
-        <div className='campo'>
-          <label htmlFor='idadmi'>ID Administrador</label>
+    <form onSubmit={handleSubmit} className="formulario-registro">
+      <div className="campo">
+        <label htmlFor="nombrecompetidor">Usuario</label>
+        <div className="input-icono">
+          <User size={18} />
           <input
-            type='number'
-            name='idadmi'
-            id='idadmi'
-            value={form.idadmi}
+            name="nombrecompetidor"
+            id="nombrecompetidor"
+            value={form.nombrecompetidor}
             onChange={handleChange}
             required
           />
         </div>
-
-        <div className='campo'>
-          <label htmlFor='nombreadmi'>Nombre</label>
+      </div>
+ <div className="campo">
+        <label htmlFor="apellidocompetidor">Apellido</label>
+        <div className="input-icono">
+          <User size={18} />
           <input
-            type='text'
-            name='nombreadmi'
-            id='nombreadmi'
-            value={form.nombreadmi}
+            name="apellidocompetidor"
+            id="apellidocompetidor"
+            value={form.apellidocompetidor}
             onChange={handleChange}
             required
           />
         </div>
-
-        <div className='campo'>
-          <label htmlFor='apellidoadmi'>Apellido</label>
+      </div>
+      <div className="campo">
+        <label htmlFor="emailcompetidor">Correo Electrónico</label>
+        <div className="input-icono">
+          <Mail size={18} />
           <input
-            type='text'
-            name='apellidoadmi'
-            id='apellidoadmi'
-            value={form.apellidoadmi}
+            type="email"
+            name="emailcompetidor"
+            id="emailcompetidor"
+            value={form.emailcompetidor}
             onChange={handleChange}
             required
           />
         </div>
+      </div>
 
-        <div className='campo'>
-          <label htmlFor='correoadmi'>Correo Electrónico</label>
+      <div className="campo">
+        <label htmlFor="passwordcompetidor">Contraseña</label>
+        <div className="input-icono">
+          <Lock size={18} />
           <input
-            type='email'
-            name='correoadmi'
-            id='correoadmi'
-            value={form.correoadmi}
+            name="passwordcompetidor"
+            id="passwordcompetidor"
+            type={mostrar ? 'text' : 'password'}
+            value={form.passwordcompetidor}
             onChange={handleChange}
             required
           />
+          <span onClick={() => setMostrar(!mostrar)}>
+            {mostrar ? <EyeOff /> : <Eye />}
+          </span>
         </div>
+      </div>
 
-        <div className='campo'>
-          <label htmlFor='passwordadmi'>Contraseña</label>
-          <div className='contenedor-contrasenia'>
-            <input
-              name='passwordadmi'
-              id='passwordadmi'
-              type={mostrarContrasenia ? 'text' : 'password'}
-              value={form.passwordadmi}
-              onChange={handleChange}
-              required
-            />
-            <span onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-              {mostrarContrasenia ? <EyeOff /> : <Eye />}
-            </span>
-          </div>
+      <div className="campo">
+        <label htmlFor="passwordcompetidor_confirmation">Confirmar Contraseña</label>
+        <div className="input-icono">
+          <Lock size={18} />
+          <input
+            name="passwordcompetidor_confirmation"
+            id="passwordcompetidor_confirmation"
+            type={mostrar ? 'text' : 'password'}
+            value={form.passwordcompetidor_confirmation}
+            onChange={handleChange}
+            required
+          />
+          <span onClick={() => setMostrar(!mostrar)}>
+            {mostrar ? <EyeOff /> : <Eye />}
+          </span>
         </div>
+      </div>
 
-        <div className='campo'>
-          <label htmlFor='passwordadmi_confirmation'>Confirmar Contraseña</label>
-          <div className='contenedor-contrasenia'>
-            <input
-              name='passwordadmi_confirmation'
-              id='passwordadmi_confirmation'
-              type={mostrarContrasenia ? 'text' : 'password'}
-              value={form.passwordadmi_confirmation}
-              onChange={handleChange}
-              required
-            />
-            <span onClick={() => setMostrarContrasenia(!mostrarContrasenia)}>
-              {mostrarContrasenia ? <EyeOff /> : <Eye />}
-            </span>
-          </div>
-        </div>
-
-        <div className='campo' id='boton'>
-          <button type='submit'>Registrarse</button>
-        </div>
-        {error && <p className='error'>{error}</p>}
-      </form>
-    </div>
+      <button type="submit" className="boton-registrar">Registrarse</button>
+      {error && <p className="error">{error}</p>}
+    </form>
   );
 }
