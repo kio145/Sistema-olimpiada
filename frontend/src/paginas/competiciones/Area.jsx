@@ -20,6 +20,14 @@ export function Area() {
         <div className="area-content">
           <div className="area-image">
             <img src={imagenCuadro} alt="imagen" />
+            <table className="tabla-costo">
+              <tbody>
+                <tr>
+                  <th className="columna-label">Costo por participante</th>
+                  <td className="columna-valor">15 Bs</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           <div className="area-info">

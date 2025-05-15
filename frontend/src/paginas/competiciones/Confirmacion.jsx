@@ -19,7 +19,7 @@ export function Confirmacion(){
 
         <p class="gracias">¡Gracias por participar en las Olimpiadas Científicas!</p>
 
-        <a href="/inicio" class="btn-regresar"> ← Regresar a menú de estudiante</a>
+        <a href="/perfil-estudiante" class="btn-regresar"> ← Regresar a menú de estudiante</a>
         </div>
 
     )
