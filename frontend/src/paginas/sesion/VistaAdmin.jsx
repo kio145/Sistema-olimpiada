@@ -82,9 +82,6 @@ export function VistaAdmin({ usuario, etapaActual, fechaHora }) {
                 <li><Link to="listado-pagos" className="sub-link">Listado de pagos</Link></li>
               </ul>
             </p>
-            <Link to="/generar-reporte" className="link-card">
-              Ir a la página &rarr;
-            </Link>
           </div>
         </div>
       </div>

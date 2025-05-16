@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Carbon\Carbon;
 use App\Models\Competencia;
 use Illuminate\Http\Request;
 
@@ -54,4 +54,31 @@ class CompetenciaController extends Controller
         Competencia::destroy($id);
         return response()->noContent();
     }
+ public function getTodasLasCompetencias()
+{
+    $competencias = Competencia::with('administrador', 'competidores')
+        ->orderBy('fechainicompetencia', 'asc')
+        ->get();
+
+    return response()->json($competencias, 200);
+}
+public function getEstadoInscripcionCompetencias()
+{
+    $hoy = Carbon::now()->toDateString();
+
+    $competencias = Competencia::select('nombrecompetencia', 'nivelcompetencia', 'fechainiinscripcion', 'fechafininscripcion','estadocompetencia')
+        ->get()
+        ->map(function ($competencia) use ($hoy) {
+            $estadoInscripcion = ($hoy >= $competencia->fechainiinscripcion && $hoy <= $competencia->fechafininscripcion);
+
+            return [
+                'nombrecompetencia'  => $competencia->nombrecompetencia,
+                'nivelcompetencia'   => $competencia->nivelcompetencia,
+                'estadoinscripcion'  => $competencia->estadocompetencia,
+            ];
+        });
+
+    return response()->json($competencias, 200);
+}
+
 }

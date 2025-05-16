@@ -12,7 +12,7 @@ class Administrador extends Authenticatable
 
     protected $table = 'administrador';
     protected $primaryKey = 'idadmi';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [

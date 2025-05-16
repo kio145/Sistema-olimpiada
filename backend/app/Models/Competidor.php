@@ -16,12 +16,12 @@ class Competidor extends Model
 
     protected $fillable = [
         'idcompetidor',
+        'usuariocompetidor',
         'nombrecompetidor',
         'apellidocompetidor',
         'emailcompetidor',
         'cicompetidor',
         'fechanacimiento',
-        'telefonocompetidor',
         'colegio',
         'curso',
         'departamento',

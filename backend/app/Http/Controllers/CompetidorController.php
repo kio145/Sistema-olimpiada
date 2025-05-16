@@ -47,17 +47,18 @@ class CompetidorController extends Controller
         $competidor = Competidor::findOrFail($id);
 
         $data = $request->validate([
+            'usuariocompetidor'    => 'sometimes|string|max:50',
             'nombrecompetidor'    => 'sometimes|string|max:50',
             'apellidocompetidor'  => 'sometimes|string|max:70',
             'emailcompetidor'     => 'sometimes|email|max:100|unique:competidor,emailcompetidor,' . $id . ',idcompetidor',
             'cicompetidor'        => 'sometimes|integer',
             'fechanacimiento'      => 'sometimes|date',
-            'telefonocompetidor'   => 'sometimes|integer',
             'colegio'             => 'sometimes|string|max:100',
             'curso'               => 'sometimes|string|max:50',
             'departamento'        => 'sometimes|string|max:50',
             'provincia'           => 'sometimes|string|max:50',
             'imagencompetidor'    => 'nullable|string|max:100',
+            'passwordcompetidor'    => 'sometimes|string|max:50',
         ]);
 
         $competidor->update($data);

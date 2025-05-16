@@ -11,12 +11,13 @@ class Competencia extends Model
 
     protected $table = 'competencia';
     protected $primaryKey = 'idcompetencia';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [
         'idcompetencia',
         'idadmi',
+        'areacompetencia',
         'areacompetencia',
         'nivelcompetencia',
         'preciocompetencia',

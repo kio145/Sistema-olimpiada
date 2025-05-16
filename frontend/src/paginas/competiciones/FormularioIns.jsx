@@ -18,6 +18,8 @@ export function FormularioIns(){
         parentesco: 'Madre del estudiante',
       });
     
+
+    
       const manejarCambio = (e) => {
         const { name, value } = e.target;
         setFormulario({ ...formulario, [name]: value });
@@ -35,6 +37,7 @@ export function FormularioIns(){
           <p><strong>Robótica - Lego P</strong></p>
     
           <form onSubmit={enviarFormulario}>
+            <h3>Por favor llene sus datos cuidadosamente</h3>
             <div className="grupo">
               <div className="campo">
                 <label>Nombre/s *</label>

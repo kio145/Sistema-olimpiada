@@ -8,7 +8,7 @@ class Cajero extends Model
 {
     protected $table = 'cajero';
     protected $primaryKey = 'idcajero';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [
@@ -16,5 +16,6 @@ class Cajero extends Model
         'nobrecajero',
         'apellidocajero',
         'imagencajero',
+        'passwordcajero',
     ];
 }
