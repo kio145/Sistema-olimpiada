@@ -29,3 +29,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/todas-competencias',[CompetenciaController::class,'getTodasLasCompetencias']);
+Route::get('/competencias-inscripcion', [CompetenciaController::class, 'getEstadoInscripcionCompetencias']);
