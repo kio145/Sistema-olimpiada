@@ -25,7 +25,6 @@ export function Pago() {
       <hr />
       <div className="boleta-detalle">
         <h3>BOLETA DE PAGO</h3>
-        <p><strong>Tutor:</strong> {tutor.nombre}</p>
         <table>
           <thead>
             <tr>
@@ -50,6 +49,7 @@ export function Pago() {
         <p><strong>Monto pagado:</strong> {monto} Bs</p>
         <p><strong>Cambio entregado:</strong> {cambio} Bs</p>
       </div>
+
       <button className='btn-pago' onClick={() => navigate('/vista-cajero')} >Regresar a menú de cajero</button>
     </div>
   );

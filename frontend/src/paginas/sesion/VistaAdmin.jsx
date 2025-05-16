@@ -34,7 +34,6 @@ export function VistaAdmin({ usuario, etapaActual, fechaHora }) {
         <p>
           <strong>ETAPA ACTUAL :</strong> {etapaActual}
         </p>
-        <p className="fecha-hora">{fechaHora}</p>
       </div>
 
       {/* Tarjetas de opciones */}

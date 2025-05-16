@@ -71,10 +71,7 @@ export function Boleta() {
       {tutor && (
         <>
           <hr />
-          <div className="tutor-info">
-            <label>Nombre del tutor :</label>
-            <input type="text" value={tutor.nombre} readOnly />
-          </div>
+          
 
           <table className="tabla-estudiantes">
             <thead>
@@ -133,6 +130,8 @@ export function Boleta() {
           </div>
         </div>
       )}
+
+
     </div>
   );
 }
