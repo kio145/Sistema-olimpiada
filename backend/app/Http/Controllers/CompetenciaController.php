@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Carbon\Carbon;
 use App\Models\Competencia;
 use Illuminate\Http\Request;
 
@@ -15,18 +15,17 @@ class CompetenciaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idcompetencia'         => 'required|integer|unique:competencia,idcompetencia',
             'idadmi'                => 'required|integer|exists:administrador,idadmi',
-            'nombrecompetencia'     => 'required|string|max:100',
+            'areacompetencia'     => 'required|string|max:100',
             'nivelcompetencia'      => 'required|string|max:50',
             'preciocompetencia'     => 'required|integer',
             'estadocompetencia'     => 'required|string|max:100',
-            'fechainiciocompetencia'=> 'required|date',
+            'fechainicompetencia'=> 'required|date',
             'fechafincompetencia'   => 'required|date',
             'fechainiinscripcion'   => 'required|date',
             'fechafininscripcion'   => 'required|date',
             'fechainipago'          => 'required|date',
-            'fechainicompetencia'   => 'required|date',
+            'fechafinpago'   => 'required|date',
             'descripcion'           => 'nullable|string|max:250',
             'imagencompetencia'     => 'nullable',
             'fechainivalidacion'    => 'required|date',
@@ -47,16 +46,16 @@ class CompetenciaController extends Controller
     {
         $data = $request->validate([
             'idadmi'                => 'sometimes|integer|exists:administrador,idadmi',
-            'nombrecompetencia'     => 'sometimes|string|max:100',
+            'areacompetencia'     => 'sometimes|string|max:100',
             'nivelcompetencia'      => 'sometimes|string|max:50',
             'preciocompetencia'     => 'sometimes|integer',
             'estadocompetencia'     => 'sometimes|string|max:100',
-            'fechainiciocompetencia'=> 'sometimes|date',
+            'fechainicompetencia'=> 'sometimes|date',
             'fechafincompetencia'   => 'sometimes|date',
             'fechainiinscripcion'   => 'sometimes|date',
             'fechafininscripcion'   => 'sometimes|date',
             'fechainipago'          => 'sometimes|date',
-            'fechainicompetencia'   => 'sometimes|date',
+            'fechafinpago'   => 'sometimes|date',
             'descripcion'           => 'nullable|string|max:250',
             'imagencompetencia'     => 'nullable',
             'fechainivalidacion'    => 'sometimes|date',
@@ -73,4 +72,31 @@ class CompetenciaController extends Controller
         Competencia::destroy($idcompetencia);
         return response()->json(null, 204);
     }
+ public function getTodasLasCompetencias()
+{
+    $competencias = Competencia::with('administrador', 'competidores')
+        ->orderBy('fechainicompetencia', 'asc')
+        ->get();
+
+    return response()->json($competencias, 200);
+}
+public function getEstadoInscripcionCompetencias()
+{
+    $hoy = Carbon::now()->toDateString();
+
+    $competencias = Competencia::select('nombrecompetencia', 'nivelcompetencia', 'fechainiinscripcion', 'fechafininscripcion','estadocompetencia')
+        ->get()
+        ->map(function ($competencia) use ($hoy) {
+            $estadoInscripcion = ($hoy >= $competencia->fechainiinscripcion && $hoy <= $competencia->fechafininscripcion);
+
+            return [
+                'nombrecompetencia'  => $competencia->nombrecompetencia,
+                'nivelcompetencia'   => $competencia->nivelcompetencia,
+                'estadoinscripcion'  => $competencia->estadocompetencia,
+            ];
+        });
+
+    return response()->json($competencias, 200);
+}
+
 }

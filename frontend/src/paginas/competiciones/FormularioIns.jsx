@@ -18,6 +18,8 @@ export function FormularioIns(){
         parentesco: 'Madre del estudiante',
       });
     
+
+    
       const manejarCambio = (e) => {
         const { name, value } = e.target;
         setFormulario({ ...formulario, [name]: value });
@@ -35,6 +37,7 @@ export function FormularioIns(){
           <p><strong>Robótica - Lego P</strong></p>
     
           <form onSubmit={enviarFormulario}>
+            <h3>Por favor llene sus datos cuidadosamente</h3>
             <div className="grupo">
               <div className="campo">
                 <label>Nombre/s *</label>
@@ -45,10 +48,13 @@ export function FormularioIns(){
                 <input type="text" name="apellidos" required value={formulario.apellidos} onChange={manejarCambio} />
               </div>
             </div>
-    
+            <div className="grupo">
+            <div className="campo">
             <label>Correo Electrónico *</label>
             <input type="email" name="correo" required value={formulario.correo} onChange={manejarCambio} />
-    
+            </div>
+            </div>
+
             <div className="grupo">
               <div className="campo">
                 <label>Cédula de Identidad *</label>
@@ -94,21 +100,30 @@ export function FormularioIns(){
                 </select>
               </div>
             </div>
-    
+            <div className="grupo">
+            <div className="campo">
             <label>Selecciona el nombre de tu tutor</label>
             <select name="tutor" value={formulario.tutor} onChange={manejarCambio}>
               <option>Padro Vasques Quintana</option>
               <option>Maria Pérez</option>
             </select>
-    
+            </div>
+            </div>
+
+            <div className="grupo">
+            <div className="campo">
             <label>El tutor es:</label>
             <select name="parentesco" value={formulario.parentesco} onChange={manejarCambio}>
               <option>Madre del estudiante</option>
               <option>Padre del estudiante</option>
               <option>Otro</option>
             </select>
-    
-            <button type="submit" className="submit-btn">Enviar</button>
+            </div>
+            </div>
+            <button type="submit" className="submit-btn"><a href="confirmacion" className='enviar-form'>Enviar</a></button>
+            <div class="regresar-btn">
+              <a href="competiciones" className='regresar'>Regresar a competiciones</a>
+            </div>
           </form>
         </div>
     )

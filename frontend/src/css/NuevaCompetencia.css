@@ -1,0 +1,37 @@
+.formulario-competencia {
+    width: 500px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    margin-top: 10px;
+  }
+  
+  input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+  }
+  
+  .grid-cursos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+  }
+  
+  .imagen-upload img {
+    display: block;
+    margin-top: 10px;
+  }
+  
+  .crear-btn {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  

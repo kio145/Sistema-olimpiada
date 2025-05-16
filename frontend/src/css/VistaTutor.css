@@ -1,0 +1,131 @@
+.tutor-container {
+    max-width: 950px;
+    margin: 40px auto;
+    padding: 30px;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+  
+  .perfil-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  
+  .foto-perfil {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    object-fit: cover;
+  }
+  
+  .datos-usuario {
+    text-align: left;
+  }
+  
+  .rol {
+    color: #3d8ac2;
+    margin: 0;
+    font-weight: bold;
+  }
+  
+  .nombre {
+    margin: 5px 0;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+  }
+  
+  .btn-editar,
+  .btn-salir {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .btn-editar {
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    color: #444;
+  }
+  
+  .btn-salir {
+    background-color: #359bdf;
+    color: white;
+  }
+  
+  .titulo-tabla {
+    margin: 30px 0 10px;
+    text-align: left;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .tabla-wrapper {
+    overflow-x: auto;
+  }
+  
+  .tabla-competidores {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 15px;
+  }
+  
+  .tabla-competidores th,
+  .tabla-competidores td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .tabla-competidores th {
+    background-color: #f0f6fc;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  /* Estados de inscripción */
+  .estado-inscripcion.espera-validacion {
+    background-color: #fffbe6;
+    color: #b38f00;
+  }
+  
+  .estado-inscripcion.espera-pago {
+    background-color: #eaf4ff;
+    color: #2176bd;
+  }
+  
+  .estado-inscripcion.rechazada {
+    background-color: #ffe6e6;
+    color: #cc0000;
+  }
+  
+  /* Estados de validación */
+  .estado-validacion.pendiente {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .estado-validacion.aceptada {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .estado-validacion.rechazada {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  

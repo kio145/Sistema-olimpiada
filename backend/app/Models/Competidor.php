@@ -13,25 +13,30 @@ class Competidor extends Model
 
     protected $table = 'competidor';
     protected $primaryKey = 'idcompetidor';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
 
     protected $fillable = [
         'idcompetidor',
+        'usuariocompetidor',
         'nombrecompetidor',
         'apellidocompetidor',
         'emailcompetidor',
+        'passwordcompetidor',
         'cicompetidor',
         'fechanacimiento',
-        'telefonocompetidor',
         'colegio',
         'curso',
         'departamento',
         'provincia',
         'imagencompetidor',
+        'passwordcompetidor',
     ];
 
+    protected $hidden = [
+        'passwordcompetidor',
+    ];
     public function tutores(): BelongsToMany
     {
         return $this->belongsToMany(Tutor::class, 'tiene', 'idcompetidor', 'idtutor');

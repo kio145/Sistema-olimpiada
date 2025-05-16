@@ -4,22 +4,27 @@ export function Competiciones() {
     return (
       <main class="main-container">
       <h2>Competiciones :</h2>
-      <div class="filters">
-        <label>Áreas :
-          <select>
-            <option>Robotica</option>
-          </select>
-        </label>
-        <label>Niveles :
-          <select>
-            <option>Todos los niveles/categorías</option>
-          </select>
-        </label>
+      <div className="filters">
+        <div className="filter-item">
+          <label>Áreas:
+            <select>
+              <option>Robotica</option>
+            </select>
+          </label>
+        </div>
+        <div className="filter-item">
+          <label>Niveles:
+            <select>
+              <option>Todos los niveles/categorías</option>
+            </select>
+          </label>
+        </div>
       </div>
+
       <button class="btn-filtrar">Aplicar filtros</button>
   
       <div class="cards-grid">
-        <div class="card">
+        <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
             <h3>Robotica</h3>
@@ -28,7 +33,7 @@ export function Competiciones() {
           </div>
         </div>
   
-        <div class="card">
+        <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
             <h3>Robotica</h3>
@@ -37,7 +42,7 @@ export function Competiciones() {
           </div>
         </div>
   
-        <div class="card">
+        <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
             <h3>Robotica</h3>
@@ -46,7 +51,7 @@ export function Competiciones() {
           </div>
         </div>
   
-        <div class="card">
+        <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
             <h3>Robotica</h3>
