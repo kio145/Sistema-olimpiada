@@ -12,17 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tutor', function (Blueprint $table) {
-            $table->id('idtutor');
-            $table->string('nombretutor', 50);
-            $table->string('apellidotutor', 70);
-            $table->string('tipotutor', 50);
-            $table->integer('telefonotutor');
-            $table->string('correotutor', 100);
-            $table->integer('citutor');
-            $table->string('passwordtutor', 100);
-            $table->binary('imagentutor')->nullable();
+            $table->integer('idtutor')->primary();
+            $table->string('nombretutor', 50)->nullable();
+            $table->string('apellidotutor', 50)->nullable();
+            $table->string('area', 50)->nullable();
+            $table->integer('telefonotutor')->nullable();
+            $table->string('correotutor', 50)->nullable();
+            $table->integer('citutor')->nullable();
+            $table->string('imagentutor', 50)->nullable();
             $table->timestamps();
-          });
+        });
     }
 
     /**

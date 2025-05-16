@@ -9,68 +9,49 @@ class CompetenciaController extends Controller
 {
     public function index()
     {
-        return response()->json(Competencia::with('administrador','competidores')->get(), 200);
+        return response()->json(Competencia::all());
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idcompetencia'         => 'required|integer|unique:competencia,idcompetencia',
-            'idadmi'                => 'required|integer|exists:administrador,idadmi',
-            'nombrecompetencia'     => 'required|string|max:100',
-            'nivelcompetencia'      => 'required|string|max:50',
-            'preciocompetencia'     => 'required|integer',
-            'estadocompetencia'     => 'required|string|max:100',
-            'fechainiciocompetencia'=> 'required|date',
-            'fechafincompetencia'   => 'required|date',
-            'fechainiinscripcion'   => 'required|date',
-            'fechafininscripcion'   => 'required|date',
-            'fechainipago'          => 'required|date',
-            'fechainicompetencia'   => 'required|date',
-            'descripcion'           => 'nullable|string|max:250',
-            'imagencompetencia'     => 'nullable',
-            'fechainivalidacion'    => 'required|date',
-            'fechafinvalidacion'    => 'required|date',
+            'idcompetencia'     => 'required|integer|unique:competencia',
+            'idadmi'            => 'required|integer|exists:administrador,idadmi',
+            'areacompetencia'   => 'required|string|max:50',
+            'nivelcompetencia'  => 'required|string|max:50',
+            'preciocompetencia' => 'required|integer',
+            'descripcion'       => 'nullable|string|max:250',
+            'imagencompetencia' => 'nullable|string|max:100',
         ]);
 
-        $competencia = Competencia::create($data);
-        return response()->json($competencia, 201);
+        $cmp = Competencia::create($data);
+        return response()->json($cmp, 201);
     }
 
-    public function show($idcompetencia)
+    public function show($id)
     {
-        $competencia = Competencia::with('administrador','competidores')->findOrFail($idcompetencia);
-        return response()->json($competencia, 200);
+        return response()->json(Competencia::findOrFail($id));
     }
 
-    public function update(Request $request, $idcompetencia)
+    public function update(Request $request, $id)
     {
+        $cmp = Competencia::findOrFail($id);
         $data = $request->validate([
-            'idadmi'                => 'sometimes|integer|exists:administrador,idadmi',
-            'nombrecompetencia'     => 'sometimes|string|max:100',
-            'nivelcompetencia'      => 'sometimes|string|max:50',
-            'preciocompetencia'     => 'sometimes|integer',
-            'estadocompetencia'     => 'sometimes|string|max:100',
-            'fechainiciocompetencia'=> 'sometimes|date',
-            'fechafincompetencia'   => 'sometimes|date',
-            'fechainiinscripcion'   => 'sometimes|date',
-            'fechafininscripcion'   => 'sometimes|date',
-            'fechainipago'          => 'sometimes|date',
-            'fechainicompetencia'   => 'sometimes|date',
-            'descripcion'           => 'nullable|string|max:250',
-            'imagencompetencia'     => 'nullable',
-            'fechainivalidacion'    => 'sometimes|date',
-            'fechafinvalidacion'    => 'sometimes|date',
+            'idadmi'            => 'sometimes|integer|exists:administrador,idadmi',
+            'areacompetencia'   => 'sometimes|string|max:50',
+            'nivelcompetencia'  => 'sometimes|string|max:50',
+            'preciocompetencia' => 'sometimes|integer',
+            'descripcion'       => 'nullable|string|max:250',
+            'imagencompetencia' => 'nullable|string|max:100',
         ]);
 
-        $competencia = Competencia::findOrFail($idcompetencia);
-        $competencia->update($data);
-        return response()->json($competencia, 200);
+        $cmp->update($data);
+        return response()->json($cmp);
     }
 
-    public function destroy($idcompetencia)
+    public function destroy($id)
     {
-        Competencia::destroy($idcompetencia);
-        return response()->json(null, 204);
+        Competencia::destroy($id);
+        return response()->noContent();
     }
 }

@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Competencia extends Model
 {
@@ -15,34 +13,30 @@ class Competencia extends Model
     protected $primaryKey = 'idcompetencia';
     public $incrementing = false;
     protected $keyType = 'int';
-    public $timestamps = true;
 
     protected $fillable = [
         'idcompetencia',
         'idadmi',
-        'nombrecompetencia',
+        'areacompetencia',
         'nivelcompetencia',
         'preciocompetencia',
-        'estadocompetencia',
-        'fechainiciocompetencia',
-        'fechafincompetencia',
-        'fechainiinscripcion',
-        'fechafininscripcion',
-        'fechainipago',
-        'fechainicompetencia',
         'descripcion',
-        'imagencompetencia',
-        'fechainivalidacion',
-        'fechafinvalidacion',
+        'imagencompetencia'
     ];
 
-    public function administrador(): BelongsTo
+    public function administrador()
     {
-        return $this->belongsTo(Administrador::class, 'idadmi', 'idadmi');
+        return $this->belongsTo(Administrador::class, 'idadmi');
     }
 
-    public function competidores(): BelongsToMany
+    public function competidores()
     {
-        return $this->belongsToMany(Competidor::class, 'tiene0', 'idcompetencia', 'idcompetidor');
+        return $this->belongsToMany(Competidor::class, 'competidor_tutores', 'idcompetencia', 'idcompetidor')
+                    ->withPivot('idtutor', 'tipo_tutor');
+    }
+
+    public function requisitos()
+    {
+        return $this->hasMany(RequisitoCompetencia::class, 'idcompetencia');
     }
 }

@@ -6,53 +6,53 @@ use App\Models\Administrador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-
 class AdministradorController extends Controller
 {
     public function index()
     {
-        return response()->json(Administrador::all(), 200);
+        return response()->json(Administrador::all());
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idadmi'       => 'required|integer|unique:administrador,idadmi',
+            'idadmi'       => 'required|integer|unique:administrador',
             'nombreadmi'   => 'required|string|max:50',
             'apellidoadmi' => 'required|string|max:70',
-            'correoadmi'   => 'required|email|max:100',
-            'passwordadmi' => 'required|string|min:6|confirmed',
+            'correoadmi'   => 'required|email|max:100|unique:administrador,correoadmi',
+            'passwordadmi' => 'required|string|min:6',
             'imagenadmi'   => 'nullable|string|max:100',
         ]);
 
         $data['passwordadmi'] = Hash::make($data['passwordadmi']);
         $admin = Administrador::create($data);
-                return response()->json($admin, 201);
+
+        return response()->json($admin, 201);
     }
 
-    public function show($idadmi)
+    public function show($id)
     {
-        $admin = Administrador::findOrFail($idadmi);
-        return response()->json($admin, 200);
+        return response()->json(Administrador::findOrFail($id));
     }
 
-    public function update(Request $request, $idadmi)
+    public function update(Request $request, $id)
     {
+        $admin = Administrador::findOrFail($id);
+
         $data = $request->validate([
             'nombreadmi'   => 'sometimes|string|max:50',
             'apellidoadmi' => 'sometimes|string|max:70',
-            'correoadmi'   => 'sometimes|email|max:100',
+            'correoadmi'   => 'sometimes|email|max:100|unique:administrador,correoadmi,' . $id . ',idadmi',
             'imagenadmi'   => 'nullable|string|max:100',
         ]);
 
-        $admin = Administrador::findOrFail($idadmi);
         $admin->update($data);
-        return response()->json($admin, 200);
+        return response()->json($admin);
     }
 
-    public function destroy($idadmi)
+    public function destroy($id)
     {
-        Administrador::destroy($idadmi);
-        return response()->json(null, 204);
+        Administrador::destroy($id);
+        return response()->noContent();
     }
 }

@@ -12,21 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('competidor', function (Blueprint $table) {
-            $table->id('idcompetidor');
-            $table->string('nombrecompetidor', 50);
-            $table->string('apellidocompetidor', 70);
-            $table->string('emailcompetidor', 100);
+            $table->integer('idcompetidor')->primary();
+            $table->string('nombrecompetidor', 50)->nullable();
+            $table->string('apellidocompetidor', 50)->nullable();
+            $table->string('emailcompetidor', 50)->nullable();
             $table->integer('cicompetidor')->nullable();
             $table->date('fechanacimiento')->nullable();
             $table->integer('telefonocompetidor')->nullable();
-            $table->string('colegio', 100)->nullable();
+            $table->string('colegio', 50)->nullable();
             $table->string('curso', 50)->nullable();
             $table->string('departamento', 50)->nullable();
             $table->string('provincia', 50)->nullable();
-            $table->string('passwordcompetidor', 100);
-            $table->string('imagencompetidor', 100)->nullable();
+            $table->string('imagencompetidor', 50)->nullable();
             $table->timestamps();
-         });
+        });
     }
 
     /**

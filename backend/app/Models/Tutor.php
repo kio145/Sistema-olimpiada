@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tutor extends Model
 {
@@ -15,26 +13,26 @@ class Tutor extends Model
     protected $primaryKey = 'idtutor';
     public $incrementing = false;
     protected $keyType = 'int';
-    public $timestamps = true;
 
     protected $fillable = [
         'idtutor',
         'nombretutor',
         'apellidotutor',
-        'tipotutor',
+        'area',
         'telefonotutor',
         'correotutor',
         'citutor',
-        'imagentutor',
+        'imagentutor'
     ];
 
-    public function competidores(): BelongsToMany
+    public function competidores()
     {
-        return $this->belongsToMany(Competidor::class, 'tiene', 'idtutor', 'idcompetidor');
+        return $this->belongsToMany(Competidor::class, 'competidor_tutores', 'idtutor', 'idcompetidor')
+                    ->withPivot('idcompetencia', 'tipo_tutor');
     }
 
-    public function boletasPago(): HasMany
+    public function validaciones()
     {
-        return $this->hasMany(BoletaPago::class, 'id_tutor', 'idtutor');
+        return $this->hasMany(ValidacionTutor::class, 'idtutor');
     }
 }

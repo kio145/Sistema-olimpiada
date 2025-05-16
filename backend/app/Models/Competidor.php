@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Competidor extends Model
 {
@@ -13,15 +11,14 @@ class Competidor extends Model
 
     protected $table = 'competidor';
     protected $primaryKey = 'idcompetidor';
+    public $incrementing = false;
     protected $keyType = 'int';
-    public $timestamps = true;
 
     protected $fillable = [
         'idcompetidor',
         'nombrecompetidor',
         'apellidocompetidor',
         'emailcompetidor',
-        'passwordcompetidor',
         'cicompetidor',
         'fechanacimiento',
         'telefonocompetidor',
@@ -29,19 +26,21 @@ class Competidor extends Model
         'curso',
         'departamento',
         'provincia',
-        'imagencompetidor',
+        'imagencompetidor'
     ];
-
     protected $hidden = [
         'passwordcompetidor',
     ];
-    public function tutores(): BelongsToMany
+
+    public function competencias()
     {
-        return $this->belongsToMany(Tutor::class, 'tiene', 'idcompetidor', 'idtutor');
+        return $this->belongsToMany(Competencia::class, 'competidor_tutores', 'idcompetidor', 'idcompetencia')
+                    ->withPivot('idtutor', 'tipo_tutor');
     }
 
-    public function competencias(): BelongsToMany
+    public function tutores()
     {
-        return $this->belongsToMany(Competencia::class, 'tiene0', 'idcompetidor', 'idcompetencia');
+        return $this->belongsToMany(Tutor::class, 'competidor_tutores', 'idcompetidor', 'idtutor')
+                    ->withPivot('idcompetencia', 'tipo_tutor');
     }
 }

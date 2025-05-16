@@ -7,25 +7,22 @@ use App\Http\Controllers\CajeroController;
 use App\Http\Controllers\TutorController;
 use App\Http\Controllers\CompetidorController;
 use App\Http\Controllers\CompetenciaController;
-use App\Http\Controllers\ReporteController;
-use App\Http\Controllers\BoletaPagoController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FechaController;
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\RequisitoCompetenciaController;
+use App\Http\Controllers\CompetidorTutorController;
+use App\Http\Controllers\ValidacionTutorController;
 
 
-Route::apiResource('administradores', AdministradorController::class) ->only(['index','store','show','update','destroy']);
+
+Route::apiResource('administradores', AdministradorController::class);
 Route::apiResource('cajeros', CajeroController::class);
 Route::apiResource('tutores', TutorController::class);
 Route::apiResource('competidores', CompetidorController::class);
 Route::apiResource('competencias', CompetenciaController::class);
-Route::apiResource('reportes', ReporteController::class);
-Route::apiResource('boletas-pago', BoletaPagoController::class);
-
-Route::post('login',   [AuthController::class,'login']);
-Route::post('logout',  [AuthController::class,'logout']);
-Route::middleware('auth:sanctum')->get('user', [AuthController::class,'user']);
-
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
+Route::apiResource('fechas', FechaController::class);
+Route::apiResource('inscripciones', InscripcionController::class);
+Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::class);
+Route::apiResource('competidor-tutores', CompetidorTutorController::class)
+     ->only(['index','store','show','destroy']);
+Route::apiResource('validaciones-tutor', ValidacionTutorController::class);
