@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('boleta_pago', function (Blueprint $table) {
             $table->integer('idboleta')->primary();
-            $table->integer('idcajero')->nullable();
-            $table->integer('idcompetidor')->nullable();
-            $table->integer('id_competidor')->nullable();
+            $table->unsignedInteger('idcajero')->nullable();
+            $table->unsignedInteger('idcompetidor')->nullable();
+            $table->unsignedInteger('id_competidor')->nullable();
             $table->date('fecha_emision')->nullable();
             $table->integer('montototal')->nullable();
-            $table->integer('id_tutor')->nullable();
+            $table->unsignedInteger('id_tutor')->nullable();
             $table->timestamps();
 
             $table->foreign('idcajero')->references('idcajero')->on('cajero')

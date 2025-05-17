@@ -6,29 +6,45 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('competidor_tutores', function (Blueprint $table) {
-            $table->integer('idcompetencia')->nullable();
-            $table->integer('idcompetidor')->nullable();
-            $table->integer('idtutor')->nullable();
+            // Coincidir con increments() de competencia
+            $table->unsignedInteger('idcompetencia')->nullable();
+
+            // Si en competidor usaste increments(): es unsigned
+            $table->unsignedInteger('idcompetidor')->nullable();
+
+            // Si en tutor usaste increments(): es unsigned
+            $table->unsignedInteger('idtutor')->nullable();
+
             $table->string('tipo_tutor', 256)->nullable();
 
-            $table->foreign('idcompetencia')->references('idcompetencia')->on('competencia')
-                ->onDelete('restrict')->onUpdate('restrict');
-            $table->foreign('idcompetidor')->references('idcompetidor')->on('competidor')
-                ->onDelete('restrict')->onUpdate('restrict');
-            $table->foreign('idtutor')->references('idtutor')->on('tutor')
-                ->onDelete('restrict')->onUpdate('restrict');
+            // Índices para optimizar y clave foránea
+            $table->index('idcompetencia');
+            $table->index('idcompetidor');
+            $table->index('idtutor');
+
+            $table->foreign('idcompetencia')
+                  ->references('idcompetencia')
+                  ->on('competencia')
+                  ->onDelete('restrict')
+                  ->onUpdate('restrict');
+
+            $table->foreign('idcompetidor')
+                  ->references('idcompetidor')
+                  ->on('competidor')
+                  ->onDelete('restrict')
+                  ->onUpdate('restrict');
+
+            $table->foreign('idtutor')
+                  ->references('idtutor')
+                  ->on('tutor')
+                  ->onDelete('restrict')
+                  ->onUpdate('restrict');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('competidor_tutores');

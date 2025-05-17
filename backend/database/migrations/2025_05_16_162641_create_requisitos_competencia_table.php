@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('requisitos_competencia', function (Blueprint $table) {
-            $table->string('requisito_id', 10)->primary();
-            $table->integer('idcompetencia')->nullable();
+            $table->integer('requisito_id')->primary();
+            $table->unsignedInteger('idcompetencia')->nullable();
             $table->string('curso', 50)->nullable();
             $table->timestamps();
 

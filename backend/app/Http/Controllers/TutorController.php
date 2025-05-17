@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\JsonResponse;
+
 
 class TutorController extends Controller
 {
@@ -30,26 +32,28 @@ class TutorController extends Controller
         return response()->json($tutor, 201);
     }
 
-    public function show($id)
-    {
-        return response()->json(Tutor::findOrFail($id));
-    }
-
-    public function update(Request $request, $id)
+    // GET /api/tutores/{id}
+    public function show(int $id): JsonResponse
     {
         $tutor = Tutor::findOrFail($id);
+        return response()->json($tutor, 200);
+    }
+
+    public function update(Request $request, int $id): JsonResponse
+     {
         $data = $request->validate([
             'nombretutor'   => 'sometimes|string|max:50',
             'apellidotutor' => 'sometimes|string|max:50',
             'area'          => 'sometimes|string|max:50',
-            'telefontutor'  => 'sometimes|integer',
+            'telefonotutor' => 'sometimes|numeric',
             'correotutor'   => 'sometimes|email|max:100',
-            'citutor'       => 'sometimes|integer',
-            'imagentutor'   => 'nullable|string|max:100',
+            'citutor'       => 'sometimes|numeric',
+            'imagentutor'   => 'sometimes|url',
         ]);
 
+        $tutor = Tutor::findOrFail($id);
         $tutor->update($data);
-        return response()->json($tutor);
+        return response()->json($tutor, 200);
     }
 
     public function destroy($id)

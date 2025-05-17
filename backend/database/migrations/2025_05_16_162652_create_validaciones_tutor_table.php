@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('validaciones_tutor', function (Blueprint $table) {
             $table->integer('validacion_id_')->primary();
-            $table->integer('idtutor')->nullable();
-            $table->integer('idcompetidor')->nullable();
+            $table->unsignedInteger('idtutor')->nullable();
+            $table->unsignedInteger('idcompetidor')->nullable();
             $table->string('estado_validacion', 256)->nullable();
             $table->string('motivo_rechazo', 256)->nullable();
             $table->timestamps();

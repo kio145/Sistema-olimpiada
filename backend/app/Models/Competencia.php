@@ -4,38 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
-/**
- * 
- *
- * @property int $idcompetencia
- * @property int|null $idadmi
- * @property string|null $areacompetencia
- * @property string|null $nivelcompetencia
- * @property int|null $preciocompetencia
- * @property string|null $descripcion
- * @property string|null $imagencompetencia
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Administrador|null $administrador
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Competidor> $competidores
- * @property-read int|null $competidores_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RequisitoCompetencia> $requisitos
- * @property-read int|null $requisitos_count
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia query()
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia whereAreacompetencia($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia whereDescripcion($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia whereIdadmi($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia whereIdcompetencia($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia whereImagencompetencia($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia whereNivelcompetencia($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia wherePreciocompetencia($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competencia whereUpdatedAt($value)
- * @mixin \Eloquent
- */
 class Competencia extends Model
 {
     use HasFactory;
@@ -49,24 +19,70 @@ class Competencia extends Model
         'idcompetencia',
         'idadmi',
         'areacompetencia',
-        'areacompetencia',
         'nivelcompetencia',
         'preciocompetencia',
         'descripcion',
-        'imagencompetencia'
+        'imagencompetencia',
     ];
 
+    /**
+     * Scope para filtrar por área exacta
+     */
+    public function scopeArea(Builder $query, $area)
+    {
+        return $query->when($area, fn(Builder $q) => $q->where('areacompetencia', $area));
+    }
+
+    /**
+     * Scope para filtrar por nivel exacto
+     */
+    public function scopeNivel(Builder $query, $nivel)
+    {
+        return $query->when($nivel, fn(Builder $q) => $q->where('nivelcompetencia', $nivel));
+    }
+
+    /**
+     * Scope para rango de precio (min y/o max)
+     */
+    public function scopePrecioBetween(Builder $query, $min, $max)
+    {
+        return $query
+            ->when($min, fn(Builder $q) => $q->where('preciocompetencia', '>=', $min))
+            ->when($max, fn(Builder $q) => $q->where('preciocompetencia', '<=', $max));
+    }
+
+    /**
+     * Scope para búsqueda en descripción (LIKE %texto%)
+     */
+    public function scopeDescripcionLike(Builder $query, $texto)
+    {
+        return $query->when($texto, fn(Builder $q) => $q->where('descripcion', 'like', "%{$texto}%"));
+    }
+
+    /**
+     * Relación con Administrador
+     */
     public function administrador()
     {
         return $this->belongsTo(Administrador::class, 'idadmi');
     }
 
+    /**
+     * Relación muchos a muchos con Competidor (a través de competidor_tutores)
+     */
     public function competidores()
     {
-        return $this->belongsToMany(Competidor::class, 'competidor_tutores', 'idcompetencia', 'idcompetidor')
-                    ->withPivot('idtutor', 'tipo_tutor');
+        return $this->belongsToMany(
+            Competidor::class,
+            'competidor_tutores',
+            'idcompetencia',
+            'idcompetidor'
+        )->withPivot('idtutor', 'tipo_tutor');
     }
 
+    /**
+     * Relación uno a muchos con RequisitoCompetencia
+     */
     public function requisitos()
     {
         return $this->hasMany(RequisitoCompetencia::class, 'idcompetencia');
