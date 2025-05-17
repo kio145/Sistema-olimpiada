@@ -20,11 +20,11 @@ export function Formulario(){
         <div>
             <form onSubmit={iniciar} className='formulario'>
                 <div className='campo' id='entrada'>
-                    <label htmlFor="correo" id='texto'> <Mail color='#359bdf'/> Correo Electroico</label>
+                    <label htmlFor="correo" id='texto'> <Mail color='#359bdf'/> Correo Electrónico</label>
                     <input type="email" name="correo" id="correo"  onChange={(e) => setCorreo(e.target.value)}/>
                 </div>
                 <div  className='campo' id='entrada'>
-                    <label htmlFor="password" id='texto'> <Lock color='#359bdf'/> Contrasena</label>
+                    <label htmlFor="password" id='texto'> <Lock color='#359bdf'/> Contraseña</label>
                     <div className='contenedor-contrasenia'>
                         <input name="password" id="password" 
                             type={mostrarContrasenia ? 'text' : 'password'}
