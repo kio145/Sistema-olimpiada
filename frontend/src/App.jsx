@@ -19,6 +19,7 @@ import { Inscripcion } from './paginas/competiciones/Inscripcion';
 import { Confirmacion } from './paginas/competiciones/Confirmacion';
 import { VistaCajero } from './paginas/sesion/VistaCajero';
 import { VistaAdmin } from './paginas/sesion/VistaAdmin';
+import { Login } from '@/componentes/Login';
 import { VistaTutor } from './paginas/sesion/VistaTutor';
 import { Boleta } from './paginas/sesion/Boleta';
 import { Pago } from './paginas/sesion/Pago';
@@ -60,6 +61,8 @@ function App() {
       <Route path='/generar-boleta' element={<Boleta/>}></Route>
       <Route path='/pago-boleta' element={<Pago/>}></Route>
       <Route path="/vista-admin/listado-postulantes" element={<ListadoPostulantes />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/vista-admin" element={<VistaAdmin />} />
       <Route path="/vista-admin/listado-pagos" element={<ListadoPagos />} />
       <Route path="/vista-admin/listado-competiciones" element={<ListadoCompeticiones />} />
       <Route path="nueva-competencia" element={<NuevaCompetencia />} />

@@ -3,7 +3,13 @@ import { Link } from 'react-router-dom';
 import '../../css/VistaAdmin.css';
 import { FiMonitor, FiCalendar, FiClipboard } from 'react-icons/fi';
 
-export function VistaAdmin({ usuario, etapaActual, fechaHora }) {
+export function VistaAdmin() {
+  const { state } = useLocation();
+  const { usuario, etapaActual, fechaHora } = state || {};
+
+  if (!usuario) {
+    return <p>No autorizado. <Link to="/sesion-admin">Inicia sesión</Link></p>;
+  }
   return (
     <div className="admin-container">
       {/* Cabecera de perfil */}

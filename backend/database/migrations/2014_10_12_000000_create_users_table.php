@@ -12,11 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->id();                           // bigint unsigned auto‐increment
+            $table->string('name');                 // nombre completo
+            $table->string('email')->unique();      // correo
+            $table->string('password');             // contraseña Hasheada
+            $table->enum('role', [                  // para saber a qué “perfil” pertenece
+                'administrador',
+                'competidor',
+                'tutor',
+                'cajero'
+            ]);
+            $table->unsignedBigInteger('profile_id')->nullable();   // id en la tabla de perfil
+            $table->string('profile_type')->nullable();             // el modelo: App\Models\Administrador, etc.
             $table->rememberToken();
             $table->timestamps();
         });

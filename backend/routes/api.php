@@ -12,6 +12,7 @@ use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\RequisitoCompetenciaController;
 use App\Http\Controllers\CompetidorTutorController;
 use App\Http\Controllers\ValidacionTutorController;
+use App\Http\Controllers\Auth\LoginController;
 
 
 
@@ -26,3 +27,4 @@ Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::cla
 Route::apiResource('competidor-tutores', CompetidorTutorController::class)
      ->only(['index','store','show','destroy']);
 Route::apiResource('validaciones-tutor', ValidacionTutorController::class);
+Route::post('login', [LoginController::class, 'login']);

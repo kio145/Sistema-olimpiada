@@ -43,9 +43,11 @@ class AdministradorController extends Controller
             'nombreadmi'   => 'sometimes|string|max:50',
             'apellidoadmi' => 'sometimes|string|max:70',
             'correoadmi'   => 'sometimes|email|max:100|unique:administrador,correoadmi,' . $id . ',idadmi',
+            'passwordadmi' => 'required|string|min:6|confirmed',
             'imagenadmi'   => 'nullable|string|max:100',
         ]);
-
+        $data['passwordadmi'] = Hash::make($data['passwordadmi']);
+        Administrador::create($data);
         $admin->update($data);
         return response()->json($admin);
     }

@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import '../css/Inicio.css';
 import imagenCuadro from '/imagenInicio.JPG';
-import { SubmenuTest } from './sesion/SubmenuTest';
+
 export function Inicio() {
   const [mostrarSubmenu, setMostrarSubmenu] = useState(false);
   const submenuRef = useRef(null);
 
-  const toggleSubmenu = () => {
-    setMostrarSubmenu((prev) => !prev);
+  const toggleSubmenu = e => {
+    e.preventDefault();
+    setMostrarSubmenu(prev => !prev);
   };
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = event => {
     if (submenuRef.current && !submenuRef.current.contains(event.target)) {
       setMostrarSubmenu(false);
     }
@@ -18,10 +20,9 @@ export function Inicio() {
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
 
   return (
     <div className="contenedorInicio">
