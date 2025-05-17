@@ -1,10 +1,10 @@
 import '../../css/Inicio.css';
-import { FormularioRegistro } from './FormularioRegistro';
-export function RegistroEstudiante(){
+import { FormularioRegistro } from '../formularios/FormularioRegistro';
+export function RegistroCajero(){
     return (
         <div>
             <p className='titulo1'>Registrarse</p>
-            <p className='titulo2'>Como Estudiante</p>
+            <p className='titulo2'>Como Cajero</p>
             <FormularioRegistro/>
         </div>
     )

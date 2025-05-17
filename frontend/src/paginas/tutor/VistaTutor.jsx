@@ -11,6 +11,7 @@ export function VistaTutor() {
             <div className="datos-usuario">
             <p className="rol">Tutor</p>
             <h2 className="nombre">Dayra Damian Grageda</h2>
+            <p className="area">Area</p>
             <div className="acciones">
             <Link to="/editar-perfil" className="btn-editar-admin">
                     Editar perfil ✎
@@ -58,6 +59,9 @@ export function VistaTutor() {
                 {/* ...más filas */}
             </tbody>
             </table>
+            <script>
+                
+            </script>
         </div>
         </div>
 

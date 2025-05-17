@@ -8,7 +8,7 @@ export function Competiciones() {
         <div className="filter-item">
           <label>Áreas:
             <select>
-              <option>Robotica</option>
+              <option>Robótica</option>
             </select>
           </label>
         </div>
@@ -27,7 +27,7 @@ export function Competiciones() {
         <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
-            <h3>Robotica</h3>
+            <h3>Robótica</h3>
             <p>Nivel : Builders P</p>
             <a href="/area">Más información</a>
           </div>
@@ -36,7 +36,7 @@ export function Competiciones() {
         <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
-            <h3>Robotica</h3>
+            <h3>Robótica</h3>
             <p>Nivel : Builders S</p>
             <a href="/area">Más información</a>
           </div>
@@ -45,7 +45,7 @@ export function Competiciones() {
         <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
-            <h3>Robotica</h3>
+            <h3>Robótica</h3>
             <p>Nivel : Lego P</p>
             <a href="/area">Más información</a>
           </div>
@@ -54,7 +54,7 @@ export function Competiciones() {
         <div class="card-comp">
           <div class="img-placeholder"></div>
           <div class="card-body">
-            <h3>Robotica</h3>
+            <h3>Robótica</h3>
             <p>Nivel : Lego S</p>
             <a href="/area">Más información</a>
           </div>

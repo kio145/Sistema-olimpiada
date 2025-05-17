@@ -88,10 +88,6 @@ export function ListadoPostulantes() {
         </tbody>
       </table>
 
-      <div className="acciones-exportar">
-        <button className="pdf" onClick={exportarPDF}>PDF</button>
-        <button className="excel" onClick={exportarExcel}>Excel</button>
-      </div>
 
       <div className="volver">
         <button onClick={volver}>⨯ Regresar a menú de administrador</button>

@@ -25,7 +25,6 @@ export function Pago() {
       <hr />
       <div className="boleta-detalle">
         <h3>BOLETA DE PAGO</h3>
-        <p><strong>Tutor:</strong> {tutor.nombre}</p>
         <table>
           <thead>
             <tr>

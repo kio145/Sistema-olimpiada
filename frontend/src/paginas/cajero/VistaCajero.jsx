@@ -46,7 +46,7 @@ export function VistaCajero() {
             <tr>
               <th>Nombre y Apellidos del Competidor</th>
               <th>Area</th>
-              <th>CI del Tutor</th>
+              <th>CI del Estudiante</th>
               <th>Costo de Inscripción</th>
             </tr>
           </thead>

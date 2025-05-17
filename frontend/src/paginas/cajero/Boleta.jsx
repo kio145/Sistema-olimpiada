@@ -54,11 +54,10 @@ export function Boleta() {
     <div className="boleta-container">
       <h2>Generando Boleta</h2>
       <p className="sub-text">
-        Busque al tutor con su cédula de identidad para obtener los estudiantes afiliados a ese tutor
       </p>
 
       <div className="busqueda">
-        <label>C.I. tutor:</label>
+        <label>C.I. estudiante:</label>
         <input
           type="text"
           value={ciTutor}
@@ -71,10 +70,7 @@ export function Boleta() {
       {tutor && (
         <>
           <hr />
-          <div className="tutor-info">
-            <label>Nombre del tutor :</label>
-            <input type="text" value={tutor.nombre} readOnly />
-          </div>
+          
 
           <table className="tabla-estudiantes">
             <thead>
