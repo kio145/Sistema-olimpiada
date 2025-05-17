@@ -1,5 +1,5 @@
 import '../../css/Inicio.css';
-import { FormularioRegistro } from './FormularioRegistro';
+import { FormularioRegistro } from '../formularios/FormularioRegistro';
 export function RegistroAdministrador(){
     return (
         <div>

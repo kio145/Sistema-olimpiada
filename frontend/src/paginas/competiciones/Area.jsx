@@ -34,8 +34,6 @@ export function Area() {
             <h3>Requisitos</h3>
             <ul>
               <li>Nivel Lego P</li>
-              <li>Cursar 5to o 6to de primaria</li>
-              <li>Ser estudiante de nivel primaria en el sistema de Educación Regular del Estado de Bolivia</li>
               <li>Tener cédula de identidad vigente</li>
             </ul>
 

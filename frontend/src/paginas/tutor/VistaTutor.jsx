@@ -59,6 +59,9 @@ export function VistaTutor() {
                 {/* ...más filas */}
             </tbody>
             </table>
+            <script>
+                
+            </script>
         </div>
         </div>
 

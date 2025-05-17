@@ -36,7 +36,7 @@ export function Formulario(){
                     </div>
                 </div>
                 <div  className='campo' id='boton'>
-                    <button type="submit">Iniciar Sesion</button>
+                    <button type="submit">Iniciar Sesión</button>
                 </div>
             </form>
         </div>

@@ -1,5 +1,5 @@
 import '../../css/Inicio.css';
-import { FormularioRegistroTutor } from './FormularioRegistroTutor';
+import { FormularioRegistroTutor } from '../formularios/FormularioRegistroTutor';
 export function RegistroTutor(){
     return (
         <div>
