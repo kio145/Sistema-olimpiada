@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import '../css/Inicio.css';
+  import '../css/Inicio.css';
 import imagenCuadro from '/imagenInicio.JPG';
 import { SubmenuTest } from './sesion/SubmenuTest';
-export function Inicio() {
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
+ function Inicio2() {
   const [mostrarSubmenu, setMostrarSubmenu] = useState(false);
   const submenuRef = useRef(null);
-
+  
+   
   const toggleSubmenu = () => {
     setMostrarSubmenu((prev) => !prev);
   };
@@ -72,4 +76,36 @@ export function Inicio() {
       </div>
     </div>
   );
+}
+
+export function Inicio() {
+  const [fechas, setFechas] = useState({
+    fechaInicio: '2025-03-01',
+    fechaFin: '2025-04-15',
+  });
+  
+return(
+  <>
+    <Row className='justify-content-center'>
+      <Col xs={6} md={4}>
+        <img src={imagenCuadro} alt="imagen.png" />
+        </Col>
+        <Col xs={6} md={4}>
+        <h1 style={{textAlign: "center", fontSize:35,  color: '#359bdf'}} >Olimpiadas ciencitificas 2025</h1>
+         <h2 style={{textAlign: "center", fontSize:20,  }} >Facultad de Ciencias y Tecnología - UMSS </h2>
+         <p>Bienvenido al portal oficial de inscripciones para las Olimpiadas Cientificas organizadas por la  Facultad de Ciencias y Tecnologia de la Universidad Mayor de San Simon.
+          </p>
+          <p>
+          Este espacio esta diseñado para que estudiantes de primaria y secundaria de Cochabamba participen en un evento donde la ciencia, la tecnologia y la creatividad se unen para inspirar el futuro.
+          </p>  
+         <h3>¿Quieres ser parte?</h3>
+         <p>Olimpiadas Cientificas 2025Para inscribirse a algunas de las areas de competencia, solo necesitas <a href='/sesion-estudiante'>Iniciar Sesion</a> o <a href='/registro'>Crear cuenta</a>
+         </p>
+         <h3>Fechas de inscripciones</h3>
+         <p>Inicio: {fechas.fechaInicio}</p>
+         <p>Fin: {fechas.fechaInicio}</p>
+      </Col>
+    </Row>
+  </>
+)
 }
