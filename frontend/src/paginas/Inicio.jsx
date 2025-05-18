@@ -14,7 +14,7 @@ import Col from 'react-bootstrap/Col';
     setMostrarSubmenu((prev) => !prev);
   };
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = event => {
     if (submenuRef.current && !submenuRef.current.contains(event.target)) {
       setMostrarSubmenu(false);
     }
@@ -22,10 +22,9 @@ import Col from 'react-bootstrap/Col';
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
 
   return (
     <div className="contenedorInicio">

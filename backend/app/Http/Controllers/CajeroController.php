@@ -9,14 +9,15 @@ class CajeroController extends Controller
 {
     public function index()
     {
-        return response()->json(Cajero::all(), 200);
+        return response()->json(Cajero::all());
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nombrecajero'   => 'required|string|max:50',
-            'apellidocajero' => 'required|string|max:70',
+            'idcajero'       => 'required|integer|unique:cajero',
+            'nobrecajero'    => 'required|string|max:50',
+            'apellidocajero' => 'required|string|max:50',
             'imagencajero'   => 'nullable|string|max:100',
             'passwordcajero'   => 'required|string|max:50',
             
@@ -26,29 +27,28 @@ class CajeroController extends Controller
         return response()->json($cajero, 201);
     }
 
-    public function show($idcajero)
+    public function show($id)
     {
-        $cajero = Cajero::findOrFail($idcajero);
-        return response()->json($cajero, 200);
+        return response()->json(Cajero::findOrFail($id));
     }
 
-    public function update(Request $request, $idcajero)
+    public function update(Request $request, $id)
     {
+        $cajero = Cajero::findOrFail($id);
         $data = $request->validate([
-            'nombrecajero'   => 'sometimes|string|max:50',
-            'apellidocajero' => 'sometimes|string|max:70',
+            'nobrecajero'    => 'sometimes|string|max:50',
+            'apellidocajero' => 'sometimes|string|max:50',
             'imagencajero'   => 'nullable|string|max:100',
             'passwordcajero'   => 'sometimes|string|max:50',
         ]);
 
-        $cajero = Cajero::findOrFail($idcajero);
         $cajero->update($data);
-        return response()->json($cajero, 200);
+        return response()->json($cajero);
     }
 
-    public function destroy($idcajero)
+    public function destroy($id)
     {
-        Cajero::destroy($idcajero);
-        return response()->json(null, 204);
+        Cajero::destroy($id);
+        return response()->noContent();
     }
 }
