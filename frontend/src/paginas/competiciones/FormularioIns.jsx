@@ -18,8 +18,6 @@ export function FormularioIns(){
         parentesco: 'Madre del estudiante',
       });
     
-
-    
       const manejarCambio = (e) => {
         const { name, value } = e.target;
         setFormulario({ ...formulario, [name]: value });

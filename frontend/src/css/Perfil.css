@@ -190,14 +190,4 @@
     border: none;
     cursor: pointer;
   }
-  .estado.inscrito {
-  color: green;
-  font-weight: bold;
-  }
-
-  .estado.espera {
-    color: gray;
-    font-style: italic;
-  }
-
   
