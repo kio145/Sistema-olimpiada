@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('correoadmi', 100)->nullable();
             $table->string('imagenadmi', 50)->nullable();
             $table->timestamps();
+
         });
     }
 

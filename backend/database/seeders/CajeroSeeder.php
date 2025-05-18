@@ -7,12 +7,19 @@ use App\Models\Cajero;
 
 class CajeroSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         Cajero::create([
-            'idcajero'       => 1,
-            'nombrecajero'    => 'Cajerouno',
-            'apellidocajero' => 'Ejemplo',
+            'idcajero'       => 2,
+            'nombrecajero'   => 'Carlos',
+            'apellidocajero' => 'González',
+            'imagencajero'   => null,
+        ]);
+
+        Cajero::create([
+            'idcajero'       => 3,
+            'nombrecajero'   => 'María',
+            'apellidocajero' => 'Pérez',
             'imagencajero'   => null,
         ]);
     }

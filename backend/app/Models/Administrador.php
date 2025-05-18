@@ -46,7 +46,7 @@ class Administrador extends Authenticatable
     protected $keyType = 'int';
 
     protected $fillable = [
-        'idadmi',
+        'user_id',
         'nombreadmi',
         'apellidoadmi',
         'correoadmi',

@@ -55,8 +55,7 @@ class Competidor extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'idcompetidor',
-        'usuariocompetidor',
+        'user_id',
         'nombrecompetidor',
         'apellidocompetidor',
         'emailcompetidor',

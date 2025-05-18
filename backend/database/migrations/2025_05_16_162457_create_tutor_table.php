@@ -21,7 +21,9 @@ return new class extends Migration
             $table->integer('citutor')->nullable();
             $table->string('imagentutor', 50)->nullable();
             $table->timestamps();
+
         });
+        
     }
 
     /**

@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Hash;
 
 class AdministradorSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         Administrador::create([
-            'idadmi'       => 1,
+            'idadmi'       => 2,
             'nombreadmi'   => 'Admin',
             'apellidoadmi' => 'Principal',
             'correoadmi'   => 'admin@ejemplo.com',

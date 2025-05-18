@@ -17,6 +17,7 @@ class Tutor extends Authenticatable
     protected $keyType = 'int';
 
     protected $fillable = [
+        'user_id',
         'nombretutor',
         'apellidotutor',
         'area',

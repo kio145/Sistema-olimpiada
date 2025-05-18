@@ -31,6 +31,8 @@ import { GestionarFechas } from './paginas/admin/GestionarFechas';
 import { ValidarInscripcion } from './paginas/tutor/ValidarInscripcion';
 import { InscripcionValidada } from './paginas/tutor/InscripcionValidada';
 import { InscripcionRechazada } from './paginas/tutor/InscripcionRechazada';
+import { Login } from './componentes/Login';
+
 
 
 

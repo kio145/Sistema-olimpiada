@@ -32,8 +32,8 @@ class Cajero extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'idcajero',
-        'nobrecajero',
+        'user_id',
+        'nombrecajero',
         'apellidocajero',
         'imagencajero',
         'passwordcajero',
