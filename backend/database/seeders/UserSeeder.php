@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
         $adminPerfil = Administrador::create([
             'nombreadmi'   => 'Admin',
             'apellidoadmi' => 'Principal',
-            'correoadmi'   => 'admin@ejemplo.com',
+            'correoadmi'   => 'admin@gmail.com',
             'passwordadmi' => Hash::make('cifrado123'),
             // 'imagenadmi' => null
         ]);
@@ -64,7 +64,7 @@ class UserSeeder extends Seeder
             'apellidotutor' => 'González',
             'area'          => 'Matemáticas',
             'telefonotutor' => 123456789,
-            'correotutor'   => 'tutor@ejemplo.com',
+            'correotutor'   => 'tutor@gmail.com',
             'citutor'       => 87654321,
             'imagentutor'   => null,
         ]);
@@ -80,7 +80,7 @@ class UserSeeder extends Seeder
         $competidorPerfil = Competidor::create([
             'nombrecompetidor'  => 'Luis',
             'apellidocompetidor'=> 'Ramírez',
-            'emailcompetidor'   => 'competidor@ejemplo.com',
+            'emailcompetidor'   => 'competidor@gmail.com',
             'cicompetidor'      => 1234567,
             'fechanacimiento'   => now()->subYears(20)->toDateString(),
             'telefonocompetidor'=> 987654321,

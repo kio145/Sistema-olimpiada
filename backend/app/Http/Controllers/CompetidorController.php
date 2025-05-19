@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;              
+use Illuminate\Validation\Rule; 
 
 
 class CompetidorController extends Controller
@@ -49,36 +51,68 @@ class CompetidorController extends Controller
     }
     public function show(int $id): JsonResponse
     {
-    $competidor = Competidor::findOrFail((int) $id);
+        $competidor = Competidor::findOrFail((int) $id);
         return response()->json($competidor, 200);
     }
 
-     // PUT/PATCH /api/competidores/{id}
+    // PUT/PATCH /api/competidores/{id}
+    // app/Http/Controllers/CompetidorController.php
+
     public function update(Request $request, int $id): JsonResponse
     {
+        \Log::info('Update payload:', $request->all());
         $competidor = Competidor::findOrFail($id);
+
+        // 1) Validar sólo los campos que pueden cambiar
         $data = $request->validate([
             'nombrecompetidor'   => 'sometimes|string|max:50',
             'apellidocompetidor' => 'sometimes|string|max:50',
-            'emailcompetidor'    => 'sometimes|email|unique:competidor,emailcompetidor,'.$competidor->idcompetidor.',idcompetidor',
-            'cicompetidor'       => 'sometimes|integer|unique:competidor,cicompetidor,'.$competidor->idcompetidor.',idcompetidor',
-            'fechanacimiento'     => 'sometimes|date',
-            'telefonocompetidor' => 'sometimes|string|max:20',
-            'colegio'            => 'sometimes|string|max:100',
-            'curso'              => 'sometimes|string|max:50',
-            'departamento'       => 'nullable|string|max:50',
-            'provincia'          => 'nullable|string|max:50',
-            'imagencompetidor'   => 'nullable|string|max:100',
+            'emailcompetidor'    => [
+                'sometimes',
+                'email',
+                Rule::unique('competidor', 'emailcompetidor')->ignore($id, 'idcompetidor')
+            ],
+            'passwordcompetidor' => 'sometimes|string|min:6|confirmed',
+            'imagencompetidor'   => 'sometimes|image|max:2048',
         ]);
 
-        $competidor->update($data);
+        // 2) Si viene archivo de imagen, guárdalo y setea la ruta
+        if ($request->hasFile('imagencompetidor')) {
+            $path = $request->file('imagencompetidor')->store('competidores', 'public');
+            $data['imagencompetidor'] = $path;
+        }
+
+        // 3) Actualiza competidor
+        $competidor->update(Arr::except($data, ['passwordcompetidor']));
+
+        // 4) Actualiza usuario asociado
+        $user = User::where('profile_type', Competidor::class)
+            ->where('profile_id', $id)
+            ->first();
+
+        if ($user) {
+            $userUpdates = [];
+            if (isset($data['emailcompetidor'])) {
+                $userUpdates['email'] = $data['emailcompetidor'];
+                $userUpdates['name']  = "{$competidor->nombrecompetidor} {$competidor->apellidocompetidor}";
+            }
+            if (isset($data['passwordcompetidor'])) {
+                $userUpdates['password'] = Hash::make($data['passwordcompetidor']);
+            }
+            if ($userUpdates) {
+                $user->update($userUpdates);
+            }
+        }
+
+        // 5) Devolver el perfil actualizado
         return response()->json($competidor, 200);
     }
+
 
     // DELETE /api/competidores/{id}
     public function destroy(int $id): JsonResponse
     {
         Competidor::destroy($id);
-         return response()->json(null, 204);
+        return response()->json(null, 204);
     }
 }

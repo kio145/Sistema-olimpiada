@@ -32,6 +32,7 @@ import { ValidarInscripcion } from './paginas/tutor/ValidarInscripcion';
 import { InscripcionValidada } from './paginas/tutor/InscripcionValidada';
 import { InscripcionRechazada } from './paginas/tutor/InscripcionRechazada';
 import { Login } from './componentes/Login';
+import { FormularioEdicionPerfil } from './paginas/formularios/FormularioEdicionPerfil';
 
 
 
@@ -60,6 +61,7 @@ function App() {
         {/* Resto de rutas... */}
         <Route path="/perfil-estudiante" element={<PerfilEstudiante />} />
         <Route path="/editar-perfil" element={<EditarPerfil />} />
+        <Route path="/editar-perfil"   element={<FormularioEdicionPerfil />} />
         <Route path="/registro" element={<RegistroEstudiante />} />
         <Route path="/registro-admin" element={<RegistroAdministrador />} />
         <Route path="/registro-cajero" element={<RegistroCajero />} />

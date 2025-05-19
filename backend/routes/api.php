@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function(){
 //Competidores
 Route::apiResource('competidores', CompetidorController::class);
 Route::get('competidores/{id}', [CompetidorController::class, 'show']);
+Route::put('competidores/{id}', [CompetidorController::class, 'update']);
 
 //Competencias
 Route::apiResource('competencias', CompetenciaController::class);

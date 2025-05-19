@@ -19,54 +19,72 @@ export function Login() {
   };
 
   const handleSubmit = async e => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    try {
-      const res = await api.post('/login', {
-        email:    form.email,
-        password: form.password
-      });
-      const { token, role, user } = res.data;
+  e.preventDefault();
+  setError('');
+  setLoading(true);
 
-      // 1) Guarda el token
-      localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  try {
+    // 1) Invocamos el login en el endpoint correcto
+    const { data } = await api.post('/login', {
+      email:    form.email,
+      password: form.password
+    });
 
-      // 2) Redirige según rol, enviando profile_id en lugar de id "genérico"
-      if (role === 'administrador') {
+    // 2) Desestructuramos el payload
+    const { token, role, user } = data;
+    console.log('Login ok:', role, user);
+
+    // 3) Guardamos token y configuramos el header
+    localStorage.setItem('token', token);
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    // 4) Redirigimos según rol
+    switch (role) {
+      case 'administrador':
         navigate('/vista-admin', {
           state: {
             usuario: {
-              nombre:      user.name,
-              iniciales:   user.name.slice(0, 2).toUpperCase(),
-              cerrarSesion: () => {
-                localStorage.removeItem('token');
-                delete api.defaults.headers.common['Authorization'];
-                navigate('/login');
-              }
+              nombre:        user.name,
+              iniciales:     user.name.slice(0, 2).toUpperCase(),
             },
             etapaActual: '',
             fechaHora:   ''
           }
         });
-      } else if (role === 'competidor') {
-         navigate('/perfil-estudiante', { state: { user } });
-      } else if (role === 'tutor') {
-        navigate('/vista-tutor', { state: { user } });
-      } else if (role === 'cajero') {
-        navigate('/vista-cajero', { state: { user } });
-      } else {
-        // rol inesperado
-        setError('Rol de usuario desconocido');
-      }
+        break;
 
-    } catch (err) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
-    } finally {
-      setLoading(false);
+      case 'competidor':
+        // PerfilEstudiante espera `state.user.profile_id`
+        if (!user.profile_id) {
+          throw new Error('No se recibió profile_id');
+        }
+        navigate('/perfil-estudiante', { state: { user } });
+        break;
+
+      case 'tutor':
+        navigate('/vista-tutor', { state: { user } });
+        break;
+
+      case 'cajero':
+        navigate('/vista-cajero', { state: { user } });
+        break;
+
+      default:
+        setError('Rol de usuario desconocido');
     }
-  };
+
+  } catch (err) {
+    console.error('Login error:', err);
+    // 5) Mejor lectura del mensaje de error
+    const msg = err.response?.data?.message
+             || err.response?.data?.error
+             || 'Error al iniciar sesión';
+    setError(msg);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const toggleSubmenu = () => {
     setMostrarSubmenu(prev => !prev);

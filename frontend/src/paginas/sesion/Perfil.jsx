@@ -56,9 +56,13 @@ export function PerfilEstudiante() {
             {profile.nombrecompetidor} {profile.apellidocompetidor}
           </h2>
           <div className="botones-admin">
-            <Link to="/editar-perfil" className="btn-editar-admin">
-              Editar perfil ✎
-            </Link>
+            <Link
+             to="/editar-perfil"
+             className="btn-editar-admin"
+             state={{ user }}
+              >
+                Editar perfil ✎
+              </Link>
             <Link
               to="/inicio"
               className="btn-cerrar-admin"

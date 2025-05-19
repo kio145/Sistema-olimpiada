@@ -31,15 +31,16 @@ export function VistaAdmin() {
             <Link to="/editar-perfil" className="btn-editar-admin">
               Editar perfil ✎
             </Link>
-            <button className="btn-cerrar-admin" onClick={usuario.cerrarSesion}>
-              Cerrar Sesión
-            </button>
+              <button
+        className="btn-cerrar-admin"
+        onClick={() => logout(navigate)}
+      >
+        Cerrar Sesión
+      </button>
           </div>
         </div>
       </div>
-
       <hr/>
-
       {/* Etapa actual */}
       <div className="etapa-actual">
         <p><strong>ETAPA ACTUAL :</strong> {etapaActual}</p>
