@@ -1,0 +1,72 @@
+.formulario-registro {
+    max-width: 400px;
+    margin: 10px auto;
+    padding: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  .titulo-registro {
+    text-align: center;
+    color: #359bdf;
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
+  
+  .campo {
+    margin-bottom: 20px;
+  }
+  
+  .campo {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  label{
+    margin-bottom: 6px;
+  }
+  
+  .input-icono {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 10px;
+    background-color: #fafafa;
+    margin-top: 10px;
+  }
+  
+  .input-icono input {
+    border: none;
+    outline: none;
+    flex: 1;
+    padding: 8px;
+    background-color: transparent;
+    font-size: 14px;
+  }
+  
+  .input-icono svg {
+    margin-right: 8px;
+    cursor: pointer;
+  }
+  
+  .boton-registrar {
+    width: 100%;
+    padding: 10px;
+    background-color: #359bdf;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    max-width: 200px;
+    display: block;
+    margin: 20px auto 0;
+  }
+  
+  .boton-registrar:hover {
+    background-color: #2a7bb8;
+  }
+  

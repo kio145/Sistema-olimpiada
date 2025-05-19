@@ -1,0 +1,203 @@
+.perfil-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 12px;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .perfil-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .foto-perfil {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    object-fit: cover;
+  }
+  
+  .datos-usuario {
+    text-align: left;
+  }
+  
+  .rol {
+    color: #3d8ac2;
+    margin: 0;
+    font-weight: bold;
+  }
+  
+  .nombre {
+    margin: 5px 0;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+  }
+  
+  .btn-editar,
+  .btn-salir {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .btn-editar {
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    color: #444;
+  }
+  
+  .btn-salir {
+    background-color: #359bdf;
+    color: white;
+  }
+  
+  hr {
+    margin: 25px 0;
+    border: none;
+    border-top: 1px solid #ddd;
+  }
+  
+  .inscripcion-titulo {
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 20px;
+  }
+  
+  .tarjeta-competencia {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    background-color: #fefefe;
+    max-width: 500px;
+    margin: 0 auto 30px;
+    text-align: left;
+  }
+  
+  .imagen-competencia {
+    width: 80px;
+    height: 80px;
+    background-color: #eee;
+    border-radius: 8px;
+    background-image: url('ruta/imagen.jpg'); /* si deseas imagen */
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .info-competencia {
+    flex: 1;
+  }
+  
+  .estado {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #444;
+  }
+  
+  .punto {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: gold;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  
+  .acciones-competencia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .btn-buscar {
+    background-color: #359bdf;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-buscar:hover {
+    background-color: #2a7bb8;
+  }
+  
+  .nota {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    max-width: 400px;
+  }
+  .foto-perfil{
+    width: 80px;
+    height: 80px;
+    background-color: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: #999;
+    border: 1px solid #ccc;
+  }  
+  .botones-perfil {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .botones-admin {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-editar-admin {
+    background: #eee;
+    color: #333;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .btn-cerrar-admin {
+    background: #3d8ac2;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  .estado.inscrito {
+  color: green;
+  font-weight: bold;
+  }
+
+  .estado.espera {
+    color: gray;
+    font-style: italic;
+  }
+
+  
