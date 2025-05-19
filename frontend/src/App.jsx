@@ -46,7 +46,7 @@ function App() {
         <Route path="/informacion-inscripciones" element={<InfoInscripcion />} />
 
         {/* Formularios de sesión y registro */}
-        <Route path="/login" element={<Login />} />
+       <Route path="/login" element={<Login key={Math.random()} />} />
         <Route path="/sesion-estudiante" element={<Estudiante />} />
         <Route path="/sesion-cajero" element={<Cajero />} />
         <Route path="/sesion-admin" element={<Admin />} />

@@ -75,3 +75,47 @@ button:hover{
     padding-right: 10%;
     align-self: auto;
 }
+
+/* Contenedor relativo para que el submenu se posicione respecto de aquí */
+.menu-boton {
+  position: relative;
+  display: inline-block;
+}
+
+/* Submenú escondido por defecto */
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 0;
+  padding: 0.5rem 0;
+  list-style: none;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+
+  display: none;           /* lo ocultamos */
+  min-width: 150px;        /* ancho mínimo */
+}
+
+/* Cada item de la lista */
+.submenu li {
+  padding: 0.5rem 1rem;
+}
+
+/* Link dentro del item */
+.submenu li a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+/* Al pasar por encima de cada item */
+.submenu li:hover {
+  background: #f0f0f0;
+}
+
+/* Cuando el contenedor tiene la clase .open, mostramos el submenu */
+.menu-boton.open .submenu {
+  display: block;
+}

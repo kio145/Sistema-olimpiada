@@ -1,47 +1,49 @@
-// src/paginas/sesion/PerfilEstudiante.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../../css/Perfil.css';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import api from '../../api/api'; 
+import api from '../../api/api';
 
 export function PerfilEstudiante() {
   const { state } = useLocation();
-  const navigate = useNavigate();
-  const user = state?.user;
-  const [profile, setProfile] = useState(null);
+  const navigate   = useNavigate();
+  const user       = state?.user;
+  const [profile, setProfile]           = useState(null);
   const [inscripciones, setInscripciones] = useState([]);
 
   useEffect(() => {
-    if (!user) {
-      // If no user in state, redirect to login
+    // Si no hay user o no tiene profile_id, volvemos a login
+    if (!user?.profile_id) {
       return navigate('/login');
     }
 
-    // 1) Fetch full competitor profile
-    api.get(`/competidores/${user.id}`)
+    const competidorId = user.profile_id;
+
+    // 1) Obtener perfil completo de competidor
+    api.get(`/competidores/${competidorId}`)
       .then(res => setProfile(res.data))
       .catch(() => {
-        // token invalid or not found
         localStorage.removeItem('token');
         navigate('/login');
       });
 
-    // 2) Fetch this user’s inscriptions (assuming you have this query param)
-    api.get('/inscripciones', { params: { idcompetidor: user.id } })
+    // 2) Obtener inscripciones de este competidor (relacionadas con competencias)
+    api.get('/inscripciones', { params: { idcompetidor: competidorId } })
       .then(res => setInscripciones(res.data))
       .catch(console.error);
+
   }, [user, navigate]);
 
   if (!profile) {
     return <p>Cargando perfil…</p>;
   }
 
-  // Build initials from first letters
+  // Construimos iniciales
   const initials = `${profile.nombrecompetidor?.[0] || ''}${profile.apellidocompetidor?.[0] || ''}`.toUpperCase();
 
   return (
     <div className="perfil-container">
+      {/* Cabecera */}
       <div className="perfil-header">
         <div className="foto-perfil">
           <div className="circulo">
@@ -78,28 +80,32 @@ export function PerfilEstudiante() {
       {inscripciones.length === 0 ? (
         <p>No te has inscrito en ninguna competencia aún.</p>
       ) : (
-        inscripciones.map((insc) => (
-          <div className="tarjeta-competencia" key={insc._inscripcion_id}>
-            <div className="imagen-competencia">
-              {/* puedes usar insc.competencia.imagencompetencia aquí */}
+        inscripciones.map(insc => {
+          // comprobamos que venga la relación 'competencia'
+          if (!insc.competencia) return null;
+          return (
+            <div className="tarjeta-competencia" key={insc._inscripcion_id}>
+              <div className="imagen-competencia">
+                {/* <img src={insc.competencia.imagencompetencia} alt="" /> */}
+              </div>
+              <div className="info-competencia">
+                <strong>{insc.competencia.areacompetencia}</strong>
+                <p>Nivel: {insc.competencia.nivelcompetencia}</p>
+                <p
+                  className={`estado ${
+                    insc.estado_inscripcion === 'inscrito' ? 'inscrito' : 'espera'
+                  }`}
+                >
+                  <span className="punto" />
+                  Estado:{' '}
+                  {insc.estado_inscripcion === 'inscrito'
+                    ? 'Inscrito'
+                    : 'En espera de validación'}
+                </p>
+              </div>
             </div>
-            <div className="info-competencia">
-              <strong>{insc.competencia.areacompetencia}</strong>
-              <p>Nivel: {insc.competencia.nivelcompetencia}</p>
-              <p
-                className={`estado ${
-                  insc.estado_inscripcion === 'inscrito' ? 'inscrito' : 'espera'
-                }`}
-              >
-                <span className="punto" />
-                Estado:{' '}
-                {insc.estado_inscripcion === 'inscrito'
-                  ? 'Inscrito'
-                  : 'En espera de validación'}
-              </p>
-            </div>
-          </div>
-        ))
+          );
+        })
       )}
 
       <div className="acciones-competencia">

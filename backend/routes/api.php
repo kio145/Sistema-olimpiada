@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdministradorController;
+use App\Http\Controllers\BoletaPagoController;
 use App\Http\Controllers\CajeroController;
 use App\Http\Controllers\TutorController;
 use App\Http\Controllers\CompetidorController;
@@ -36,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
 //Competidores
 Route::apiResource('competidores', CompetidorController::class);
+Route::get('competidores/{id}', [CompetidorController::class, 'show']);
 
 //Competencias
 Route::apiResource('competencias', CompetenciaController::class);
@@ -44,8 +46,8 @@ Route::apiResource('competencias', CompetenciaController::class);
 Route::apiResource('fechas', FechaController::class);
 
 //Inscripciones
-Route::apiResource('inscripciones', InscripcionController::class);
-
+Route::apiResource('inscripciones', InscripcionController::class)
+     ->only(['index','store','show','update','destroy']);
 //Requisitos-competencia
 Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::class);
 

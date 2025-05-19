@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Inscripcion;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class InscripcionController extends Controller
 {
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        return response()->json(Inscripcion::all());
+        $query = Inscripcion::with('competencia');
+
+        if ($request->filled('idcompetidor')) {
+            $query->where('idcompetidor', $request->input('idcompetidor'));
+        }
+
+        $inscripciones = $query->get();
+        return response()->json($inscripciones, 200);
     }
 
     public function store(Request $request)

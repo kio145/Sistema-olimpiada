@@ -6,12 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import api from '@/api/api';
 
 export function Login() {
-  const [form, setForm]         = useState({ email: '', password: '' });
-  const [showPwd, setShowPwd]   = useState(false);
-  const [error, setError]       = useState('');
-  const [loading, setLoading]   = useState(false);
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [showPwd, setShowPwd] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [mostrarSubmenu, setMostrarSubmenu] = useState(false);
-  const navigate                = useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -29,11 +29,11 @@ export function Login() {
       });
       const { token, role, user } = res.data;
 
-      // Guarda el token
+      // 1) Guarda el token
       localStorage.setItem('token', token);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      // Redirige según rol
+      // 2) Redirige según rol, enviando profile_id en lugar de id "genérico"
       if (role === 'administrador') {
         navigate('/vista-admin', {
           state: {
@@ -42,6 +42,7 @@ export function Login() {
               iniciales:   user.name.slice(0, 2).toUpperCase(),
               cerrarSesion: () => {
                 localStorage.removeItem('token');
+                delete api.defaults.headers.common['Authorization'];
                 navigate('/login');
               }
             },
@@ -49,9 +50,17 @@ export function Login() {
             fechaHora:   ''
           }
         });
+      } else if (role === 'competidor') {
+         navigate('/perfil-estudiante', { state: { user } });
+      } else if (role === 'tutor') {
+        navigate('/vista-tutor', { state: { user } });
+      } else if (role === 'cajero') {
+        navigate('/vista-cajero', { state: { user } });
       } else {
-        navigate('/dashboard-estudiante', { state: { user } });
+        // rol inesperado
+        setError('Rol de usuario desconocido');
       }
+
     } catch (err) {
       setError(err.response?.data?.message || 'Error al iniciar sesión');
     } finally {
@@ -108,9 +117,9 @@ export function Login() {
       <div className="parrafoFinal">
         <p>En caso de no tener una cuenta por favor</p>
         <div className="menu-boton centrado">
-          <a href="#" className="opcion" onClick={toggleSubmenu}>
-            Registrarse
-          </a>
+         <button type="button" className="opcion" onClick={toggleSubmenu}>
+             Registrarse
+          </button>
           {mostrarSubmenu && (
             <ul className="submenu">
               <li><a href="/registro">Estudiante</a></li>
