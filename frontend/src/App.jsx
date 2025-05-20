@@ -67,8 +67,6 @@ function App() {
       <Route path="/validar-inscripcion" element={<ValidarInscripcion />} />
       <Route path="/inscripcion-aceptada" element={<InscripcionValidada />} />
       <Route path="/inscripcion-rechazada" element={<InscripcionRechazada />} />
-
-
       <Route path="/vista-admin" element={
       <VistaAdmin 
         usuario={{

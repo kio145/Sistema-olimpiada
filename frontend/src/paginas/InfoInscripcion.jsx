@@ -12,7 +12,7 @@ export function InfoInscripcion(){
                 <div>
                     <p className='tituloSegundario' id='s1'>1. Registro en linea </p>
                     <div className='contenido'>
-                        <NotebookPen size={64} color="#549cd4" />
+                        <NotebookPen className='d-flex align-self-center' size={64} color="#549cd4" />
                         <p className='parrafo'> 
                             <li>Ingresa al sistema de inscripciones desde esta pagina</li>
                             <li>Haz clic en "Registrarse" si aun no tienes una cuenta</li>
@@ -28,13 +28,13 @@ export function InfoInscripcion(){
                             <li>Después de enviar tu inscripción, se enviará un correo al tutor con los detalles.</li>
                             <li>El tutor debe revisar los datos y validar la inscripción desde el enlace recibido por correo.</li>
                         </p>
-                        <IdCard size={64} color="#549cd4" />
+                        <IdCard className='d-flex align-self-center' size={64} color="#549cd4" />
                     </div>
                 </div>
                 <div>
                     <p className='tituloSegundario' id='s3'>3. Pago presencial</p>
                     <div className='contenido'>
-                        <CircleDollarSign size={82} color="#549cd4" />
+                        <CircleDollarSign className='d-flex align-self-center' size={82} color="#549cd4" />
                         <p className='parrafo'>
                             <li>Una vez validad la inscripción, el tutor debera dirigirse personalmente al cajero de la Facultad de Ciencias y Tecnología, en el Departamento de Informatica.</li>
                             <li> Allí debera realizar el pago correspondiente para confirmar oficialmente la participación del estudiante</li>

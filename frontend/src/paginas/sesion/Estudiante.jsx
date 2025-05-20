@@ -80,7 +80,7 @@ export function Estudiante() {
                 <Button
                   variant="link"
                   onClick={togglePassword}
-                  style={{width: '1px', position:'fixed',marginLeft:'24%'}}
+                  style={{width: '1px', position:'absolute', marginLeft: '90%'}}
                 >
                   {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
               </Button>

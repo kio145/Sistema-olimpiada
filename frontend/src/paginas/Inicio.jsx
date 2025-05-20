@@ -83,6 +83,10 @@ export function Inicio() {
     fechaInicio: '2025-03-01',
     fechaFin: '2025-04-15',
   });
+  function recibirfechas(){
+    let Datosfetch; /*funcion de api para recibir fechas*/
+    setFechas(Datosfetch);
+  }
   
 return(
   <>
@@ -102,8 +106,8 @@ return(
          <p>Olimpiadas Cientificas 2025Para inscribirse a algunas de las areas de competencia, solo necesitas <a href='/sesion-estudiante'>Iniciar Sesion</a> o <a href='/registro'>Crear cuenta</a>
          </p>
          <h3>Fechas de inscripciones</h3>
-         <p>Inicio: {fechas.fechaInicio}</p>
-         <p>Fin: {fechas.fechaInicio}</p>
+         <p className='mx-4'>Inicio: {fechas.fechaInicio}</p>
+         <p className='mx-4'>Fin: {fechas.fechaInicio}</p>
       </Col>
     </Row>
   </>
