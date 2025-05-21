@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Models;
-
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+/* use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory; */
 
-class Tutor extends Authenticatable
+class Tutor extends Model 
 {
-    use HasApiTokens, Notifiable, HasFactory;
+    use HasFactory;
 
     protected $table = 'tutor';
     protected $primaryKey = 'idtutor';
@@ -24,10 +25,11 @@ class Tutor extends Authenticatable
         'telefonotutor',
         'correotutor',
         'citutor',
-        'imagentutor'
+        'imagentutor',
     ];
 
     protected $hidden = [
+        'passwordtutor',
     ];
 
     public function competidores()
