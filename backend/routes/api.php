@@ -25,15 +25,10 @@ Route::post('competencias', [CompetenciaController::class, 'store']);
 //Cajeros
 Route::apiResource('cajeros', CajeroController::class);
 
-//Perfil Tutores
-Route::apiResource('tutores', TutorController::class)->only(['index','show','update','store','destroy']);
-  // Obtener el perfil del tutor que está logueado
-Route::middleware('auth:sanctum')->group(function(){
-    Route::get('tutores/me',       [TutorController::class, 'me']);
-    Route::put('tutores/me',       [TutorController::class, 'updateMe']);
-});
-  // (Por si acaso) Obtener el perfil de cualquier tutor por su ID
-    Route::get('tutores/{id}', [TutorController::class, 'show']);
+//Tutores
+Route::apiResource('tutores', TutorController::class);
+Route::get('tutores/{id}', [TutorController::class, 'show']);
+Route::put('tutores/{id}', [TutorController::class, 'update']);
 
 //Competidores
 Route::apiResource('competidores', CompetidorController::class);
