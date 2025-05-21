@@ -15,16 +15,28 @@ use App\Http\Controllers\CompetidorTutorController;
 use App\Http\Controllers\ValidacionTutorController;
 use App\Http\Controllers\Auth\LoginController;
 
-     //Cajeros
-     Route::apiResource('cajeros', CajeroController::class);
-     Route::get('cajeros/{id}', [CajeroController::class, 'show']);
-     Route::put('cajeros/{id}', [CajeroController::class, 'update']);
+//Cajeros
+Route::apiResource('cajeros', CajeroController::class);
 
-     //Tutores
-     Route::apiResource('tutores', TutorController::class);
-     Route::get('tutores/{id}', [TutorController::class, 'show']);
-     Route::put('tutores/{id}', [TutorController::class, 'update']);
+//Tutores
+Route::apiResource('tutores', TutorController::class);
+Route::get('tutores/{id}', [TutorController::class, 'show']);
+Route::put('tutores/{id}', [TutorController::class, 'update']);
 
+//Competidores
+Route::apiResource('competidores', CompetidorController::class);
+Route::get('competidores/{id}', [CompetidorController::class, 'show']);
+Route::put('competidores/{id}', [CompetidorController::class, 'update']);
+
+//Competencias
+Route::apiResource('competencias', CompetenciaController::class);
+
+//Fechas
+Route::apiResource('fechas', FechaController::class);
+
+//Inscripciones
+Route::apiResource('inscripciones', InscripcionController::class)
+     ->only(['index','store','show','update','destroy']);
 //Requisitos-competencia
 Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::class);
 
