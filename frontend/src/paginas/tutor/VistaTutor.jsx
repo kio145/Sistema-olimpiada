@@ -1,26 +1,75 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import '../../css/VistaTutor.css';
-import { FiMonitor, FiCalendar, FiClipboard } from 'react-icons/fi';
+import api from '../../api/api';
 
 export function VistaTutor() {
+  const { state } = useLocation();
+  const navigate   = useNavigate();
+  const user       = state?.user;
+  const [profile, setProfile]           = useState(null);
+
+  useEffect(() => {
+
+    if (!user?.profile_id) {
+      return navigate('/login');
+    }
+
+    const tutorId = user.profile_id;
+
+    api.get(`/tutores/${tutorId}`)
+      .then(res => setProfile(res.data))
+      .catch(() => {
+        localStorage.removeItem('token');
+        navigate('/login');
+      });
+  }, [user, navigate]);
+  
+  if (!profile) {
+    return <p>Cargando perfil…</p>;
+  }
+
+  const initials = `${profile.nombretutor?.[0] || ''}${profile.apellidotutor?.[0] || ''}`.toUpperCase();
+
   return (
     <div className="tutor-container">
-        <div className="perfil-header">
-            <img className="foto-perfil" src="URL_IMAGEN" alt="Foto del tutor" />
-            <div className="datos-usuario">
-            <p className="rol">Tutor</p>
-            <h2 className="nombre">Dayra Damian Grageda</h2>
-            <p className="area">Area</p>
-            <div className="acciones">
-            <Link to="/editar-perfil" className="btn-editar-admin">
-                    Editar perfil ✎
-                    </Link>
-                    <Link to="/inicio" className="btn-cerrar-admin">
-                    Cerrar Sesión
-                    </Link></div>
-            </div>
+      {/* Cabecera */}
+        <div className="perfil-container">
+      {/* Cabecera */}
+      <div className="perfil-header">
+        <div className="foto-perfil">
+          <div className="circulo">
+            <span className="inicial">{initials}</span>
+          </div>
         </div>
+        <div className="datos-usuario">
+          <p className="rol">Tutor</p>
+          <h2 className="nombre">
+            {profile.nombretutor} {profile.apellidotutor}
+          </h2>
+          <div className="botones-admin">
+            <Link
+             to="/editar-perfil"
+             className="btn-editar-admin"
+             state={{ user }}
+              >
+                Editar perfil ✎
+              </Link>
+            <Link
+              to="/inicio"
+              className="btn-cerrar-admin"
+              onClick={() => {
+                localStorage.removeItem('token');
+                navigate('/inicio');
+              }}
+            >
+              Cerrar Sesión
+            </Link>
+          </div>
+        </div>
+      </div> 
 
         <hr />
 
@@ -64,6 +113,6 @@ export function VistaTutor() {
             </script>
         </div>
         </div>
-
+      </div> 
   );
 }

@@ -1,38 +1,74 @@
 import React from 'react';
-import '../../css/VistaCajero.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-
+import { useEffect, useState } from 'react';
+import '../../css/VistaCajero.css';
+import api from '../../api/api';
 
 export function VistaCajero() {
-  // Datos simulados
-  const competidores = [
-    { nombre: 'Catalina Ramirez Herrera', area: 'Robotica', ci: '1234567', costo: 15 },
-    { nombre: 'Romeo Luis Escalera Valverde', area: 'Fisica', ci: '2637488', costo: 20 },
-    { nombre: 'Lucia Quispe Quispe', area: 'Astrofísica', ci: '9099099', costo: 15 },
-    { nombre: 'Maria Ximena Quinteros Duran', area: 'Robotica', ci: '5262662', costo: 15 },
-    { nombre: 'Oswald Orellana Luan', area: 'Matematicas', ci: '2578198', costo: 10 },
-  ];
+  const { state } = useLocation();
+  const navigate   = useNavigate();
+  const user       = state?.user;
+  const [profile, setProfile]           = useState(null);
+
+  useEffect(() => {
+
+    if (!user?.profile_id) {
+      return navigate('/login');
+    }
+
+    const cajeroId = user.profile_id;
+
+    api.get(`/cajeros/${cajeroId}`)
+      .then(res => setProfile(res.data))
+      .catch(() => {
+        localStorage.removeItem('token');
+        navigate('/login');
+      });
+  }, [user, navigate]);
+  
+  if (!profile) {
+    return <p>Cargando perfil…</p>;
+  }
+  const initials = `${profile.nombrecajero?.[0] || ''}${profile.apellidocajero?.[0] || ''}`.toUpperCase();
 
   return (
     <div className="cajero-container">
-      <div className="perfil">
-        <div className="foto-perfil">
-          <div className="circulo">
-            <span className="inicial">X</span>
-          </div>
-        </div>
-        <div className="info-perfil">
-          <p className="rol">Cajero</p>
-          <h2 className="nombre">Carlos Valverde Teran</h2>
-          <div className="botones-admin">
-                    <Link to="/editar-perfil" className="btn-editar-admin">
-                    Editar perfil ✎
-                    </Link>
-                    <Link to="/inicio" className="btn-cerrar-admin">
-                    Cerrar Sesión
-                    </Link>
+      {/* Cabecera */}
+              <div className="perfil-container">
+            {/* Cabecera */}
+            <div className="perfil-header">
+              <div className="foto-perfil">
+                <div className="circulo">
+                  <span className="inicial">{initials}</span>
                 </div>
-        </div>
+              </div>
+              <div className="datos-usuario">
+                <p className="rol">Cajero</p>
+                <h2 className="nombre">
+                  {profile.nombrecajero} {profile.apellidocajero}
+                </h2>
+                <div className="botones-admin">
+                  <Link
+                   to="/editar-perfil"
+                   className="btn-editar-admin"
+                   state={{ user }}
+                    >
+                      Editar perfil ✎
+                    </Link>
+                  <Link
+                    to="/inicio"
+                    className="btn-cerrar-admin"
+                    onClick={() => {
+                      localStorage.removeItem('token');
+                      navigate('/inicio');
+                    }}
+                  >
+                    Cerrar Sesión
+                  </Link>
+                </div>
+              </div>
+            </div> 
       </div>
   <hr />
       <div className="boleta">
