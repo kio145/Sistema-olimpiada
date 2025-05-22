@@ -15,37 +15,16 @@ use App\Http\Controllers\CompetidorTutorController;
 use App\Http\Controllers\ValidacionTutorController;
 use App\Http\Controllers\Auth\LoginController;
 
+     //Cajeros
+     Route::apiResource('cajeros', CajeroController::class);
+     Route::get('cajeros/{id}', [CajeroController::class, 'show']);
+     Route::put('cajeros/{id}', [CajeroController::class, 'update']);
 
-//Administradores
-Route::apiResource('administradores', AdministradorController::class);
-//para creacion de competencia
-Route::get('competencias', [CompetenciaController::class, 'index']);
-Route::post('competencias', [CompetenciaController::class, 'store']);
+     //Tutores
+     Route::apiResource('tutores', TutorController::class);
+     Route::get('tutores/{id}', [TutorController::class, 'show']);
+     Route::put('tutores/{id}', [TutorController::class, 'update']);
 
-//Cajeros
-Route::apiResource('cajeros', CajeroController::class);
-Route::get('cajeros/{id}', [CajeroController::class, 'show']);
-Route::put('cajeros/{id}', [CajeroController::class, 'update']);
-
-//Tutores
-Route::apiResource('tutores', TutorController::class);
-Route::get('tutores/{id}', [TutorController::class, 'show']);
-Route::put('tutores/{id}', [TutorController::class, 'update']);
-
-//Competidores
-Route::apiResource('competidores', CompetidorController::class);
-Route::get('competidores/{id}', [CompetidorController::class, 'show']);
-Route::put('competidores/{id}', [CompetidorController::class, 'update']);
-
-//Competencias
-Route::apiResource('competencias', CompetenciaController::class);
-
-//Fechas
-Route::apiResource('fechas', FechaController::class);
-
-//Inscripciones
-Route::apiResource('inscripciones', InscripcionController::class)
-     ->only(['index','store','show','update','destroy']);
 //Requisitos-competencia
 Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::class);
 
@@ -61,23 +40,6 @@ Route::post('login', [LoginController::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
-  //Administradores
-  Route::apiResource('administradores', AdministradorController::class);
-
-
-
-  //Cajeros
-  Route::apiResource('cajeros', CajeroController::class);
-
-  //Perfil Tutores
-  Route::apiResource('tutores', TutorController::class)->only(['index', 'show', 'update', 'store', 'destroy']);
-  // Obtener el perfil del tutor que está logueado
-
-  Route::get('tutores/me',       [TutorController::class, 'me']);
-  Route::put('tutores/me',       [TutorController::class, 'updateMe']);
-
-  // (Por si acaso) Obtener el perfil de cualquier tutor por su ID
-  Route::get('tutores/{id}', [TutorController::class, 'show']);
 
   //Competidores
   Route::get('competidores/{id}', [CompetidorController::class, 'show']);

@@ -69,7 +69,6 @@ export function VistaCajero() {
                 </div>
               </div>
             </div> 
-      </div>
   <hr />
       <div className="boleta">
         <button className="btn-generar"><a href="generar-boleta" className='generar-boleta-link'>Generar Boleta</a> </button>
@@ -87,17 +86,19 @@ export function VistaCajero() {
             </tr>
           </thead>
           <tbody>
-            {competidores.map((c, i) => (
+            {/* {cajeros.map((c, i) => (
               <tr key={i}>
                 <td>{c.nombre}</td>
                 <td>{c.area}</td>
                 <td>{c.ci}</td>
                 <td>{c.costo}</td>
               </tr>
-            ))}
+            ))} */}
           </tbody>
+          No existen habilitados 
         </table>
       </div>
+    </div>
     </div>
   );
 }
