@@ -14,7 +14,7 @@ export function Barra(){
             <div className="enlaces">
                 <ul><a href="/informacion-inscripciones" className='opcion'>¿Como me inscribo?</a></ul>
                 <ul><a href="/competiciones" className='opcion'>Competiciones</a></ul>
-                <ul><CircleUser /><a href="/sesion-estudiante" className='opcion'>Iniciar Sesion</a>
+                <ul><CircleUser /><a href="/sesion-estudiante" className='opcion'>Iniciar Sesión</a>
                 </ul>
             </div>
         </div>

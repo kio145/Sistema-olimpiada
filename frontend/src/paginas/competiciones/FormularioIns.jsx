@@ -41,11 +41,36 @@ export function FormularioIns(){
             <div className="grupo">
               <div className="campo">
                 <label>Nombre/s *</label>
-                <input type="text" name="nombres" required value={formulario.nombres} onChange={manejarCambio} />
+                <input
+                  type="text"
+                  name="nombres"
+                  required
+                  value={formulario.nombres}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{0,50}$/.test(value)) {
+                      setFormulario({ ...formulario, nombres: value });
+                    }
+                  }}
+                  //placeholder="Solo letras, máximo 50 caracteres"
+                />
               </div>
               <div className="campo">
                 <label>Apellidos *</label>
-                <input type="text" name="apellidos" required value={formulario.apellidos} onChange={manejarCambio} />
+                <input
+                  type="text"
+                  name="apellidos"
+                  required
+                  value={formulario.apellidos}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{0,50}$/.test(value)) {
+                      setFormulario({ ...formulario, apellidos: value });
+                    }
+                  }}
+                  placeholder="Solo letras, máximo 50 caracteres"
+                />
+
               </div>
             </div>
             <div className="grupo">
@@ -58,8 +83,21 @@ export function FormularioIns(){
             <div className="grupo">
               <div className="campo">
                 <label>Cédula de Identidad *</label>
-                <input type="text" name="cedula" required value={formulario.cedula} onChange={manejarCambio} />
-              </div>
+                <input
+                  type="text"
+                  name="cedula"
+                  required
+                  value={formulario.cedula}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Permitir solo números y hasta 7 caracteres
+                    if (/^\d{0,7}$/.test(value)) {
+                      setFormulario({ ...formulario, cedula: value });
+                    }
+                  }}
+                  placeholder="Máximo 7 dígitos"
+                />
+                </div>
               <div className="campo">
                 <label>Fecha de Nacimiento * </label>
                 <input type="date" name="nacimiento" required value={formulario.nacimiento} onChange={manejarCambio} />
@@ -116,11 +154,11 @@ export function FormularioIns(){
             <select name="parentesco" value={formulario.parentesco} onChange={manejarCambio}>
               <option>Madre del estudiante</option>
               <option>Padre del estudiante</option>
-              <option>Otro</option>
+              <option>Profesor del estudiante</option>
             </select>
             </div>
             </div>
-            <button type="submit" className="submit-btn"><a href="confirmacion" className='enviar-form'>Enviar</a></button>
+            <button type="submit" className="submit-btn">Enviar</button>
             <div class="regresar-btn">
               <a href="competiciones" className='regresar'>Regresar a competiciones</a>
             </div>
