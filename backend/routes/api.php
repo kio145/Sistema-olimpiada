@@ -17,6 +17,8 @@ use App\Http\Controllers\Auth\LoginController;
 
 //Cajeros
 Route::apiResource('cajeros', CajeroController::class);
+Route::get('cajeros/{id}', [CajeroController::class, 'show']);
+Route::put('cajeros/{id}', [CajeroController::class, 'update']);
 
 //Tutores
 Route::apiResource('tutores', TutorController::class);
