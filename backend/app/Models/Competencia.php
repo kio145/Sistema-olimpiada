@@ -5,7 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-
+use App\Models\Administrador;
+use App\Models\Competidor;
+use App\Models\RequisitoCompetencia;
+use App\Models\Fecha;
 class Competencia extends Model
 {
     use HasFactory;
@@ -16,7 +19,6 @@ class Competencia extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'idcompetencia',
         'idadmi',
         'areacompetencia',
         'nivelcompetencia',
@@ -32,6 +34,8 @@ class Competencia extends Model
     {
         return $query->when($area, fn(Builder $q) => $q->where('areacompetencia', $area));
     }
+
+    
 
     /**
      * Scope para filtrar por nivel exacto
@@ -87,4 +91,9 @@ class Competencia extends Model
     {
         return $this->hasMany(RequisitoCompetencia::class, 'idcompetencia');
     }
+     public function fechas()
+    {
+        return $this->hasOne(Fecha::class, 'idcompetencia');
+    }
+
 }

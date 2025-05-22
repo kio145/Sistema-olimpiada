@@ -33,6 +33,7 @@ import { InscripcionValidada } from './paginas/tutor/InscripcionValidada';
 import { InscripcionRechazada } from './paginas/tutor/InscripcionRechazada';
 import { Login } from './componentes/Login';
 import { FormularioEdicionPerfil } from './paginas/formularios/FormularioEdicionPerfil';
+import { FormularioIns } from './paginas/competiciones/FormularioIns'
 
 
 
@@ -72,14 +73,17 @@ function App() {
         <Route path="/confirmacion" element={<Confirmacion />} />
         <Route path="/generar-boleta" element={<Boleta />} />
         <Route path="/pago-boleta" element={<Pago />} />
-        <Route path="/vista-admin/listado-postulantes" element={<ListadoPostulantes />} />
-        <Route path="/vista-admin/listado-pagos" element={<ListadoPagos />} />
-        <Route path="/vista-admin/listado-competiciones" element={<ListadoCompeticiones />} />
+        <Route path="/listado-postulantes" element={<ListadoPostulantes />} />
+        <Route path="/listado-pagos" element={<ListadoPagos />} />
+        <Route path="/listado-competiciones" element={<ListadoCompeticiones />} />
         <Route path="/nueva-competencia" element={<NuevaCompetencia />} />
         <Route path="/gestionar-fechas" element={<GestionarFechas />} />
         <Route path="/validar-inscripcion" element={<ValidarInscripcion />} />
         <Route path="/inscripcion-aceptada" element={<InscripcionValidada />} />
         <Route path="/inscripcion-rechazada" element={<InscripcionRechazada />} />
+        <Route path="/area/:id" element={<Area />} />
+        <Route path="/inscripcion" element={<FormularioIns />} />
+        <Route path="/confirmacion" element={<Confirmacion />} />
       </Routes>
     </BrowserRouter>
   );

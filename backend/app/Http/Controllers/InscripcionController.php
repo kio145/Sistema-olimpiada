@@ -20,19 +20,31 @@ class InscripcionController extends Controller
         return response()->json($inscripciones, 200);
     }
 
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            '_inscripcion_id'     => 'required|integer|unique:inscripciones',
-            'idcompetencia'       => 'required|integer|exists:competencia,idcompetencia',
-            'idcompetidor'        => 'required|integer|exists:competidor,idcompetidor',
-            'estado_validacion'   => 'nullable|string|max:256',
-            'estado_inscripcion'  => 'nullable|string|max:256',
-        ]);
+   // app/Http/Controllers/InscripcionController.php
 
-        $i = Inscripcion::create($data);
-        return response()->json($i, 201);
+public function store(Request $request): JsonResponse
+{
+    $user = $request->user();
+    if (!$user || $user->role !== 'competidor') {
+        return response()->json(['message' => 'No autorizado'], 403);
     }
+
+    // 1) Sólo validamos idcompetencia
+    $data = $request->validate([
+        'idcompetencia' => 'required|integer|exists:competencia,idcompetencia',
+        // 'idtutor' ya no lo pedimos
+    ]);
+
+    // 2) Rellenamos el resto
+    $data['idcompetidor']      = $user->profile_id;
+    $data['estado_inscripcion'] = 'pendiente';
+
+    // 3) Creamos la inscripción
+    $insc = Inscripcion::create($data);
+
+    return response()->json($insc, 201);
+}
+
 
     public function show($id)
     {

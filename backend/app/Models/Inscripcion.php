@@ -17,6 +17,7 @@ class Inscripcion extends Model
         '_inscripcion_id',
         'idcompetencia',
         'idcompetidor',
+        'idtutor',
         'estado_validacion',
         'estado_inscripcion',
     ];

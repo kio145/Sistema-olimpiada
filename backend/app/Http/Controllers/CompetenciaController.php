@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RequisitoCompetencia;
 use App\Models\Competencia;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr;
 use Carbon\Carbon;
 
 class CompetenciaController extends Controller
@@ -25,58 +26,80 @@ class CompetenciaController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $competencias = Competencia::query()
+        $competencias = Competencia::with('requisitos')   // ← aquí
             ->area($request->query('area'))
             ->nivel($request->query('nivel'))
-            ->precioBetween(
-                $request->query('precio_min'),
-                $request->query('precio_max')
-            )
+            ->precioBetween($request->query('precio_min'), $request->query('precio_max'))
             ->descripcionLike($request->query('q'))
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
         return response()->json($competencias);
     }
-
     /**
      * POST /api/competencias
      * Crear una nueva competencia (solo administradores).
      */
     public function store(Request $request): JsonResponse
     {
-        if (Auth::user()->role !== 'administrador') {
+        // 1) Usuario actual
+        $user = $request->user();
+        if (!$user || $user->role !== 'administrador') {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
+        // 2) Validación
         $data = $request->validate([
-            'idcompetencia'     => 'required|integer|unique:competencia,idcompetencia',
             'areacompetencia'   => 'required|string|max:50',
             'nivelcompetencia'  => 'required|string|max:50',
             'preciocompetencia' => 'required|integer',
             'descripcion'       => 'nullable|string|max:250',
-            'imagencompetencia' => 'nullable|string|max:100',
+            'imagencompetencia' => 'nullable|image|max:1024',
+            'cursos'            => 'required|array|min:1',
+            'cursos.*'          => 'string|max:50',
         ]);
 
-        // Asignar el administrador que crea la competencia
-        $data['idadmi'] = Auth::user()->profile_id;
+        // 3) ID del admin
+        $data['idadmi'] = $user->profile_id;
 
-        $competencia = Competencia::create($data);
+        // 4) Guardar imagen
+        if ($request->hasFile('imagencompetencia')) {
+            $data['imagencompetencia'] = $request
+                ->file('imagencompetencia')
+                ->store('competencias', 'public');
+        }
 
-        return response()->json($competencia, 201);
+        // 5) Crear competencia (omite 'cursos')
+        $competencia = Competencia::create(
+            Arr::except($data, ['cursos'])
+        );
+
+        // 6) Crear un requisito por cada curso seleccionado
+        foreach ($data['cursos'] as $curso) {
+            RequisitoCompetencia::create([
+                'idcompetencia' => $competencia->idcompetencia,
+                'curso'         => $curso,
+            ]);
+        }
+
+        // 7) Devolver con los requisitos cargados
+        return response()->json(
+            $competencia->load('requisitos'),
+            201
+        );
     }
 
     /**
      * GET /api/competencias/{id}
      * Mostrar una competencia específica.
      */
-    public function show(int $id): JsonResponse
-    {
-        $competencia = Competencia::with(['administrador', 'competidores', 'requisitos'])
-            ->findOrFail($id);
-
-        return response()->json($competencia, 200);
-    }
+   public function show(int $id): JsonResponse
+{
+    // Carga también requisitos y fechas
+    $c = Competencia::with(['requisitos','fechas'])
+                    ->findOrFail($id);
+    return response()->json($c, 200);
+}
 
     /**
      * PUT /api/competencias/{id}
@@ -107,8 +130,7 @@ class CompetenciaController extends Controller
     {
         Competencia::destroy($id);
 
-          return response()->json(null, 204);
-
+        return response()->json(null, 204);
     }
 
     /**
@@ -117,8 +139,8 @@ class CompetenciaController extends Controller
      */
     public function getTodasLasCompetencias(): JsonResponse
     {
-        $competencias = Competencia::with(['administrador', 'competidores', 'requisitos'])
-            ->orderBy('areacompetencia', 'asc')
+        $competencias = Competencia::with(['administrador','competidores','requisitos','fechas'])
+            ->orderBy('areacompetencia','asc')
             ->get();
 
         return response()->json($competencias, 200);
@@ -133,14 +155,14 @@ class CompetenciaController extends Controller
         $hoy = Carbon::now()->toDateString();
 
         $result = Competencia::select(
-                'idcompetencia',
-                'areacompetencia',
-                'nivelcompetencia'
-            )
+            'idcompetencia',
+            'areacompetencia',
+            'nivelcompetencia'
+        )
             ->get()
             ->map(function ($c) use ($hoy) {
                 // Asumimos que la tabla FECHAS está vinculada por idfechas = idcompetencia
-                $fechas = $c->requisitos()->first()?->fechas; 
+                $fechas = $c->requisitos()->first()?->fechas;
                 $ini = $fechas->fecha_inicio_inscripcion ?? null;
                 $fin = $fechas->fecha_fin_inscripcion ?? null;
                 return [

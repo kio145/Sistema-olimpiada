@@ -14,7 +14,8 @@ class FechaSeeder extends Seeder
     public function run(): void
     {
         Fecha::create([
-            'idfecha'                => 1,
+            'idfecha'                  => 1,
+            'idcompetencia'            => 1,
             'fecha_inicio_competencia' => '2025-06-01',
             'fecha_fin_competencia'    => '2025-06-02',
             'fecha_inicio_inscripcion' => '2025-05-01',
