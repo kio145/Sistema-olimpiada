@@ -4,52 +4,54 @@ namespace App\Http\Controllers;
 
 use App\Models\BoletaPago;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class BoletaPagoController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        return response()->json(BoletaPago::with(['cajero','competidor','tutor'])->get(), 200);
+        return response()->json(BoletaPago::all(), 200);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
+            'idboleta'        => 'required|integer|unique:boleta_pago,idboleta',
             'idcajero'        => 'required|integer|exists:cajero,idcajero',
-            'id_competidor'   => 'required|integer|exists:competidor,idcompetidor',
+            'idcompetidor'    => 'required|integer|exists:competidor,idcompetidor',
             'fecha_emision'   => 'required|date',
-            'montototal'      => 'required|integer',
-            'id_tutor'        => 'required|integer|exists:tutor,idtutor',
+            'montototal'      => 'required|numeric',
+            'idtutor'         => 'nullable|integer|exists:tutor,idtutor',
         ]);
 
         $boleta = BoletaPago::create($data);
         return response()->json($boleta, 201);
     }
 
-    public function show($idboleta)
+    public function show(int $id): JsonResponse
     {
-        $boleta = BoletaPago::with(['cajero','competidor','tutor'])->findOrFail($idboleta);
+        $boleta = BoletaPago::findOrFail($id);
         return response()->json($boleta, 200);
     }
 
-    public function update(Request $request, $idboleta)
+    public function update(Request $request, int $id): JsonResponse
     {
+        $boleta = BoletaPago::findOrFail($id);
         $data = $request->validate([
-            'idcajero'        => 'sometimes|integer|exists:cajero,idcajero',
-            'id_competidor'   => 'sometimes|integer|exists:competidor,idcompetidor',
-            'fecha_emision'   => 'sometimes|date',
-            'montototal'      => 'sometimes|integer',
-            'id_tutor'        => 'sometimes|integer|exists:tutor,idtutor',
+            'idcajero'      => 'sometimes|integer|exists:cajero,idcajero',
+            'idcompetidor'  => 'sometimes|integer|exists:competidor,idcompetidor',
+            'fecha_emision' => 'sometimes|date',
+            'montototal'    => 'sometimes|numeric',
+            'idtutor'       => 'nullable|integer|exists:tutor,idtutor',
         ]);
 
-        $boleta = BoletaPago::findOrFail($idboleta);
         $boleta->update($data);
         return response()->json($boleta, 200);
     }
 
-    public function destroy($idboleta)
+    public function destroy(int $id): JsonResponse
     {
-        BoletaPago::destroy($idboleta);
+        BoletaPago::destroy($id);
         return response()->json(null, 204);
     }
 }

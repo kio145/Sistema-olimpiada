@@ -1,4 +1,5 @@
-// src/components/FormularioCompetidor.jsx
+// src/components/FormularioRegistro.jsx
+
 import '../../css/FormularioRegistro.css';
 import { Lock, Mail, Eye, EyeOff, User } from 'lucide-react';
 import { useState } from 'react';
@@ -14,32 +15,36 @@ export function FormularioRegistro() {
     passwordcompetidor_confirmation: ''
   });
   const [mostrar, setMostrar] = useState(false);
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [error, setError]       = useState('');
+  const navigate                = useNavigate();
 
   const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
+
     if (form.passwordcompetidor !== form.passwordcompetidor_confirmation) {
       setError('Las contraseñas no coinciden');
       return;
     }
+
     try {
-      // POST a /competidores con sólo nombre, email y password
-      const res = await api.post('/competidores', {
-        idcompetidor: form.idcompetidor, 
-        nombrecompetidor:     form.nombrecompetidor,
-        apellidocompetidor:   form.apellidocompetidor,
-        emailcompetidor:      form.emailcompetidor,
-        passwordcompetidor:   form.passwordcompetidor,
+      // Payload con solo los campos básicos
+      const payload = {
+        nombrecompetidor:   form.nombrecompetidor,
+        apellidocompetidor: form.apellidocompetidor,
+        emailcompetidor:    form.emailcompetidor,
+        passwordcompetidor: form.passwordcompetidor,
         passwordcompetidor_confirmation: form.passwordcompetidor_confirmation
-      });
+      };
+
+      const res = await api.post('/competidores', payload);
       console.log('Registrado:', res.data);
-      navigate('/login-competidor');
+      navigate('/login');  // redirige a login tras registro
     } catch (err) {
       console.error(err.response?.data);
       setError(err.response?.data?.message || 'Error al registrar');
@@ -48,8 +53,9 @@ export function FormularioRegistro() {
 
   return (
     <form onSubmit={handleSubmit} className="formulario-registro">
+      {/* Nombre */}
       <div className="campo">
-        <label htmlFor="nombrecompetidor">Usuario</label>
+        <label htmlFor="nombrecompetidor">Nombre</label>
         <div className="input-icono">
           <User size={18} />
           <input
@@ -61,7 +67,9 @@ export function FormularioRegistro() {
           />
         </div>
       </div>
- <div className="campo">
+
+      {/* Apellido */}
+      <div className="campo">
         <label htmlFor="apellidocompetidor">Apellido</label>
         <div className="input-icono">
           <User size={18} />
@@ -74,6 +82,8 @@ export function FormularioRegistro() {
           />
         </div>
       </div>
+
+      {/* Correo */}
       <div className="campo">
         <label htmlFor="emailcompetidor">Correo Electrónico</label>
         <div className="input-icono">
@@ -89,6 +99,7 @@ export function FormularioRegistro() {
         </div>
       </div>
 
+      {/* Contraseña */}
       <div className="campo">
         <label htmlFor="passwordcompetidor">Contraseña</label>
         <div className="input-icono">
@@ -107,6 +118,7 @@ export function FormularioRegistro() {
         </div>
       </div>
 
+      {/* Confirmación de Contraseña */}
       <div className="campo">
         <label htmlFor="passwordcompetidor_confirmation">Confirmar Contraseña</label>
         <div className="input-icono">
@@ -125,7 +137,9 @@ export function FormularioRegistro() {
         </div>
       </div>
 
-      <button type="submit" className="boton-registrar">Registrarse</button>
+      <button type="submit" className="boton-registrar">
+        Registrarse
+      </button>
       {error && <p className="error">{error}</p>}
     </form>
   );

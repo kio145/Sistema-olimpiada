@@ -1,53 +1,27 @@
-import React, { useState } from 'react';
+// src/paginas/admin/ListadoCompeticiones.jsx
+
+import React, { useState, useEffect } from 'react';
 import '../../css/ListadoCompeticiones.css';
 import { FaSearch, FaEdit, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api/api';
 
 export function ListadoCompeticiones() {
   const navigate = useNavigate();
-
   const [busqueda, setBusqueda] = useState('');
-  const [competiciones, setCompeticiones] = useState([
-    {
-      id: 1,
-      area: 'Astronomía - Astrofísica',
-      nivel: '3P',
-      descripcion: '',
-      cursos: ['3ro Primaria'],
-      costo: '15',
-    },
-    {
-      id: 2,
-      area: 'Informática',
-      nivel: 'Guacamayo',
-      descripcion: '',
-      cursos: ['5to Primaria', '6to Primaria'],
-      costo: '15',
-    }
-  ]);
+  const [competiciones, setCompeticiones] = useState([]);
+
+  useEffect(() => {
+    api.get('/competencias')              // llama a GET /api/competencias
+       .then(res => setCompeticiones(res.data.data)) // paginador Laravel
+       .catch(console.error);
+  }, []);
 
   const filtradas = competiciones.filter(c =>
-    `${c.area} ${c.nivel}`.toLowerCase().includes(busqueda.toLowerCase())
+    `${c.areacompetencia} ${c.nivelcompetencia}`
+      .toLowerCase()
+      .includes(busqueda.toLowerCase())
   );
-
-  const crearNueva = () => {
-    navigate('/nueva-competencia');
-  };
-
-  const volver = () => {
-    navigate('/vista-admin');
-  };
-
-  const editar = (id) => {
-    alert(`Editar competencia con ID: ${id}`);
-    // Aquí iría la lógica de redirección o edición
-  };
-
-  const eliminar = (id) => {
-    if (window.confirm('¿Estás seguro que deseas eliminar esta competencia?')) {
-      setCompeticiones(prev => prev.filter(c => c.id !== id));
-    }
-  };
 
   return (
     <div className="contenedor-competiciones">
@@ -56,38 +30,49 @@ export function ListadoCompeticiones() {
       <div className="busqueda-nueva">
         <input
           type="text"
-          placeholder="Listado de competiciones"
+          placeholder="Buscar competiciones..."
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={e => setBusqueda(e.target.value)}
         />
-        <button className='buscar-btn'><FaSearch /></button>
-        <button className="nueva-btn" onClick={crearNueva}>Crear Nueva Competición</button>
+        <button className="buscar-btn"><FaSearch/></button>
+        <button className="nueva-btn" onClick={() => navigate('/nueva-competencia')}>
+          Crear Nueva Competición
+        </button>
       </div>
 
       <table className="tabla-competiciones">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Área</th>
-            <th>Nivel</th>
-            <th>Descripción</th>
-            <th>Cursos</th>
-            <th>Costo por participante (Bs)</th>
-            <th>Acciones</th>
+            <th>ID</th><th>Área</th><th>Nivel</th>
+            <th>Descripción</th><th>Cursos</th><th>Costo (Bs)</th><th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {filtradas.map((c, i) => (
-            <tr key={i}>
-              <td>{c.id}</td>
-              <td>{c.area}</td>
-              <td>{c.nivel}</td>
+          {filtradas.map(c => (
+            <tr key={c.idcompetencia}>
+              <td>{c.idcompetencia}</td>
+              <td>{c.areacompetencia}</td>
+              <td>{c.nivelcompetencia}</td>
               <td>{c.descripcion}</td>
-              <td>{c.cursos.join(', ')}</td>
-              <td>{c.costo}</td>
               <td>
-                <button onClick={() => editar(c.id)} className="accion editar"><FaEdit /></button>
-                <button onClick={() => eliminar(c.id)} className="accion eliminar"><FaTrash /></button>
+                {(c.requisitos || [])
+                  .map(r => r.curso)
+                  .join(', ')}
+              </td>
+              <td>{c.preciocompetencia}</td>
+              <td>
+                <button onClick={()=>navigate(`/editar-competencia/${c.idcompetencia}`)} className="accion editar">
+                  <FaEdit/>
+                </button>
+                <button onClick={()=> {
+                  if (confirm('¿Eliminar esta competencia?')) {
+                    api.delete(`/competencias/${c.idcompetencia}`)
+                       .then(() => setCompeticiones(prev => prev.filter(x => x.idcompetencia!==c.idcompetencia)))
+                       .catch(console.error);
+                  }
+                }} className="accion eliminar">
+                  <FaTrash/>
+                </button>
               </td>
             </tr>
           ))}
@@ -95,7 +80,9 @@ export function ListadoCompeticiones() {
       </table>
 
       <div className="volver">
-        <button onClick={volver}>⨯ Regresar a menú de administrador</button>
+        <button onClick={() => navigate('/vista-admin')}>
+          ⨯ Regresar a menú de administrador
+        </button>
       </div>
     </div>
   );
