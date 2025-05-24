@@ -31,4 +31,14 @@ class Inscripcion extends Model
             'idcompetencia'       // PK en competencia
         );
     }
+
+    public function competidor()
+    {
+        return $this->belongsTo(
+            Competidor::class,
+            'idcompetidor',      // FK en inscripciones
+            'idcompetidor'       // PK en competencia
+        );
+    }	
+
 }

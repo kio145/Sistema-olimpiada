@@ -40,6 +40,9 @@ Route::middleware('auth:sanctum')->group(function () {
   // (Por si acaso) Obtener el perfil de cualquier tutor por su ID
   Route::get('tutores/{id}', [TutorController::class, 'show']);
 
+  //obtener competidores de tutor
+  Route::get('/tutores/{id}/competidores', [TutorController::class, 'obtenerCompetidores']);
+
   //Competidores
   Route::get('competidores/{id}', [CompetidorController::class, 'show']);
   Route::put('competidores/{id}', [CompetidorController::class, 'update']);
@@ -54,6 +57,10 @@ Route::middleware('auth:sanctum')->group(function () {
   //Inscripciones
   Route::apiResource('inscripciones', InscripcionController::class)
     ->only(['index', 'store', 'show', 'update', 'destroy']);
+
+  //obtener todos los datos de una inscripcion
+  Route::get('/tutores/inscripcion/{id}', [InscripcionController::class, 'verInscripcion']);
+
   //Requisitos-competencia
   Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::class);
 
@@ -63,7 +70,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
   //Validaciones de tutor a competidor
   Route::apiResource('validaciones-tutor', ValidacionTutorController::class);
-
 
   //boleta de pago
   Route::apiResource('boleta-pagos', BoletaPagoController::class);

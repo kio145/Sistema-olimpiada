@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\Inscripcion;
+
 /**
  * 
  *
@@ -71,6 +73,11 @@ class Competidor extends Model
         'passwordcompetidor',
     ];
 
+	public function inscripciones()
+	{
+		return $this->hasMany(Inscripcion::class, 'idcompetidor', 'idcompetidor');
+	}	
+	
     public function competencias()
     {
         return $this->belongsToMany(Competencia::class, 'competidor_tutores', 'idcompetidor', 'idcompetencia')

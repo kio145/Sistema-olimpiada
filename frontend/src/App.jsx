@@ -78,7 +78,7 @@ function App() {
         <Route path="/listado-competiciones" element={<ListadoCompeticiones />} />
         <Route path="/nueva-competencia" element={<NuevaCompetencia />} />
         <Route path="/gestionar-fechas" element={<GestionarFechas />} />
-        <Route path="/validar-inscripcion" element={<ValidarInscripcion />} />
+        <Route path="/validar-inscripcion/:id" element={<ValidarInscripcion />} />
         <Route path="/inscripcion-aceptada" element={<InscripcionValidada />} />
         <Route path="/inscripcion-rechazada" element={<InscripcionRechazada />} />
         <Route path="/area/:id" element={<Area />} />

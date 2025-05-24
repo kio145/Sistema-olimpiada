@@ -68,4 +68,44 @@ public function store(Request $request): JsonResponse
         Inscripcion::destroy($id);
         return response()->noContent();
     }
+
+     //ver todos los datos de una inscripcion
+	public function verInscripcion($id)
+	{
+		$inscripcion = \App\Models\Inscripcion::with([
+			'competencia',
+			'competidor.tutores'
+		])->findOrFail($id);
+
+		$competidor = $inscripcion->competidor;
+		$competencia = $inscripcion->competencia;
+
+		$tutorComp = $competidor->tutores->first(function($tutor) use ($inscripcion)		{
+			return $tutor->pivot->idcompetencia==$inscripcion->idcompetencia;
+		});
+
+		return response()->json([
+			'nombrecompetidor' => $competidor->nombrecompetidor,
+			'apellidocompetidor' => $competidor->apellidocompetidor,
+			'emailcompetidor' => $competidor->emailcompetidor,
+			'cicompetidor' => $competidor->cicompetidor,
+			'fechanacimiento' => $competidor->fechanacimiento,
+			'telefonocompetidor' => $competidor->telefonocompetidor,
+			'colegio' => $competidor->colegio,
+			'curso' => $competidor->curso,
+			'departamento' => $competidor->departamento,
+			'provincia' => $competidor->provincia,
+
+			'areacompetencia' => $competencia->areacompetencia,
+			'nivelcompetencia' => $competencia->nivelcompetencia,
+
+			'nombretutor' => $tutorComp?->nombretutor,
+			'apellidotutor' => $tutorComp?->apellidotutor,
+			'telefonotutor' => $tutorComp?->telefonotutor,
+			'correotutor' => $tutorComp?->correotutor,
+			'citutor' => $tutorComp?->citutor,
+			'tipo_tutor' => $tutorComp?->pivot?->tipo_tutor
+		]);
+	}
+
 }
