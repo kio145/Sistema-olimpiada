@@ -58,7 +58,6 @@ class FechaController extends Controller
     {
         // 1) Validamos entrada
         $data = $request->validate([
-        'idcompetencia'            => 'required|integer|exists:competencia,idcompetencia|unique:fechas,idcompetencia',
             'fecha_inicio_inscripcion' => 'required|date',
             'fecha_fin_inscripcion'    => 'required|date',
             'fecha_inicio_validacion'  => 'required|date',
@@ -80,7 +79,6 @@ class FechaController extends Controller
     public function update(Request $request, $id): JsonResponse
     {
         $f = Fecha::findOrFail($id);
-
         // 1) Validamos los campos que vengan
         $data = $request->validate([
             'fecha_inicio_inscripcion' => 'sometimes|date',
@@ -93,13 +91,10 @@ class FechaController extends Controller
             'fecha_fin_competencia'    => 'sometimes|date',
         ]);
 
-        // 2) Combinamos con los valores actuales para validar rangos completos
         $merged = array_merge($f->toArray(), $data);
         $this->validateFases($merged);
 
-        // 3) Actualizamos
         $f->update($data);
-
         return response()->json($f, 200);
     }
 
@@ -114,9 +109,11 @@ class FechaController extends Controller
     /**
      * GET /api/fechas/{id}
      */
-    public function show($id): JsonResponse
+    public function show(): JsonResponse
     {
-        return response()->json(Fecha::findOrFail($id), 200);
+        // Si no existe, devolvemos 404 o creamos uno por defecto
+        $f = Fecha::firstOrFail();
+        return response()->json($f, 200);
     }
 
     /**
@@ -127,5 +124,4 @@ class FechaController extends Controller
         Fecha::destroy($id);
         return response()->json(null, 204);
     }
-    
 }

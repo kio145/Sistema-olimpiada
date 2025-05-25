@@ -12,7 +12,6 @@ class Fecha extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'idcompetencia',
         'fecha_inicio_competencia',
         'fecha_fin_competencia',
         'fecha_inicio_inscripcion',
@@ -22,8 +21,4 @@ class Fecha extends Model
         'fecha_inicio_pago',
         'fecha_fin_pago',
     ];
-     public function competencia()
-    {
-        return $this->belongsTo(Competencia::class, 'idcompetencia');
-    }
 }

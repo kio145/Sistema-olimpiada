@@ -139,7 +139,7 @@ class CompetenciaController extends Controller
      */
     public function getTodasLasCompetencias(): JsonResponse
     {
-        $competencias = Competencia::with(['administrador','competidores','requisitos','fechas'])
+        $competencias = Competencia::with(['administrador','competidores','requisitos'])
             ->orderBy('areacompetencia','asc')
             ->get();
 
