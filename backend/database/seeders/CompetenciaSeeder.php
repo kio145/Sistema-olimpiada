@@ -22,5 +22,14 @@ class CompetenciaSeeder extends Seeder
             'descripcion'       => 'Competencia de prueba',
             'imagencompetencia' => null,
         ]);
+        Competencia::create([
+            'idcompetencia'     => 2,
+            'idadmi'            => 1,
+            'areacompetencia'   => 'Programación',
+            'nivelcompetencia'  => 'Intermedio',
+            'preciocompetencia' => 75,
+            'descripcion'       => 'Competencia de programación para desarrolladores',
+            'imagencompetencia' => null,
+]);
     }
 }

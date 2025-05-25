@@ -11,8 +11,7 @@ use App\Http\Controllers\CompetenciaController;
 use App\Http\Controllers\FechaController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\RequisitoCompetenciaController;
-use App\Http\Controllers\CompetidorTutorController;
-use App\Http\Controllers\ValidacionTutorController;
+use App\Http\Controllers\ValidarTutorController;
 use App\Http\Controllers\Auth\LoginController;
 
 //Cajeros
@@ -43,15 +42,8 @@ Route::apiResource('inscripciones', InscripcionController::class)
 Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::class);
 
 //Relacion competidores-tutores
-Route::apiResource('competidor-tutores', CompetidorTutorController::class)
-     ->only(['index', 'store', 'show', 'destroy']);
-
-//Validaciones de tutor a competidor
-Route::apiResource('validaciones-tutor', ValidacionTutorController::class);
-Route::post('login', [LoginController::class, 'login']);
-  Route::get('competencias/todas', [CompetenciaController::class, 'getTodasLasCompetencias']);
-  Route::apiResource('competidores', CompetidorController::class);
-
+Route::apiResource('validarTutor', ValidarTutorController::class)
+     ->only(['index', 'store', 'show','update', 'destroy']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -75,10 +67,6 @@ Route::middleware('auth:sanctum')->group(function () {
   //Relacion competidores-tutores
   Route::apiResource('competidor-tutores', CompetidorTutorController::class)
     ->only(['index', 'store', 'show', 'destroy']);
-
-  //Validaciones de tutor a competidor
-  Route::apiResource('validaciones-tutor', ValidacionTutorController::class);
-
 
   //boleta de pago
   Route::apiResource('boleta-pagos', BoletaPagoController::class);
