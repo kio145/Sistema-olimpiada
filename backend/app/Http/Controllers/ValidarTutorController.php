@@ -21,7 +21,14 @@ class ValidarTutorController extends Controller
             'idcompetidor'     => 'required|integer|exists:competidor,idcompetidor',
             'idtutor'          => 'required|integer|exists:tutor,idtutor',
             'tipo_tutor'       => 'required|string|max:256',
+            'estado_validacion'=> 'nullable|string|max:256',
+            'motivo_rechazo'   => 'nullable|string|max:256',
         ]);
+
+        // Si estado_validacion es null, se establece como "pendiente"
+        if (empty($data['estado_validacion'])) {
+            $data['estado_validacion'] = 'pendiente';
+        }
 
         $validarTutor = ValidarTutor::create($data);
 
