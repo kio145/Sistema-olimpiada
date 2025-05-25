@@ -61,10 +61,12 @@ class TutorController extends Controller
 
     // GET /api/tutores/{id}
     public function show(int $id): JsonResponse
-    {
-        $tutor = Tutor::findOrFail((int) $id);
-        return response()->json($tutor, 200);
-    }
+{
+    $tutor = Tutor::with('competidores.competencias')->findOrFail($id);
+
+
+    return response()->json($tutor, 200);
+}
 
     public function update(Request $request, int $id): JsonResponse
      {

@@ -85,28 +85,51 @@ export function VistaTutor() {
                 </tr>
             </thead>
             <tbody>
-                {/* Mapea competidores desde props/datos aquí */}
-                <tr>
-                <td>Catalina Ramirez Herrera</td>
-                <td className="estado-inscripcion espera-validacion">En espera de validación</td>
-                <td className="estado-validacion pendiente">
-                    <a href="validar-inscripcion">Pendiente</a>
-                    </td>
-                </tr>
-                <tr>
-                <td>Romeo Luis Escalera Valverde</td>
-                <td className="estado-inscripcion espera-pago">En espera de pago</td>
-                <td className="estado-validacion aceptada">
-                   <a href="inscripcion-aceptada"> Aceptada</a></td>
-                </tr>
-                <tr>
-                <td>Lizbeth Jimenez Aranibar</td>
-                <td className="estado-inscripcion rechazada">Rechazado</td>
-                <td className="estado-validacion rechazada">
-                   <a href="inscripcion-rechazada"> Rechazada</a></td>
-                </tr>
-                {/* ...más filas */}
-            </tbody>
+  {profile.competidores?.map((competidor, index) => {
+  const estadoValidacion = competidor.pivot?.estado_validacion?.toLowerCase() || '';
+
+  // Determinar estado de inscripción basado en estado de validación
+  let estadoInscripcion = '';
+  if (estadoValidacion === 'pendiente') {
+    estadoInscripcion = 'En espera de validación';
+  } else if (estadoValidacion === 'aceptada') {
+    estadoInscripcion = 'En espera de pago';
+  } else if (estadoValidacion === 'rechazado') {
+    estadoInscripcion = 'Rechazado';
+  }
+
+  let claseInscripcion = '';
+  if (estadoInscripcion === 'En espera de validación') {
+    claseInscripcion = 'estado-inscripcion espera-validacion';
+  } else if (estadoInscripcion === 'En espera de pago') {
+    claseInscripcion = 'estado-inscripcion espera-pago';
+  } else {
+    claseInscripcion = 'estado-inscripcion rechazada';
+  }
+
+  // Link según validación
+  let link = '#';
+  if (estadoValidacion === 'pendiente') {
+    link = '/validar-inscripcion';
+  } else if (estadoValidacion === 'aceptada') {
+    link = '/inscripcion-aceptada';
+  } else if (estadoValidacion === 'rechazado') {
+    link = '/inscripcion-rechazada';
+  }
+
+  return (
+    <tr key={index}>
+      <td>{competidor.nombrecompetidor} {competidor.apellidocompetidor}</td>
+      <td className={claseInscripcion}>{estadoInscripcion}</td>
+      <td className={`estado-validacion ${estadoValidacion}`}>
+        <a href={link}>{estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)}</a>
+      </td>
+    </tr>
+  );
+})}
+
+</tbody>
+
             </table>
             <script>
                 
