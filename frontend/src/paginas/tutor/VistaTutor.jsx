@@ -8,21 +8,23 @@ import api from '../../api/api';
 
 
 export function VistaTutor() {
-	const { state } = useLocation();
+	const user = JSON.parse(localStorage.getItem('user'));
+	const role = localStorage.getItem('role');
   const navigate   = useNavigate();
-  const user       = state?.user;
  	const [profile, setProfile]           = useState(null);
   const [inscripciones, setInscripciones] = useState([]);
 	const [competidores, setCompetidores] = useState([]);
 	const [tutores, setTutores] = useState([]);
 	const [loading, setLoading] = useState(true)
 
-	const tutorId = user.profile_id;
+
 	
 	  useEffect(() => {
-    if (!user?.profile_id) {
+    if (!user || role !== 'tutor') {
       return navigate('/login');
     }
+
+	const tutorId = user.profile_id;
 
     api.get(`/tutores/${tutorId}`)
       .then(res => setProfile(res.data))
@@ -36,17 +38,17 @@ export function VistaTutor() {
       .catch(() => {
         console.error('Error', error);
 	    setLoading(false);
-	    });},[user, navigate]);
-
+	    });},[user, role, navigate]);
+	if(!user||!profile) return <p>Cargando datos de tutor...</p>
   return (
     <div className="tutor-container">
         <div className="perfil-header">
             <img className="foto-perfil" src="URL_IMAGEN" alt="Foto del tutor" />
             <div className="datos-usuario">
             <p className="rol">Tutor</p>
-            <h2 className="nombre">Dayra Luis
+            <h2 className="nombre">{profile.nombretutor} {profile.apellidotutor}
 	    </h2>
-            <p className="area">Area</p>
+            <p className="area">{profile.area}</p>
             <div className="acciones">
             <Link to="/editar-perfil" className="btn-editar-admin">
                     Editar perfil ✎

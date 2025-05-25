@@ -37,6 +37,7 @@ export function Login() {
     // 3) Guardamos token y configuramos el header
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('role', role);
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
     // 4) Redirigimos según rol

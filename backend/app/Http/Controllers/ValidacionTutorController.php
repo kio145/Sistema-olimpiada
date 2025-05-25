@@ -15,7 +15,7 @@ class ValidacionTutorController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'validacion_id_'  => 'required|integer|unique:validaciones_tutor,validacion_id_',
+            //'validacion_id_'  => 'required|integer|unique:validaciones_tutor,validacion_id_',
             'idtutor'         => 'required|integer|exists:tutor,idtutor',
             'idcompetidor'    => 'required|integer|exists:competidor,idcompetidor',
             'estado_validacion'=> 'nullable|string|max:256',

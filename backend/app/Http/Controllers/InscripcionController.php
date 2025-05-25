@@ -85,6 +85,7 @@ public function store(Request $request): JsonResponse
 		});
 
 		return response()->json([
+			'idcompetidor' => $competidor->idcompetidor,
 			'nombrecompetidor' => $competidor->nombrecompetidor,
 			'apellidocompetidor' => $competidor->apellidocompetidor,
 			'emailcompetidor' => $competidor->emailcompetidor,
@@ -96,9 +97,11 @@ public function store(Request $request): JsonResponse
 			'departamento' => $competidor->departamento,
 			'provincia' => $competidor->provincia,
 
+			'idcompetencia' => $competencia->idcompetencia,
 			'areacompetencia' => $competencia->areacompetencia,
 			'nivelcompetencia' => $competencia->nivelcompetencia,
 
+			'idtutor' =>$tutorComp?->idtutor,
 			'nombretutor' => $tutorComp?->nombretutor,
 			'apellidotutor' => $tutorComp?->apellidotutor,
 			'telefonotutor' => $tutorComp?->telefonotutor,

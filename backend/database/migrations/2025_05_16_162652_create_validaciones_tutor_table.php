@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('validaciones_tutor', function (Blueprint $table) {
-            $table->integer('validacion_id_')->primary();
+            $table->bigIncrements('validacion_id_');
             $table->unsignedInteger('idtutor')->nullable();
             $table->unsignedInteger('idcompetidor')->nullable();
             $table->string('estado_validacion', 256)->nullable();
