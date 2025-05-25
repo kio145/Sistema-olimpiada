@@ -4,20 +4,22 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\CompetidorTutor;
+use App\Models\ValidarTutor;
 
-class CompetidorTutorSeeder extends Seeder
+class ValidarTutorSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        CompetidorTutor::create([
+        ValidarTutor::create([
             'idcompetencia' => 1,
             'idcompetidor'  => 1,
             'idtutor'       => 1,
             'tipo_tutor'    => 'principal',
+            'estado_validacion'=> "pendiente",
+            'motivo_rechazo'=> null,
         ]);
     }
 }

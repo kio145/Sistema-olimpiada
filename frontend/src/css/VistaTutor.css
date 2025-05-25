@@ -110,13 +110,13 @@
   
   .estado-inscripcion.rechazada {
     background-color: #ffe6e6;
-    color: #cc0000;
+    color: #eb1c1c;
   }
   
   /* Estados de validación */
   .estado-validacion.pendiente {
     background-color: #fff3cd;
-    color: #856404;
+    color: #b69d53;
   }
   
   .estado-validacion.aceptada {
@@ -126,7 +126,7 @@
   
   .estado-validacion.rechazada {
     background-color: #f8d7da;
-    color: #721c24;
+    color: #a3333e;
   }
   .area{
     color: #333;

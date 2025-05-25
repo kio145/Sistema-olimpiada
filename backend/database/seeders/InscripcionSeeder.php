@@ -18,8 +18,7 @@ class InscripcionSeeder extends Seeder
             '_inscripcion_id'    => 1,
             'idcompetencia'      => 1,
             'idcompetidor'       => 1,
-            'estado_validacion'  => 'pendiente',
-            'estado_inscripcion' => 'inscrito',
+            'estado_inscripcion' => 'en espera de validacion',
         ]);
     }
 }

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->integer('_inscripcion_id')->primary();
             $table->unsignedInteger('idcompetencia')->nullable();
             $table->unsignedInteger('idcompetidor')->nullable();
-            $table->string('estado_validacion', 256)->nullable();
             $table->string('estado_inscripcion', 256)->nullable();
             $table->timestamps();
 

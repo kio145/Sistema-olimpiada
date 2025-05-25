@@ -101,8 +101,8 @@ export function VistaTutor() {
                 </tr>
                 <tr>
                 <td>Lizbeth Jimenez Aranibar</td>
-                <td className="estado-inscripcion espera-pago">Rechazado</td>
-                <td className="estado-validacion aceptada">
+                <td className="estado-inscripcion rechazada">Rechazado</td>
+                <td className="estado-validacion rechazada">
                    <a href="inscripcion-rechazada"> Rechazada</a></td>
                 </tr>
                 {/* ...más filas */}

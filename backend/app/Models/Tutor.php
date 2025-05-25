@@ -36,14 +36,14 @@ class Tutor extends Model
     {
         return $this->belongsToMany(
             Competidor::class,
-            'competidor_tutores',
+            'validar_tutor',
             'idtutor',
             'idcompetidor'
-        )->withPivot('idcompetencia', 'tipo_tutor');
+        )->withPivot('idcompetencia', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo');
     }
 
     public function validaciones()
     {
-        return $this->hasMany(ValidacionTutor::class, 'idtutor');
+        return $this->hasMany(ValidarTutor::class, 'idtutor');
     }
 }

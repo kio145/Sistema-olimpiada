@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CompetidorTutor;
+use App\Models\ValidarTutor;
 use Illuminate\Http\Request;
 
-class CompetidorTutorController extends Controller
+class ValidarTutorController extends Controller
 {
     public function index()
     {
-        return response()->json(CompetidorTutor::all());
+        return response()->json(ValidarTutor::all());
     }
 
     public function store(Request $request)
@@ -19,15 +19,17 @@ class CompetidorTutorController extends Controller
             'idcompetidor'  => 'required|integer|exists:competidor,idcompetidor',
             'idtutor'       => 'required|integer|exists:tutor,idtutor',
             'tipo_tutor'    => 'nullable|string|max:256',
+            'estado_validacion'=> 'nullable|string|max:256',
+            'motivo_rechazo'  => 'nullable|string|max:256',
         ]);
 
-        $pt = CompetidorTutor::create($data);
+        $pt = ValidarTutor::create($data);
         return response()->json($pt, 201);
     }
 
     public function show($idcompetencia, $idcompetidor)
     {
-        $pt = CompetidorTutor::where('idcompetencia',$idcompetencia)
+        $pt = ValidarTutor::where('idcompetencia',$idcompetencia)
              ->where('idcompetidor',$idcompetidor)
              ->firstOrFail();
         return response()->json($pt);
@@ -35,7 +37,7 @@ class CompetidorTutorController extends Controller
 
     public function destroy($idcompetencia, $idcompetidor)
     {
-        CompetidorTutor::where('idcompetencia',$idcompetencia)
+        ValidarTutor::where('idcompetencia',$idcompetencia)
             ->where('idcompetidor',$idcompetidor)
             ->delete();
         return response()->noContent();

@@ -78,10 +78,10 @@ class Competencia extends Model
     {
         return $this->belongsToMany(
             Competidor::class,
-            'competidor_tutores',
+            'validar_tutor',
             'idcompetencia',
             'idcompetidor'
-        )->withPivot('idtutor', 'tipo_tutor');
+        )->withPivot('idtutor', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo');
     }
 
     /**
