@@ -75,7 +75,7 @@ export function ValidarInscripcion(){
         <div className="validar-container">
           <h2 className="titulo">Inscripción con validación pendiente</h2>
     
-          {inscripcion && <DatosInscripcion inscripcion={ inscripcion}/>}
+           {inscripcion && <DatosInscripcion inscripcion={inscripcion} tipo="pendiente"/>}
     
           <div className="validacion">
             <p>¿Usted valida esta inscripción?</p>

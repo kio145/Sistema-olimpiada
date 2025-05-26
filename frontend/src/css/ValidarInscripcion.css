@@ -108,17 +108,25 @@
     text-align: center;
     color: #6b7280;
   }
-  .card-aceptada {
-    background-color: #fffbea;
+  .datos-inscripcion.aceptado {
+    background-color: #d4ffd3;
     border: 2px solid darkgreen;
     border-radius: 10px;
     padding: 20px;
     margin-top: 20px;
   }
   
-  .card-rechazada {
-    background-color: #fffbea;
+  .datos-inscripcion.rechazado {
+    background-color: #f8d7da;
     border: 2px solid red;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+
+  .datos-inscripcion.pendiente {
+    background-color: #fdffc4;
+    border: 2px solid #facc15;
     border-radius: 10px;
     padding: 20px;
     margin-top: 20px;

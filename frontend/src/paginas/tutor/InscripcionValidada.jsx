@@ -18,19 +18,19 @@ export function InscripcionValidada(){
 		.then(res => setInscripcion(res.data))
 		.catch(err => console.error(err));
 	}, [id]);
-	
+	useEffect(() =>{
 	api.get(`/inscripciones/${id}`)
 		.then(res => setEstado(res.data))
 		.catch(err => console.error(err));
-	
+	}, [id]);
 
-    	if(!inscripcion)return<p>Cargando datos de inscripción</p>
+    	if(!inscripcion || !estado )return<p>Cargando datos de inscripción</p>
 
       return (
         <div className="validar-container">
           <h2 className="titulo">Inscripción aceptada</h2>
     
-          {inscripcion && <DatosInscripcion inscripcion={inscripcion}/>}
+           {inscripcion && <DatosInscripcion inscripcion={inscripcion} tipo="aceptado"/>}
     
           <div className="validacion">
             <p>Usted validó todos sus datos</p>

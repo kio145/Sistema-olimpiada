@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import '../../css/VistaTutor.css';
 import { FiMonitor, FiCalendar, FiClipboard } from 'react-icons/fi';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import api from '../../api/api';
 
 
 export function VistaTutor() {
-	const user = JSON.parse(localStorage.getItem('user'));
-	const role = localStorage.getItem('role');
+	const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
+	const role = useMemo(() =>localStorage.getItem('role'),[]);
   const navigate   = useNavigate();
  	const [profile, setProfile]           = useState(null);
   const [inscripciones, setInscripciones] = useState([]);
@@ -17,12 +17,9 @@ export function VistaTutor() {
 	const [tutores, setTutores] = useState([]);
 	const [loading, setLoading] = useState(true)
 
-  const formatearEstado = (estado) =>{
-	if(!estado) return 'desconocido';
-	return estado.toLowerCase().replace(/\s+/g, '-');
-};
-
 	  useEffect(() => {
+//	const storeUser = JSON.parse(localStorage.getItem('user'));
+//	const storeRole = localStorage.getItem('role');
     if (!user || role !== 'tutor') {
       return navigate('/login');
     }

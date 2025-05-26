@@ -1,11 +1,12 @@
 import React from 'react';
 //import api from '../../api/api';
+import "../../css/ValidarInscripcion.css";
 
-export default function DatosInscripcion({ inscripcion }){
+export default function DatosInscripcion({ inscripcion , tipo}){
 
   if(!inscripcion) return null;
       return (
-          <div className="card">
+          <div className={`datos-inscripcion ${tipo}`}>
             <h3 className="seccion">I. Datos del Competidor</h3>
             <ul className="lista">
               <li><strong>Nombre/s y Apellido/s:</strong> {inscripcion.nombrecompetidor} {inscripcion.apellidocompetidor}</li>

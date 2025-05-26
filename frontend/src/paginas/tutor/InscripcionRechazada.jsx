@@ -17,19 +17,21 @@ export function InscripcionRechazada(){
 	api.get(`/tutores/inscripcion/${id}`)
 		.then(res => setInscripcion(res.data))
 		.catch(err => console.error(err));
-	}, [id]);
-	
+	},[id]);
+	useEffect(() => {
 	api.get(`/validaciones-tutor/${id}`)
 		.then(res => setMotivo(res.data))
 		.catch(err => console.error(err));
+	}, [id]);
+	
 
-    	if(!inscripcion) return <p>Cargando datos de inscripción</p>
+    	if(!inscripcion || !motivo) return <p>Cargando datos de inscripción</p>
 
       return (
         <div className="validar-container">
           <h2 className="titulo">Inscripción rechazada</h2>
     
-           {inscripcion && <DatosInscripcion inscripcion={inscripcion}/>}
+           {inscripcion && <DatosInscripcion inscripcion={inscripcion} tipo="rechazado"/>}
     
           <div className="validacion">
             <p>Razones por las cuales esta inscripción fue rechazada: </p>
