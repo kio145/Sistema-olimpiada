@@ -98,36 +98,38 @@
   }
   
   /* Estados de inscripción */
-  .estado-inscripcion.espera-validacion {
-    background-color: #fffbe6;
-    color: #b38f00;
-  }
-  
-  .estado-inscripcion.espera-pago {
-    background-color: #eaf4ff;
-    color: #2176bd;
-  }
-  
-  .estado-inscripcion.rechazada {
-    background-color: #ffe6e6;
-    color: #cc0000;
-  }
-  
-  /* Estados de validación */
-  .estado-validacion.pendiente {
-    background-color: #fff3cd;
+  .estado-inscripcion.en-espera-de-validacion {
+    background-color: #fdffc4;
     color: #856404;
   }
   
-  .estado-validacion.aceptada {
-    background-color: #d4edda;
-    color: #155724;
+  .estado-inscripcion.en-espera-de-pago {
+    background-color: #ffe5b4;
+    color: #a65c00;
+  }
+
+  
+  /* Estados de validación */
+  .estado-validacion.pendiente{
+    background-color: #fdffc4;
+    color: #856404;
   }
   
-  .estado-validacion.rechazada {
+  .estado-validacion.aceptado,
+  .estado-inscripcion.inscrito {
+    background-color: #d4ffd3;
+    color: #155724;
+  }
+
+  /*colores segun estado*/
+  .estado-validacion.rechazado, 
+  .estado-inscripcion.rechazado {
     background-color: #f8d7da;
     color: #721c24;
   }
+
+
+
   .area{
     color: #333;
     font-size: 20px;

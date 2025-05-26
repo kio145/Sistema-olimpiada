@@ -17,8 +17,11 @@ export function VistaTutor() {
 	const [tutores, setTutores] = useState([]);
 	const [loading, setLoading] = useState(true)
 
+  const formatearEstado = (estado) =>{
+	if(!estado) return 'desconocido';
+	return estado.toLowerCase().replace(/\s+/g, '-');
+};
 
-	
 	  useEffect(() => {
     if (!user || role !== 'tutor') {
       return navigate('/login');
@@ -40,6 +43,7 @@ export function VistaTutor() {
 	    setLoading(false);
 	    });},[user, role, navigate]);
 	if(!user||!profile) return <p>Cargando datos de tutor...</p>
+
   return (
     <div className="tutor-container">
         <div className="perfil-header">
@@ -76,17 +80,17 @@ export function VistaTutor() {
                 {competidores.map((comp)=>(
 		<tr key={comp.idcompetidor}>
 			<td>{comp.nombrecompetidor} {comp.apellidocompetidor}</td>
-			<td className="estado-inscripcion">{comp.estado_inscripcion}</td>
-			<td className="estado-validacion">
+			<td className={`estado-inscripcion ${(comp.estado_inscripcion).toLowerCase().replace(/\s+/g, '-')}`}>{comp.estado_inscripcion}</td>
+			<td className={`estado-validacion ${(comp.estado_validacion).toLowerCase().replace(/\s+/g, '-')}`}>
       {
         (()=>{
           switch (comp.estado_validacion?.toLowerCase()){
-            case 'pendiente':
+	    case 'pendiente':
               return<Link to={`/validar-inscripcion/${comp._inscripcion_id}`}>Pendiente</Link>;
             case 'rechazado':
-              return<Link to="/inscripcion-rechazada">Rechazado</Link>;
+              return<Link to={`/inscripcion-rechazada/${comp._inscripcion_id}`}>Rechazado</Link>;
             case 'aceptado':
-              return<Link to="/inscripcion-aceptada">Aceptada</Link>;
+              return<Link to={`/inscripcion-aceptada/${comp._inscripcion_id}`}>Aceptada</Link>;
             default:
               return comp.estado_validacion || 'Desconocido';
           }
