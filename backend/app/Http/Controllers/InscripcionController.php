@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inscripcion;
+use App\Models\Competidor;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -45,6 +46,56 @@ public function store(Request $request): JsonResponse
     return response()->json($insc, 201);
 }
 
+ /**
+     * Crea primero un Competidor y luego su Inscripción
+     * POST /api/inscripciones/competidor
+     */
+     public function storeCompetidor(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'nombrecompetidor'   => 'required|string|max:50',
+            'apellidocompetidor' => 'required|string|max:50',
+            'emailcompetidor'    => 'required|email',
+            'cedulacompetidor'   => 'required|integer',
+            'fechanacimiento'     => 'required|date',
+            'colegio'            => 'nullable|string|max:100',
+            'curso'              => 'required|string|max:50',
+            'departamento'       => 'required|string|max:50',
+            'provincia'          => 'required|string|max:50',
+            'idcompetencia'      => 'required|integer|exists:competencia,idcompetencia',
+        ]);
+
+        // 1) Buscamos por email; si no existe, creamos uno nuevo
+        $competidor = Competidor::firstOrNew([
+            'emailcompetidor' => $data['emailcompetidor']
+        ]);
+
+        // 2) Rellenamos/actualizamos los demás campos
+        $competidor->fill([
+            'nombrecompetidor'   => $data['nombrecompetidor'],
+            'apellidocompetidor' => $data['apellidocompetidor'],
+            'cicompetidor'       => $data['cedulacompetidor'],
+            'fechanacimiento'    => $data['fechanacimiento'],
+            'colegio'            => $data['colegio'] ?? null,
+            'curso'              => $data['curso'],
+            'departamento'       => $data['departamento'],
+            'provincia'          => $data['provincia'],
+        ]);
+        $competidor->save();
+
+        // 3) Creamos la inscripción
+        $insc = Inscripcion::create([
+            'idcompetidor'       => $competidor->idcompetidor,
+            'idcompetencia'      => $data['idcompetencia'],
+            'estado_inscripcion' => 'pendiente',
+        ]);
+
+        // 4) Devolvemos ambos recursos
+        return response()->json([
+            'competidor'   => $competidor,
+            'inscripcion'  => $insc,
+        ], 201);
+    }
 
     public function show($id)
     {

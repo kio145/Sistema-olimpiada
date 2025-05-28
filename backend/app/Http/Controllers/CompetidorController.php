@@ -33,6 +33,8 @@ class CompetidorController extends Controller
             'passwordcompetidor' => Hash::make($data['passwordcompetidor']),
         ]);
 
+        
+
         // 3) crea el usuario en tabla "users"
         $user = User::create([
             'name'           => $competidor->nombrecompetidor . ' ' . $competidor->apellidocompetidor,
@@ -55,56 +57,69 @@ class CompetidorController extends Controller
         return response()->json($competidor, 200);
     }
 
+    public function me(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if (!$user || $user->role !== 'competidor') {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+        $competidor = Competidor::findOrFail($user->profile_id);
+        return response()->json($competidor, 200);
+    }
+
     // PUT/PATCH /api/competidores/{id}
     // app/Http/Controllers/CompetidorController.php
 
     public function update(Request $request, int $id): JsonResponse
     {
-        \Log::info('Update payload:', $request->all());
         $competidor = Competidor::findOrFail($id);
 
-        // 1) Validar sólo los campos que pueden cambiar
         $data = $request->validate([
-            'nombrecompetidor'   => 'sometimes|string|max:50',
-            'apellidocompetidor' => 'sometimes|string|max:50',
-            'emailcompetidor'    => [
-                'sometimes',
-                'email',
-                Rule::unique('competidor', 'emailcompetidor')->ignore($id, 'idcompetidor')
+            'nombrecompetidor'     => 'sometimes|string|max:50',
+            'apellidocompetidor'   => 'sometimes|string|max:50',
+            'emailcompetidor'      => [
+                'sometimes','email',
+                Rule::unique('competidor','emailcompetidor')->ignore($id,'idcompetidor')
             ],
-            'passwordcompetidor' => 'sometimes|string|min:6|confirmed',
-            'imagencompetidor'   => 'sometimes|image|max:2048',
+            'cicompetidor'         => 'sometimes|integer',
+            'fechanacimiento'      => 'sometimes|date',
+            'telefonocompetidor'   => 'sometimes|string|max:20',
+            'colegio'              => 'sometimes|string|max:100',
+            'curso'                => 'sometimes|string|max:50',
+            'departamento'         => 'sometimes|string|max:50',
+            'provincia'            => 'sometimes|string|max:50',
+            'passwordcompetidor'   => 'sometimes|string|min:6|confirmed',
+            'imagencompetidor'     => 'sometimes|image|max:2048',
         ]);
 
-        // 2) Si viene archivo de imagen, guárdalo y setea la ruta
+        // si viene imagen, guardamos
         if ($request->hasFile('imagencompetidor')) {
-            $path = $request->file('imagencompetidor')->store('competidores', 'public');
+            $path = $request->file('imagencompetidor')->store('competidores','public');
             $data['imagencompetidor'] = $path;
         }
 
-        // 3) Actualiza competidor
+        // actualizamos competidor (sin tocar password)
         $competidor->update(Arr::except($data, ['passwordcompetidor']));
 
-        // 4) Actualiza usuario asociado
+        // actualizamos usuario en `users` si cambió email o password
         $user = User::where('profile_type', Competidor::class)
-            ->where('profile_id', $id)
-            ->first();
+                    ->where('profile_id', $id)
+                    ->first();
 
         if ($user) {
-            $userUpdates = [];
+            $u = [];
             if (isset($data['emailcompetidor'])) {
-                $userUpdates['email'] = $data['emailcompetidor'];
-                $userUpdates['name']  = "{$competidor->nombrecompetidor} {$competidor->apellidocompetidor}";
+                $u['email'] = $data['emailcompetidor'];
+                $u['name']  = "{$competidor->nombrecompetidor} {$competidor->apellidocompetidor}";
             }
             if (isset($data['passwordcompetidor'])) {
-                $userUpdates['password'] = Hash::make($data['passwordcompetidor']);
+                $u['password'] = Hash::make($data['passwordcompetidor']);
             }
-            if ($userUpdates) {
-                $user->update($userUpdates);
+            if ($u) {
+                $user->update($u);
             }
         }
 
-        // 5) Devolver el perfil actualizado
         return response()->json($competidor, 200);
     }
 

@@ -43,13 +43,16 @@ Route::middleware('auth:sanctum')->group(function () {
   //Competidores
   Route::get('competidores/{id}', [CompetidorController::class, 'show']);
   Route::put('competidores/{id}', [CompetidorController::class, 'update']);
+  Route::get('competidores/me', [CompetidorController::class, 'me']);
 
   //Competencias
   Route::apiResource('competencias', CompetenciaController::class);
 
-
   //Fechas
   Route::apiResource('fechas', FechaController::class);
+
+  // Nuevo endpoint para creación automática de competidor + inscripción
+Route::post('inscripciones/competidor', [InscripcionController::class, 'storeCompetidor']);
 
   //Inscripciones
   Route::apiResource('inscripciones', InscripcionController::class)

@@ -1,4 +1,3 @@
-// src/paginas/competiciones/FormularioIns.jsx
 import '../../css/FormularioIns.css';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -45,20 +44,20 @@ export function FormularioIns() {
       }
     }
 
-    // email
+    // Validar email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.emailcompetidor)) {
       setError('Introduce un correo electrónico válido.');
       return false;
     }
 
-    // cédula numérica (mínimo 6 dígitos)
+    // Cédula numérica (mínimo 6 dígitos)
     if (!/^\d{6,}$/.test(form.cedulacompetidor)) {
       setError('La cédula debe tener al menos 6 dígitos numéricos.');
       return false;
     }
 
-    // fecha de nacimiento no futura
+    // Fecha de nacimiento no futura
     const hoy = new Date().setHours(0,0,0,0);
     const nac = new Date(form.fechanacimiento).setHours(0,0,0,0);
     if (nac > hoy) {
@@ -66,7 +65,7 @@ export function FormularioIns() {
       return false;
     }
 
-    // provincia mínimo 2 caracteres
+    // Provincia mínimo 2 caracteres
     if (form.provincia.trim().length < 2) {
       setError('La provincia debe tener al menos 2 caracteres.');
       return false;
@@ -81,15 +80,18 @@ export function FormularioIns() {
     if (!validar()) return;
 
     try {
-      // 1) Crear competidor
-      const { data: comp } = await api.post('/competidores', form);
-      // 2) Crear inscripción
-      await api.post('/inscripciones', { idcompetencia: competenciaId });
+      // Usamos un endpoint único para crear competidor e inscripción
+       const { data } = await api.post('/inscripciones/competidor', {        ...form,
+        idcompetencia: competenciaId
+      });
       navigate('/confirmacion');
+
     } catch (e) {
       console.error(e);
       if (e.response?.data?.errors) {
         setError(Object.values(e.response.data.errors).flat().join(' '));
+      } else if (e.response?.data?.message) {
+        setError(e.response.data.message);
       } else {
         setError('Error al inscribir. Intenta de nuevo.');
       }
