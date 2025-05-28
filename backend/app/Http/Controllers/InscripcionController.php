@@ -106,7 +106,6 @@ public function store(Request $request): JsonResponse
     {
         $i = Inscripcion::findOrFail($id);
         $data = $request->validate([
-            'estado_validacion'   => 'sometimes|string|max:256',
             'estado_inscripcion'  => 'sometimes|string|max:256',
         ]);
 

@@ -14,6 +14,11 @@ use Illuminate\Validation\Rule;
 
 class CompetidorController extends Controller
 {
+    public function index()
+    {
+        return response()->json(Competidor::all());
+    }
+
     public function store(Request $request)
     {
         // 1) valida los datos

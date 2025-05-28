@@ -32,8 +32,7 @@ class DatabaseSeeder extends Seeder
         FechaSeeder::class,
         InscripcionSeeder::class,
         RequisitoCompetenciaSeeder::class,
-        CompetidorTutorSeeder::class,
-        ValidacionTutorSeeder::class,
+        ValidarTutorSeeder::class,
     ]);
 }
 

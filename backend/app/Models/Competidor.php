@@ -73,13 +73,16 @@ class Competidor extends Model
 
     public function competencias()
     {
-        return $this->belongsToMany(Competencia::class, 'competidor_tutores', 'idcompetidor', 'idcompetencia')
-                    ->withPivot('idtutor', 'tipo_tutor');
+        return $this->belongsToMany(Competencia::class,
+        'validar_tutor',
+        'idcompetidor',
+        'idcompetencia'
+        )->withPivot('idtutor', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo',);
     }
 
     public function tutores()
     {
-        return $this->belongsToMany(Tutor::class, 'competidor_tutores', 'idcompetidor', 'idtutor')
-                    ->withPivot('idcompetencia', 'tipo_tutor');
+        return $this->belongsToMany(Tutor::class, 'validar_tutor', 'idcompetidor', 'idtutor')
+                    ->withPivot('idcompetencia', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo',);
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-
+use Illuminate\Database\Eloquent\Model;
 /**
  * 
  *
@@ -20,9 +20,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder|CompetidorTutor whereTipoTutor($value)
  * @mixin \Eloquent
  */
-class CompetidorTutor extends Pivot
+class ValidarTutor extends Model
 {
-    protected $table = 'competidor_tutores';
+    protected $table = 'validar_tutor';
+    protected $primaryKey = 'validar_id';
+    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [
@@ -30,5 +32,7 @@ class CompetidorTutor extends Pivot
         'idcompetidor',
         'idtutor',
         'tipo_tutor',
+        'estado_validacion',
+        'motivo_rechazo',
     ];
 }
