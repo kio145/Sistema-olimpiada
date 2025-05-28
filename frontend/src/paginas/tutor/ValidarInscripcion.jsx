@@ -65,7 +65,7 @@ export function ValidarInscripcion() {
           <li><strong>Nombre/s y Apellido/s:</strong> {tutor.nombretutor} {tutor.apellidotutor}</li>
           <li><strong>Correo electrónico:</strong> {tutor.correotutor || 'No disponible'}</li>
           <li><strong>Rol:</strong> {tutor.rol || 'Tutor'}</li>
-          <li><strong>Número de Celular:</strong> {tutor.celular || 'No disponible'}</li>
+          <li><strong>Número de Celular:</strong> {tutor.telefonotutor || 'No disponible'}</li>
         </ul>
       </div>
 

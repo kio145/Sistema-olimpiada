@@ -83,12 +83,13 @@ export function VistaTutor() {
             <tbody>
               {profile.competidores?.map((competidor, index) => {
                 const estadoValidacion = competidor.pivot?.estado_validacion?.toLowerCase() || '';
+                const motivoRechazoData = competidor.pivot?.motivo_rechazo || 'No disponible';
 
                 // Determinar estado de inscripción basado en estado de validación
                 let estadoInscripcion = '';
                 if (estadoValidacion === 'pendiente') {
                   estadoInscripcion = 'En espera de validación';
-                } else if (estadoValidacion === 'aceptada') {
+                } else if (estadoValidacion === 'aceptado') {
                   estadoInscripcion = 'En espera de pago';
                 } else if (estadoValidacion === 'rechazado') {
                   estadoInscripcion = 'Rechazado';
@@ -118,10 +119,49 @@ export function VistaTutor() {
                               state: {
                                 tutor: profile,
                                 competidor,
-                                // Puedes agregar competencia si la tienes aquí
                               }
                             });
                           }}
+                          
+                        >
+                          {estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)}
+                        </a>
+                      ) : (
+                        estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)
+                      )}
+                      {estadoValidacion === 'aceptado' ? (
+                        <a
+                          href="#"
+                          onClick={e => {
+                            e.preventDefault();
+                            navigate('/inscripcion-aceptada', {
+                              state: {
+                                tutor: profile,
+                                competidor,
+                              }
+                            });
+                          }}
+                          
+                        >
+                          {estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)}
+                        </a>
+                      ) : (
+                        estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)
+                      )}
+                      {estadoValidacion === 'rechazado' ? (
+                        <a
+                          href="#"
+                          onClick={e => {
+                            e.preventDefault();
+                            navigate('/inscripcion-rechazada', {
+                              state: {
+                                tutor: profile,
+                                competidor,
+                                motivo_rechazo: motivoRechazoData,
+                              }
+                            });
+                          }}
+                          
                         >
                           {estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)}
                         </a>

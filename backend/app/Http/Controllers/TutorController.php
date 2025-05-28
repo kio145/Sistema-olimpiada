@@ -63,8 +63,6 @@ class TutorController extends Controller
     public function show(int $id): JsonResponse
 {
     $tutor = Tutor::with('competidores.competencias')->findOrFail($id);
-
-
     return response()->json($tutor, 200);
 }
 
