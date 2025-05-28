@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\RequisitoCompetencia;
+use App\Models\Fecha; 
 use App\Models\Competencia;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -95,10 +96,16 @@ class CompetenciaController extends Controller
      */
    public function show(int $id): JsonResponse
 {
-    // Carga también requisitos y fechas
-    $c = Competencia::with(['requisitos','fechas'])
-                    ->findOrFail($id);
-    return response()->json($c, 200);
+     // Cargo competencia con sus requisitos (pero NO con 'fechas')
+        $competencia = Competencia::with('requisitos')->findOrFail($id);
+
+        // Traigo el único registro de fechas (asumo que siempre hay uno)
+        $fechasGlobal = Fecha::first();
+
+        // Adjuntarlo como atributo “fechas” al JSON
+        $competencia->setAttribute('fechas', $fechasGlobal);
+
+        return response()->json($competencia, 200);
 }
 
     /**
@@ -137,15 +144,21 @@ class CompetenciaController extends Controller
      * GET /api/competencias/todas
      * Obtener todas las competencias con sus relaciones.
      */
-    public function getTodasLasCompetencias(): JsonResponse
+   public function getTodasLasCompetencias(): JsonResponse
     {
         $competencias = Competencia::with(['administrador','competidores','requisitos'])
             ->orderBy('areacompetencia','asc')
             ->get();
 
+        $fechasGlobal = Fecha::first();
+
+        // Para cada competencia, adjunto las mismas fechas globales
+        foreach ($competencias as $comp) {
+            $comp->setAttribute('fechas', $fechasGlobal);
+        }
+
         return response()->json($competencias, 200);
     }
-
     /**
      * GET /api/competencias/estado-inscripcion
      * Determinar si la inscripción está abierta según las fechas en tabla 'fechas'.

@@ -91,9 +91,6 @@ class Competencia extends Model
     {
         return $this->hasMany(RequisitoCompetencia::class, 'idcompetencia');
     }
-     public function fechas()
-    {
-        return $this->hasOne(Fecha::class, 'idcompetencia');
-    }
+   
 
 }

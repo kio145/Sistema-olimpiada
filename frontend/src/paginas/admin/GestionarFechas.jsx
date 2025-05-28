@@ -5,9 +5,6 @@ import '../../css/GestionarFechas.css';
 import api from '../../api/api';
 
 export function GestionarFechas() {
-  const [competencias, setCompetencias] = useState([]);
-  const [selectedComp, setSelectedComp] = useState(null);
-
   const [registro, setRegistro] = useState(null);
   const [etapas, setEtapas]     = useState([]);
   const [errors, setErrors]     = useState({});
@@ -25,39 +22,26 @@ export function GestionarFechas() {
     { key: 'competencia', label: 'Periodo de competiciones', inicioField: 'fecha_inicio_competencia', finField: 'fecha_fin_competencia' },
   ];
 
-  // 1) Al montar: cargo competencias y todas las fechas
+  // 1) Al montar: cargo el único registro de fechas (si existe)
   useEffect(() => {
-    Promise.all([
-      api.get('/competencias/todas'),
-      api.get('/fechas'),
-    ])
-    .then(([cResp, fResp]) => {
-      setCompetencias(cResp.data);
-      setAllFechas(fResp.data);
-    })
-    .catch(console.error);
+    api.get('/fechas')
+      .then(res => {
+        const data = res.data;
+        // si me devuelve un array, cojo el primero
+        const f = Array.isArray(data) && data.length > 0 ? data[0] : null;
+        setRegistro(f);
+        // inicializo las etapas (con valores o vacíos)
+        setEtapas(config.map(c => ({
+          label: c.label,
+          inicio: f?.[c.inicioField] ?? '',
+          fin:    f?.[c.finField]    ?? ''
+        })));
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Error al cargar las fechas.');
+      });
   }, []);
-
-  // guardo todas las fechas y luego filtramos por compu que elija
-  const [allFechas, setAllFechas] = useState([]);
-
-  // 2) Cuando cambie la competencia seleccionada, rellenar etapas
-  useEffect(() => {
-    if (!selectedComp) {
-      setRegistro(null);
-      setEtapas([]);
-      return;
-    }
-    // buscar fecha existente
-    const f = allFechas.find(x => x.idcompetencia === +selectedComp) || null;
-    setRegistro(f);
-    // inicializar etapas: si f existe, con sus campos; si no, vacíos
-    setEtapas(config.map(c => ({
-      label: c.label,
-      inicio: f?.[c.inicioField] ?? '',
-      fin:    f?.[c.finField]    ?? ''
-    })));
-  }, [selectedComp, allFechas]);
 
   const abrirModal = idx => {
     setErrors({});
@@ -69,10 +53,12 @@ export function GestionarFechas() {
     });
   };
   const cerrarModal = () => setModal(m => ({ ...m, abierto: false }));
-  
+
   const aplicarCambios = async () => {
     const { indice, inicio, fin } = modal;
     const { inicioField, finField } = config[indice];
+
+    // validaciones locales
     if (!inicio || !fin) {
       setErrors({ modal: 'Ambas fechas son requeridas.' });
       return;
@@ -82,10 +68,8 @@ export function GestionarFechas() {
       return;
     }
 
-    // payload parcial
-    const payload = { idcompetencia: +selectedComp };
-    payload[inicioField] = inicio;
-    payload[finField]    = fin;
+    // payload con sólo los campos que cambiaron
+    const payload = { [inicioField]: inicio, [finField]: fin };
 
     try {
       let resp;
@@ -93,15 +77,19 @@ export function GestionarFechas() {
         // existe → PUT
         resp = await api.put(`/fechas/${registro.idfecha}`, payload);
       } else {
-        // no existe → POST
-        resp = await api.post(`/fechas`, payload);
+        // no existe → POST (Laravel llenará idcompetencia con null o lo que definas)
+        resp = await api.post('/fechas', payload);
       }
-      // actualizo lista local de fechas y cierro modal
       const nueva = resp.data;
-      setAllFechas(fs => {
-        const filtradas = fs.filter(x => x.idfecha !== nueva.idfecha);
-        return [...filtradas, nueva];
+      setRegistro(nueva);
+
+      // actualizo localmente las etapas
+      setEtapas(es => {
+        const clone = [...es];
+        clone[indice] = { ...clone[indice], inicio, fin };
+        return clone;
       });
+
       cerrarModal();
     } catch (err) {
       if (err.response?.status === 422) {
@@ -115,55 +103,35 @@ export function GestionarFechas() {
 
   return (
     <div className="contenedor-fechas">
-      <h2>Gestionar fechas por Competencia</h2>
+      <h2>Gestionar fechas globales</h2>
+      <p>Fechas de inicio y fin actuales:</p>
 
-      <div className="selector-comp">
-        <label>Competencia:&nbsp;
-          <select
-            value={selectedComp ?? ''}
-            onChange={e => setSelectedComp(e.target.value || null)}
-          >
-            <option value="">— Elige una competencia —</option>
-            {competencias.map(c => (
-              <option key={c.idcompetencia} value={c.idcompetencia}>
-                {c.areacompetencia} ({c.nivelcompetencia})
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <table className="tabla-fechas">
+        <thead>
+          <tr>
+            <th>Etapa</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Fin</th>
+            <th>Editar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {etapas.map((e, i) => (
+            <tr key={i}>
+              <td>{e.label}</td>
+              <td>{e.inicio}</td>
+              <td>{e.fin}</td>
+              <td>
+                <button className="editar-btn" onClick={() => abrirModal(i)}>
+                  <FaEdit />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-      {selectedComp && (
-        <>
-          <p>Fechas de inicio y fin actuales:</p>
-          <table className="tabla-fechas">
-            <thead>
-              <tr>
-                <th>Etapa</th>
-                <th>Fecha de Inicio</th>
-                <th>Fecha de Fin</th>
-                <th>Editar fechas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {etapas.map((f, i) => (
-                <tr key={i}>
-                  <td>{f.label}</td>
-                  <td>{f.inicio}</td>
-                  <td>{f.fin}</td>
-                  <td>
-                    <button className="editar-btn" onClick={() => abrirModal(i)}>
-                      <FaEdit/>
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
-
-      {!!modal.abierto && (
+      {modal.abierto && (
         <div className="modal-gestion">
           <div className="modal-contenido">
             <h3>Editar: {etapas[modal.indice].label}</h3>
