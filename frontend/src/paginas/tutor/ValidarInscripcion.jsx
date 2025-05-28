@@ -18,6 +18,9 @@ export function ValidarInscripcion() {
       </div>
     );
   }
+   const competenciaActual = competidor.competencias?.find(
+    (c) => c.idcompetencia === competidor.pivot?.idcompetencia
+  );
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [razonRechazo, setRazonRechazo] = useState('');
@@ -56,8 +59,8 @@ export function ValidarInscripcion() {
           <li><strong>Curso:</strong> {competidor.curso || 'No disponible'}</li>
           <li><strong>Departamento:</strong> {competidor.departamento || 'No disponible'}</li>
           <li><strong>Provincia:</strong> {competidor.provincia || 'No disponible'}</li>
-          <li><strong>Área a la que se inscribe:</strong> {competidor.area || 'No disponible'}</li>
-          <li><strong>Nivel/Categoría:</strong> {competidor.nivel || 'No disponible'}</li>
+          <li><strong>Área a la que se inscribe:</strong> {competenciaActual?.areacompetencia || 'No disponible'}</li>
+          <li><strong>Nivel/Categoría:</strong> {competenciaActual?.nivelcompetencia || 'No disponible'}</li>
         </ul>
 
         <h3 className="seccion">II. Datos del Tutor</h3>

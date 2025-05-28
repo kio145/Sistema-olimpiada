@@ -8,7 +8,9 @@ export function InscripcionRechazada() {
  
    const { tutor, competidor,  motivo_rechazo } = state || {};
    console.log('Navegando con state:', { tutor, competidor, motivo_rechazo });
- 
+  if (!competidor) {
+      return <p>No hay datos del competidor.</p>;
+    }
    // Si no vienen datos, redirige o muestra error
    if (!tutor || !competidor) {
      return (
@@ -18,12 +20,15 @@ export function InscripcionRechazada() {
        </div>
      );
    }
+    const competenciaActual = competidor.competencias?.find(
+    (c) => c.idcompetencia === competidor.pivot?.idcompetencia
+    );
 
   return (
     <div className="validar-container">
       <h2 className="titulo">Inscripción rechazada</h2>
 
-      <div className="card">
+      <div className="card-rechazada">
         <h3 className="seccion">I. Datos del Competidor</h3>
         <ul className="lista">
           <li><strong>Nombre/s y Apellido/s:</strong> {competidor.nombrecompetidor} {competidor.apellidocompetidor}</li>
@@ -34,8 +39,8 @@ export function InscripcionRechazada() {
           <li><strong>Curso:</strong> {competidor.curso || 'No disponible'}</li>
           <li><strong>Departamento:</strong> {competidor.departamento || 'No disponible'}</li>
           <li><strong>Provincia:</strong> {competidor.provincia || 'No disponible'}</li>
-          <li><strong>Área a la que se inscribe:</strong> {competidor.area || 'No disponible'}</li>
-          <li><strong>Nivel/Categoría:</strong> {competidor.nivel || 'No disponible'}</li>
+          <li><strong>Área a la que se inscribe:</strong> {competenciaActual?.areacompetencia || 'No disponible'}</li>
+          <li><strong>Nivel/Categoría:</strong> {competenciaActual?.nivelcompetencia || 'No disponible'}</li>
         </ul>
 
         <h3 className="seccion">II. Datos del Tutor</h3>
