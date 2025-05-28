@@ -110,65 +110,43 @@ export function VistaTutor() {
                     <td>{competidor.nombrecompetidor} {competidor.apellidocompetidor}</td>
                     <td className={claseInscripcion}>{estadoInscripcion}</td>
                     <td className={`estado-validacion ${estadoValidacion}`}>
-                      {estadoValidacion === 'pendiente' ? (
-                        <a
-                          href="#"
-                          onClick={e => {
-                            e.preventDefault();
-                            navigate('/validar-inscripcion', {
-                              state: {
-                                tutor: profile,
-                                competidor,
-                              }
-                            });
-                          }}
-                          
-                        >
-                          {estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)}
-                        </a>
-                      ) : (
-                        estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)
-                      )}
-                      {estadoValidacion === 'aceptado' ? (
-                        <a
-                          href="#"
-                          onClick={e => {
-                            e.preventDefault();
-                            navigate('/inscripcion-aceptada', {
-                              state: {
-                                tutor: profile,
-                                competidor,
-                              }
-                            });
-                          }}
-                          
-                        >
-                          {estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)}
-                        </a>
-                      ) : (
-                        estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)
-                      )}
-                      {estadoValidacion === 'rechazado' ? (
-                        <a
-                          href="#"
-                          onClick={e => {
-                            e.preventDefault();
-                            navigate('/inscripcion-rechazada', {
-                              state: {
-                                tutor: profile,
-                                competidor,
-                                motivo_rechazo: motivoRechazoData,
-                              }
-                            });
-                          }}
-                          
-                        >
-                          {estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)}
-                        </a>
-                      ) : (
-                        estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)
-                      )}
-                    </td>
+                    {estadoValidacion === 'pendiente' && (
+                      <a
+                        href="#"
+                        onClick={e => {
+                          e.preventDefault();
+                          navigate('/validar-inscripcion', { state: { tutor: profile, competidor } });
+                        }}
+                      >
+                        Pendiente
+                      </a>
+                    )}
+
+                    {estadoValidacion === 'aceptado' && (
+                      <a
+                        href="#"
+                        onClick={e => {
+                          e.preventDefault();
+                          navigate('/inscripcion-aceptada', { state: { tutor: profile, competidor } });
+                        }}
+                      >
+                        Aceptado
+                      </a>
+                    )}
+
+                    {estadoValidacion === 'rechazado' && (
+                      <a
+                        href="#"
+                        onClick={e => {
+                          e.preventDefault();
+                          navigate('/inscripcion-rechazada', { state: { tutor: profile, competidor, motivo_rechazo: motivoRechazoData } });
+                        }}
+                      >
+                        Rechazado
+                      </a>
+                    )}
+                  </td>
+
                   </tr>
                 );
               })}
