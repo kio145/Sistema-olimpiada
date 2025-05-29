@@ -101,7 +101,7 @@ class CajeroController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        Cajero::destroy($id);
-        return response()->noContent();
+        Competidor::destroy($id);
+        return response()->json(null, 204);
     }
 }

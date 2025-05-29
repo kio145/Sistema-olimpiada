@@ -69,10 +69,6 @@ Route::apiResource('cajeros', CajeroController::class);
 Route::get('cajeros/{id}', [CajeroController::class, 'show']);
 Route::put('cajeros/{id}', [CajeroController::class, 'update']);
 
-//Tutores
-Route::apiResource('tutores', TutorController::class);
-Route::get('tutores/{id}', [TutorController::class, 'show']);
-Route::put('tutores/{id}', [TutorController::class, 'update']);
 
 //Competidores
 Route::apiResource('competidores', CompetidorController::class);
