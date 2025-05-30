@@ -62,14 +62,44 @@ export function ValidarInscripcion() {
   }
 };
 
-  const enviarRechazo = () => {
+   const enviarRechazo = () => {
     if (razonRechazo.trim() === '') {
       alert('Por favor, ingrese una razón.');
       return;
     }
-    alert("❌ Inscripción rechazada\nMotivo: " + razonRechazo);
-    setMostrarModal(false);
-    navigate(-1);
+
+    // Obtener el ID de validación
+    const validarId = competidor.pivot?.validar_id;
+    console.log("validarId:", validarId);
+
+    if (!validarId) {
+      alert('No se pudo obtener el ID de validación.');
+      return;
+    }
+
+    // Llamada a la API para rechazar la inscripción
+    fetch(`http://127.0.0.1:8000/api/validarTutor/${validarId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        estado_validacion: 'rechazado',
+        motivo_rechazo: razonRechazo, // Enviar el motivo de rechazo
+      })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Error actualizando validación');
+      return res.json();
+    })
+    .then(data => {
+      // Después de la respuesta, mostramos un mensaje y redirigimos
+      setMostrarModal(false); // Cierra el modal de rechazo
+      navigate(-1); // Redirige a la pantalla anterior
+    })
+    .catch(err => {
+      alert('Error al rechazar inscripción: ' + err.message);
+    });
   };
 
   return (
