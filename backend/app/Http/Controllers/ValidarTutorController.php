@@ -37,6 +37,7 @@ class ValidarTutorController extends Controller
 
     public function update(Request $request, int $validar_id): JsonResponse
     {
+    try {
         $data = $request->validate([
             'idcompetencia'    => 'sometimes|integer|exists:competencia,idcompetencia',
             'idcompetidor'     => 'sometimes|integer|exists:competidor,idcompetidor',
@@ -50,7 +51,12 @@ class ValidarTutorController extends Controller
         $validarTutor->update($data);
 
         return response()->json($validarTutor);
+    } catch (\Exception $e) {
+        \Log::error("Error actualizando validación: " . $e->getMessage());
+        return response()->json(['error' => 'Error actualizando validación'], 500);
     }
+    }
+
 
     // Nota: Usar el primary key 'validar_id' para show y destroy es más correcto
     public function show(int $validar_id): JsonResponse

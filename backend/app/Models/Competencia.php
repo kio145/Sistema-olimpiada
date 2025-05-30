@@ -81,7 +81,7 @@ class Competencia extends Model
             'validar_tutor',
             'idcompetencia',
             'idcompetidor'
-        )->withPivot('idtutor', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo');
+        )->withPivot('validar_id', 'idtutor', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo');
     }
 
     /**

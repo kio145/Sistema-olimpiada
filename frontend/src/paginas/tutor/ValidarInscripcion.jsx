@@ -24,15 +24,43 @@ export function ValidarInscripcion() {
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [razonRechazo, setRazonRechazo] = useState('');
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
   const validarInscripcion = (respuesta) => {
-    if (respuesta === "si") {
-      alert("✅ Inscripción validada");
-      navigate(-1);
-    } else {
-      setMostrarModal(true);
+  if (respuesta === "si") {
+    const validarId = competidor.pivot?.validar_id; 
+    console.log("validarId:", validarId);
+
+    if (!validarId) {
+      alert('No se pudo obtener el ID de validación.');
+      return;
     }
-  };
+
+    fetch(`http://127.0.0.1:8000/api/validarTutor/${validarId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        estado_validacion: 'aceptado',
+      })
+    })
+    .then(res => {
+      
+      if (!res.ok) throw new Error('Error actualizando validación');
+      return res.json();
+    })
+    .then(data => {
+      setMostrarConfirmacion(true);
+    })
+    .catch(err => {
+      alert('Error al validar inscripción: ' + err.message);
+    });
+
+  } else {
+    setMostrarModal(true);
+  }
+};
 
   const enviarRechazo = () => {
     if (razonRechazo.trim() === '') {
@@ -107,6 +135,22 @@ export function ValidarInscripcion() {
           </div>
         </div>
       )}
+      {mostrarConfirmacion && (
+      <div className="modal-overlay">
+        <div className="modal-contenido">
+          <h3>✅ Inscripción validada</h3>
+          <button
+            className="btn-volver"
+            onClick={() => {
+              setMostrarConfirmacion(false);
+              navigate(-1);
+            }}
+          >
+            Volver
+          </button>
+        </div>
+      </div>
+    )}
     </div>
   );
 }
