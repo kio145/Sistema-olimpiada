@@ -115,19 +115,20 @@
   
   /* Estados de validación */
   .estado-validacion.pendiente {
-    background-color: #fff3cd;
-    color: #b69d53;
-  }
-  
-  .estado-validacion.aceptada {
-    background-color: #d4edda;
-    color: #155724;
-  }
-  
-  .estado-validacion.rechazada {
-    background-color: #f8d7da;
-    color: #a3333e;
-  }
+  background-color: #fff3cd;
+  color: #b69d53;
+}
+
+.estado-validacion.aceptado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-validacion.rechazado {
+  background-color: #f8d7da;
+  color: #a3333e;
+}
+
   .area{
     color: #333;
     font-size: 20px;
