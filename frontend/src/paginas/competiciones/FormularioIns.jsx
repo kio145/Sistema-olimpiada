@@ -1,5 +1,6 @@
+// src/paginas/competiciones/FormularioIns.jsx
 import '../../css/FormularioIns.css';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../api/api';
 
@@ -8,6 +9,10 @@ export function FormularioIns() {
   const { state } = useLocation();
   const { competenciaId } = state || {};
 
+  // Lista de tutores traída del backend
+  const [tutores, setTutores] = useState([]);
+
+  // Formulario ahora incluye idtutor
   const [form, setForm] = useState({
     nombrecompetidor:   '',
     apellidocompetidor: '',
@@ -18,8 +23,18 @@ export function FormularioIns() {
     curso:             '',
     departamento:      '',
     provincia:         '',
+    idtutor:           '',
   });
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Traer tutores disponibles
+    api.get('/tutores')
+      .then(res => setTutores(res.data))
+      .catch(() => {
+        // No detener el formulario por fallo aquí
+      });
+  }, []);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -27,7 +42,6 @@ export function FormularioIns() {
   };
 
   const validar = () => {
-    // Campos requeridos
     const req = [
       'nombrecompetidor',
       'apellidocompetidor',
@@ -35,7 +49,8 @@ export function FormularioIns() {
       'cedulacompetidor',
       'fechanacimiento',
       'curso',
-      'provincia'
+      'provincia',
+      'idtutor'             
     ];
     for (let campo of req) {
       if (!form[campo]?.toString().trim()) {
@@ -43,34 +58,25 @@ export function FormularioIns() {
         return false;
       }
     }
-
-    // Validar email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.emailcompetidor)) {
       setError('Introduce un correo electrónico válido.');
       return false;
     }
-
-    // Cédula numérica (mínimo 6 dígitos)
     if (!/^\d{6,}$/.test(form.cedulacompetidor)) {
       setError('La cédula debe tener al menos 6 dígitos numéricos.');
       return false;
     }
-
-    // Fecha de nacimiento no futura
     const hoy = new Date().setHours(0,0,0,0);
     const nac = new Date(form.fechanacimiento).setHours(0,0,0,0);
     if (nac > hoy) {
       setError('La fecha de nacimiento no puede ser futura.');
       return false;
     }
-
-    // Provincia mínimo 2 caracteres
     if (form.provincia.trim().length < 2) {
       setError('La provincia debe tener al menos 2 caracteres.');
       return false;
     }
-
     return true;
   };
 
@@ -80,12 +86,11 @@ export function FormularioIns() {
     if (!validar()) return;
 
     try {
-      // Usamos un endpoint único para crear competidor e inscripción
-       const { data } = await api.post('/inscripciones/competidor', {        ...form,
+      await api.post('/inscripciones/competidor', {
+        ...form,
         idcompetencia: competenciaId
       });
       navigate('/confirmacion');
-
     } catch (e) {
       console.error(e);
       if (e.response?.data?.errors) {
@@ -103,63 +108,68 @@ export function FormularioIns() {
       <h2>Registro de Inscripción</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit} noValidate>
+
+        {/* Nombre y Apellidos */}
         <div className="grupo">
           <div className="campo">
-            <label>Nombre/s *</label>
+            <label>Nombre/s *</label>
             <input
               type="text"
               name="nombrecompetidor"
-              required
               value={form.nombrecompetidor}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="campo">
-            <label>Apellidos *</label>
+            <label>Apellidos *</label>
             <input
               type="text"
               name="apellidocompetidor"
-              required
               value={form.apellidocompetidor}
               onChange={handleChange}
+              required
             />
           </div>
         </div>
 
+        {/* Correo */}
         <div className="campo">
-          <label>Correo Electrónico *</label>
+          <label>Correo Electrónico *</label>
           <input
             type="email"
             name="emailcompetidor"
-            required
             value={form.emailcompetidor}
             onChange={handleChange}
+            required
           />
         </div>
 
+        {/* Cédula y Fecha de Nacimiento */}
         <div className="grupo">
           <div className="campo">
-            <label>Cédula de Identidad *</label>
+            <label>Cédula de Identidad *</label>
             <input
               type="text"
               name="cedulacompetidor"
-              required
               value={form.cedulacompetidor}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="campo">
-            <label>Fecha de Nacimiento *</label>
+            <label>Fecha de Nacimiento *</label>
             <input
               type="date"
               name="fechanacimiento"
-              required
               value={form.fechanacimiento}
               onChange={handleChange}
+              required
             />
           </div>
         </div>
 
+        {/* Colegio y Curso */}
         <div className="grupo">
           <div className="campo">
             <label>Unidad Educativa</label>
@@ -171,12 +181,12 @@ export function FormularioIns() {
             />
           </div>
           <div className="campo">
-            <label>Curso *</label>
+            <label>Curso *</label>
             <select
               name="curso"
-              required
               value={form.curso}
               onChange={handleChange}
+              required
             >
               <option value="">— Selecciona —</option>
               <option>1ro Primaria</option>
@@ -195,14 +205,15 @@ export function FormularioIns() {
           </div>
         </div>
 
+        {/* Departamento y Provincia */}
         <div className="grupo">
           <div className="campo">
-            <label>Departamento *</label>
+            <label>Departamento *</label>
             <select
               name="departamento"
-              required
               value={form.departamento}
               onChange={handleChange}
+              required
             >
               <option value="">— Selecciona —</option>
               <option>Cochabamba</option>
@@ -217,16 +228,34 @@ export function FormularioIns() {
             </select>
           </div>
           <div className="campo">
-            <label>Provincia *</label>
+            <label>Provincia *</label>
             <input
               type="text"
               name="provincia"
-              required
               placeholder="Escribe tu provincia"
               value={form.provincia}
               onChange={handleChange}
+              required
             />
           </div>
+        </div>
+
+        {/* Selección de Tutor */}
+        <div className="campo">
+          <label>Tutor *</label>
+          <select
+            name="idtutor"
+            value={form.idtutor}
+            onChange={handleChange}
+            required
+          >
+            <option value="">— Elige un tutor —</option>
+            {tutores.map(t => (
+               <option key={t.idtutor} value={t.idtutor}>
+                 {t.nombretutor} {t.apellidotutor}
+                  </option>
+                  ))}
+          </select>
         </div>
 
         <button type="submit" className="submit-btn">

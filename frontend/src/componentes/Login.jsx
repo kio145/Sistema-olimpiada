@@ -35,7 +35,7 @@ export function Login() {
     console.log('Login ok:', role, user);
 
     // 3) Guardamos token y configuramos el header
-    localStorage.setItem('token', token);
+   localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(user));
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 

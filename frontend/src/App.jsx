@@ -11,7 +11,7 @@ import { Tutor } from './paginas/sesion/Tutor';
 import { PerfilEstudiante } from './paginas/sesion/Perfil';
 import { EditarPerfil } from './paginas/sesion/EditarPerfil';
 import { RegistroEstudiante } from './paginas/registro/RegistroEstudiante';
-import { RegistroAdministrador} from './paginas/registro/RegistroAdmin';
+import { RegistroAdministrador } from './paginas/registro/RegistroAdmin';
 import { RegistroCajero } from './paginas/registro/RegistroCajero';
 import { RegistroTutor } from './paginas/registro/RegistroTutor';
 import { Competiciones } from './paginas/competiciones/Competiciones';
@@ -28,27 +28,24 @@ import { ListadoPagos } from './paginas/admin/ListadoPagos';
 import { ListadoCompeticiones } from './paginas/admin/ListadoCompeticiones';
 import { NuevaCompetencia } from './paginas/admin/NuevaCompetencia';
 import { GestionarFechas } from './paginas/admin/GestionarFechas';
-import { ValidarInscripcion } from './paginas/tutor/ValidarInscripcion';
+import { ValidarInscripcion } from "./paginas/tutor/ValidarInscripcion";
 import { InscripcionValidada } from './paginas/tutor/InscripcionValidada';
 import { InscripcionRechazada } from './paginas/tutor/InscripcionRechazada';
 import { Login } from './componentes/Login';
 import { FormularioEdicionPerfil } from './paginas/formularios/FormularioEdicionPerfil';
-import { FormularioIns } from './paginas/competiciones/FormularioIns'
-
-
-
+import { FormularioIns } from './paginas/competiciones/FormularioIns';
 
 function App() {
   return (
     <BrowserRouter>
-      <Barra/>
+      <Barra />
       <Routes>
-        <Route path="/" element={<Navigate to="/inicio" />} />
+        <Route path="/" element={<Navigate to="/inicio" replace />} />
         <Route path="/inicio" element={<Inicio />} />
         <Route path="/informacion-inscripciones" element={<InfoInscripcion />} />
 
-        {/* Formularios de sesión y registro */}
-       <Route path="/login" element={<Login key={Math.random()} />} />
+        {/* Login y Sesiones */}
+        <Route path="/login" element={<Login key={Math.random()} />} />
         <Route path="/sesion-estudiante" element={<Estudiante />} />
         <Route path="/sesion-cajero" element={<Cajero />} />
         <Route path="/sesion-admin" element={<Admin />} />
@@ -57,33 +54,51 @@ function App() {
         {/* Paneles */}
         <Route path="/vista-admin" element={<VistaAdmin />} />
         <Route path="/vista-cajero" element={<VistaCajero />} />
-        <Route path="/vista-tutor" element={<VistaTutor />} />
+        
 
-        {/* Resto de rutas... */}
+        {/* Perfil */}
         <Route path="/perfil-estudiante" element={<PerfilEstudiante />} />
         <Route path="/editar-perfil" element={<EditarPerfil />} />
-        <Route path="/editar-perfil"   element={<FormularioEdicionPerfil />} />
+        <Route path="/editar-perfil" element={<FormularioEdicionPerfil />} />
+
+        {/* Registro */}
         <Route path="/registro" element={<RegistroEstudiante />} />
         <Route path="/registro-admin" element={<RegistroAdministrador />} />
         <Route path="/registro-cajero" element={<RegistroCajero />} />
         <Route path="/registro-tutor" element={<RegistroTutor />} />
+
+        {/* Competiciones */}
         <Route path="/competiciones" element={<Competiciones />} />
-        <Route path="/area" element={<Area />} />
+        {/* Parámetro dinámico para cargar un área concreta */}
+        <Route path="/area/:id" element={<Area />} />
+        {/* Listado de inscripciones para un competidor, etc. */}
         <Route path="/inscripcion" element={<Inscripcion />} />
+        {/* Formulario de inscripción separado para evitar conflictos */}
+        <Route path="/inscripcion/registro" element={<FormularioIns />} />
         <Route path="/confirmacion" element={<Confirmacion />} />
+
+        {/* Cajero */}
         <Route path="/generar-boleta" element={<Boleta />} />
         <Route path="/pago-boleta" element={<Pago />} />
+
+        {/* Admin */}
         <Route path="/listado-postulantes" element={<ListadoPostulantes />} />
         <Route path="/listado-pagos" element={<ListadoPagos />} />
         <Route path="/listado-competiciones" element={<ListadoCompeticiones />} />
         <Route path="/nueva-competencia" element={<NuevaCompetencia />} />
         <Route path="/gestionar-fechas" element={<GestionarFechas />} />
-        <Route path="/validar-inscripcion" element={<ValidarInscripcion />} />
-        <Route path="/inscripcion-aceptada" element={<InscripcionValidada />} />
-        <Route path="/inscripcion-rechazada" element={<InscripcionRechazada />} />
-        <Route path="/area/:id" element={<Area />} />
-        <Route path="/inscripcion" element={<FormularioIns />} />
-        <Route path="/confirmacion" element={<Confirmacion />} />
+
+        {/* Tutor: validación con parámetro dinámico */}
+        
+        <Route path="/validar-inscripcion/:validarId" element={<ValidarInscripcion />} />
+        <Route path="/inscripcion-aceptada/:validarId" element={<InscripcionValidada />} />
+        <Route path="/inscripcion-rechazada/:validarId" element={<InscripcionRechazada />} />
+
+        <Route path="/vista-tutor" element={<VistaTutor />} />
+
+
+        {/* Fallback: si no coincide ninguna ruta */}
+        <Route path="*" element={<Navigate to="/inicio" replace />} />
       </Routes>
     </BrowserRouter>
   );

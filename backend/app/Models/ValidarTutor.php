@@ -4,22 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Model;
-/**
- * 
- *
- * @property int|null $idcompetencia
- * @property int|null $idcompetidor
- * @property int|null $idtutor
- * @property string|null $tipo_tutor
- * @method static \Illuminate\Database\Eloquent\Builder|CompetidorTutor newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CompetidorTutor newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CompetidorTutor query()
- * @method static \Illuminate\Database\Eloquent\Builder|CompetidorTutor whereIdcompetencia($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CompetidorTutor whereIdcompetidor($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CompetidorTutor whereIdtutor($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CompetidorTutor whereTipoTutor($value)
- * @mixin \Eloquent
- */
+
 class ValidarTutor extends Model
 {
     protected $table = 'validar_tutor';
@@ -35,4 +20,22 @@ class ValidarTutor extends Model
         'estado_validacion',
         'motivo_rechazo',
     ];
+
+    public function competidor()
+    {
+        return $this->belongsTo(
+            Competidor::class,
+            'idcompetidor',     
+            'idcompetidor'      
+        );
+    }
+
+    public function competencia()
+    {
+        return $this->belongsTo(
+            Competencia::class,
+            'idcompetencia',     
+            'idcompetencia'      
+        );
+    }
 }

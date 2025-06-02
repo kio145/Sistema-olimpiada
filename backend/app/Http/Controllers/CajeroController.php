@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Cajero;
@@ -7,14 +6,26 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Arr;              
-use Illuminate\Validation\Rule; 
+use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
 class CajeroController extends Controller
 {
     public function index()
     {
         return response()->json(Cajero::all());
+    }
+
+    public function me(Request $request): JsonResponse
+    {
+        // 1) obtenemos el usuario autenticado (en la tabla "users", gracias a sanctum)
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
+        // 2) buscamos al cajero cuyo profile_id coincide con $user->profile_id
+        $cajero = Cajero::findOrFail($user->profile_id);
+
+        return response()->json($cajero, 200);
     }
 
     public function store(Request $request)
@@ -43,14 +54,14 @@ class CajeroController extends Controller
         ]);
 
         return response()->json([
-            'cajero' => $cajero,
-            'usuario'    => $user,
+            'cajero'  => $cajero,
+            'usuario' => $user,
         ], 201);
     }
 
     public function show(int $id): JsonResponse
     {
-        $cajero = Cajero::findOrFail((int) $id);
+        $cajero = Cajero::findOrFail($id);
         return response()->json($cajero, 200);
     }
 
@@ -75,12 +86,12 @@ class CajeroController extends Controller
             $path = $request->file('imagencajero')->store('cajeros', 'public');
             $data['imagencajero'] = $path;
         }
-        
+
         $cajero->update(Arr::except($data, ['passwordcajero']));
 
-         $user = User::where('profile_type', Cajero::class)
-            ->where('profile_id', $id)
-            ->first();
+        $user = User::where('profile_type', Cajero::class)
+                    ->where('profile_id', $id)
+                    ->first();
 
         if ($user) {
             $userUpdates = [];
@@ -101,7 +112,7 @@ class CajeroController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        Competidor::destroy($id);
+        Cajero::destroy($id);
         return response()->json(null, 204);
     }
 }

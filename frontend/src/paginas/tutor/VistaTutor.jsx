@@ -1,43 +1,40 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import '../../css/VistaTutor.css';
-import api from '../../api/api';
+// src/paginas/tutor/VistaTutor.jsx
+
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import "../../css/VistaTutor.css";
+import api from "../../api/api";
 
 export function VistaTutor() {
   const { state } = useLocation();
   const navigate   = useNavigate();
   const user       = state?.user;
-  const [profile, setProfile]           = useState(null);
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-
     if (!user?.profile_id) {
-      return navigate('/login');
+      navigate("/login");
+      return;
     }
-
-    const tutorId = user.profile_id;
-
-    api.get(`/tutores/${tutorId}`)
+    api.get(`/tutores/${user.profile_id}`)
       .then(res => setProfile(res.data))
       .catch(() => {
-        localStorage.removeItem('token');
-        navigate('/login');
+        localStorage.removeItem("token");
+        navigate("/login");
       });
   }, [user, navigate]);
-  
+
   if (!profile) {
     return <p>Cargando perfil…</p>;
   }
 
-  const initials = `${profile.nombretutor?.[0] || ''}${profile.apellidotutor?.[0] || ''}`.toUpperCase();
+  const initials = (
+    (profile.nombretutor?.[0] || "") +
+    (profile.apellidotutor?.[0] || "")
+  ).toUpperCase();
 
   return (
     <div className="tutor-container">
-      {/* Cabecera */}
-        <div className="perfil-container">
-      {/* Cabecera */}
       <div className="perfil-header">
         <div className="foto-perfil">
           <div className="circulo">
@@ -51,91 +48,86 @@ export function VistaTutor() {
           </h2>
           <div className="botones-admin">
             <Link
-             to="/editar-perfil"
-             className="btn-editar-admin"
-             state={{ user }}
-              >
-                Editar perfil ✎
-              </Link>
-            <Link
-              to="/inicio"
+              to="/editar-perfil"
+              className="btn-editar-admin"
+              state={{ user }}
+            >
+              Editar perfil ✎
+            </Link>
+            <button
               className="btn-cerrar-admin"
               onClick={() => {
-                localStorage.removeItem('token');
-                navigate('/inicio');
+                localStorage.removeItem("token");
+                navigate("/inicio");
               }}
             >
               Cerrar Sesión
-            </Link>
+            </button>
           </div>
         </div>
-      </div> 
+      </div>
 
-        <hr />
+      <hr />
 
-        <h3 className="titulo-tabla">Listado de tus competidores :</h3>
+      <h3 className="titulo-tabla">Listado de tus competidores :</h3>
+      <div className="tabla-wrapper">
+        <table className="tabla-competidores">
+          <thead>
+            <tr>
+              <th>Nombre y Apellidos del Competidor</th>
+              <th>Estado de Inscripción</th>
+              <th>Estado de Validación</th>
+            </tr>
+          </thead>
+          <tbody>
+            {profile.competidores?.map((competidor, index) => {
+              const p = competidor.pivot || {};
+              const estado = (p.estado_validacion || "").toLowerCase();
+              // p.validar_id es el PK en validar_tutor
+              const validarId = p.validar_id;
 
-        <div className="tabla-wrapper">
-            <table className="tabla-competidores">
-            <thead>
-                <tr>
-                <th>Nombre y Apellidos del Competidor</th>
-                <th>Estado de Inscripción</th>
-                <th>Estado de Validación</th>
+              // Texto legible:
+              let textoIns = "";
+              if (estado === "pendiente") textoIns = "En espera de validación";
+              else if (estado === "aceptada") textoIns = "En espera de pago";
+              else if (estado === "rechazado") textoIns = "Rechazado";
+
+              // Clases de estilo:
+              let claseIns = "estado-inscripcion ";
+              if (estado === "pendiente") claseIns += "espera-validacion";
+              else if (estado === "aceptada") claseIns += "espera-pago";
+              else claseIns += "rechazada";
+
+              // Ruta dinámica según el estado de validación:
+              let ruta = "#";
+              if (estado === "pendiente") {
+                ruta = `/validar-inscripcion/${validarId}`;
+              } else if (estado === "aceptada") {
+                ruta = `/inscripcion-aceptada/${validarId}`;
+              } else if (estado === "rechazado") {
+                ruta = `/inscripcion-rechazada/${validarId}`;
+              }
+
+              return (
+                <tr key={index}>
+                  <td>
+                    {competidor.nombrecompetidor}{" "}
+                    {competidor.apellidocompetidor}
+                  </td>
+                  <td className={claseIns}>{textoIns}</td>
+                  <td className={`estado-validacion ${estado}`}>
+                    <Link to={ruta}>
+                      {estado.charAt(0).toUpperCase() + estado.slice(1)}
+                    </Link>
+                  </td>
                 </tr>
-            </thead>
-            <tbody>
-  {profile.competidores?.map((competidor, index) => {
-  const estadoValidacion = competidor.pivot?.estado_validacion?.toLowerCase() || '';
-
-  // Determinar estado de inscripción basado en estado de validación
-  let estadoInscripcion = '';
-  if (estadoValidacion === 'pendiente') {
-    estadoInscripcion = 'En espera de validación';
-  } else if (estadoValidacion === 'aceptada') {
-    estadoInscripcion = 'En espera de pago';
-  } else if (estadoValidacion === 'rechazado') {
-    estadoInscripcion = 'Rechazado';
-  }
-
-  let claseInscripcion = '';
-  if (estadoInscripcion === 'En espera de validación') {
-    claseInscripcion = 'estado-inscripcion espera-validacion';
-  } else if (estadoInscripcion === 'En espera de pago') {
-    claseInscripcion = 'estado-inscripcion espera-pago';
-  } else {
-    claseInscripcion = 'estado-inscripcion rechazada';
-  }
-
-  // Link según validación
-  let link = '#';
-  if (estadoValidacion === 'pendiente') {
-    link = '/validar-inscripcion';
-  } else if (estadoValidacion === 'aceptada') {
-    link = '/inscripcion-aceptada';
-  } else if (estadoValidacion === 'rechazado') {
-    link = '/inscripcion-rechazada';
-  }
-
-  return (
-    <tr key={index}>
-      <td>{competidor.nombrecompetidor} {competidor.apellidocompetidor}</td>
-      <td className={claseInscripcion}>{estadoInscripcion}</td>
-      <td className={`estado-validacion ${estadoValidacion}`}>
-        <a href={link}>{estadoValidacion.charAt(0).toUpperCase() + estadoValidacion.slice(1)}</a>
-      </td>
-    </tr>
-  );
-})}
-
-</tbody>
-
-            </table>
-            <script>
-                
-            </script>
-        </div>
-        </div>
-      </div> 
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
+
+export default VistaTutor;

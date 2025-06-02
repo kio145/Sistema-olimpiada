@@ -1,6 +1,7 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+// src/paginas/sesion/PerfilEstudiante.jsx
+
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import '../../css/Perfil.css';
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import api from '../../api/api';
 
@@ -8,18 +9,16 @@ export function PerfilEstudiante() {
   const { state } = useLocation();
   const navigate   = useNavigate();
   const user       = state?.user;
-  const [profile, setProfile]           = useState(null);
+  const [profile, setProfile] = useState(null);
   const [inscripciones, setInscripciones] = useState([]);
 
   useEffect(() => {
-    // Si no hay user o no tiene profile_id, volvemos a login
     if (!user?.profile_id) {
       return navigate('/login');
     }
-
     const competidorId = user.profile_id;
 
-    // 1) Obtener perfil completo de competidor
+    // 1) Cargo datos del competidor
     api.get(`/competidores/${competidorId}`)
       .then(res => setProfile(res.data))
       .catch(() => {
@@ -27,7 +26,7 @@ export function PerfilEstudiante() {
         navigate('/login');
       });
 
-    // 2) Obtener inscripciones de este competidor (relacionadas con competencias)
+    // 2) Cargo sus inscripciones
     api.get('/inscripciones', { params: { idcompetidor: competidorId } })
       .then(res => setInscripciones(res.data))
       .catch(console.error);
@@ -38,12 +37,14 @@ export function PerfilEstudiante() {
     return <p>Cargando perfil…</p>;
   }
 
-  // Construimos iniciales
-  const initials = `${profile.nombrecompetidor?.[0] || ''}${profile.apellidocompetidor?.[0] || ''}`.toUpperCase();
+  const initials = (
+    (profile.nombrecompetidor?.[0] || '') +
+    (profile.apellidocompetidor?.[0] || '')
+  ).toUpperCase();
 
   return (
     <div className="perfil-container">
-      {/* Cabecera */}
+      {/* Cabecera del estudiante */}
       <div className="perfil-header">
         <div className="foto-perfil">
           <div className="circulo">
@@ -57,12 +58,12 @@ export function PerfilEstudiante() {
           </h2>
           <div className="botones-admin">
             <Link
-             to="/editar-perfil"
-             className="btn-editar-admin"
-             state={{ user }}
-              >
-                Editar perfil ✎
-              </Link>
+              to="/editar-perfil"
+              className="btn-editar-admin"
+              state={{ user }}
+            >
+              Editar perfil ✎
+            </Link>
             <Link
               to="/inicio"
               className="btn-cerrar-admin"
@@ -85,26 +86,33 @@ export function PerfilEstudiante() {
         <p>No te has inscrito en ninguna competencia aún.</p>
       ) : (
         inscripciones.map(insc => {
-          // comprobamos que venga la relación 'competencia'
           if (!insc.competencia) return null;
+
+          // Determino el texto según el estado real en la BD:
+          let textoEstado = '';
+          if (insc.estado_inscripcion === 'inscrito') {
+            textoEstado = 'Inscrito';
+          } else if (insc.estado_inscripcion === 'rechazado') {
+            textoEstado = 'Rechazado';
+          } else {
+            textoEstado = 'En espera de validación';
+          }
+
           return (
             <div className="tarjeta-competencia" key={insc._inscripcion_id}>
               <div className="imagen-competencia">
-                {/* <img src={insc.competencia.imagencompetencia} alt="" /> */}
+                {/* Si maneja imagen:
+                <img
+                  src={`${api.defaults.baseURL}/storage/${insc.competencia.imagencompetencia}`}
+                  alt={insc.competencia.areacompetencia}
+                /> */}
               </div>
               <div className="info-competencia">
                 <strong>{insc.competencia.areacompetencia}</strong>
                 <p>Nivel: {insc.competencia.nivelcompetencia}</p>
-                <p
-                  className={`estado ${
-                    insc.estado_inscripcion === 'inscrito' ? 'inscrito' : 'espera'
-                  }`}
-                >
+                <p className={`estado ${insc.estado_inscripcion}`}>
                   <span className="punto" />
-                  Estado:{' '}
-                  {insc.estado_inscripcion === 'inscrito'
-                    ? 'Inscrito'
-                    : 'En espera de validación'}
+                  Estado: {textoEstado}
                 </p>
               </div>
             </div>
@@ -123,3 +131,5 @@ export function PerfilEstudiante() {
     </div>
   );
 }
+
+export default PerfilEstudiante;

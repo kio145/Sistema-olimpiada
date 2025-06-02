@@ -16,30 +16,34 @@ use App\Http\Controllers\Auth\LoginController;
 
 Route::post('login', [LoginController::class, 'login']);
   Route::get('competencias/todas', [CompetenciaController::class, 'getTodasLasCompetencias']);
+    Route::get('competidores/habilitados', [CompetidorController::class, 'habilitados']);
   Route::apiResource('competidores', CompetidorController::class);
+
 
 
 Route::middleware('auth:sanctum')->group(function () {
   //Administradores
   Route::apiResource('administradores', AdministradorController::class);
 
+  Route::get('cajeros/me', [CajeroController::class, 'me']);
   //Cajeros
   Route::apiResource('cajeros', CajeroController::class);
 
-  //Perfil Tutores
-  Route::apiResource('tutores', TutorController::class)->only(['index', 'show', 'update', 'store', 'destroy']);
-  // Obtener el perfil del tutor que está logueado
+   Route::get('tutores/me',   [TutorController::class, 'me']);
+    Route::put('tutores/me',   [TutorController::class, 'updateMe']);
 
-  Route::get('tutores/me',       [TutorController::class, 'me']);
-  Route::put('tutores/me',       [TutorController::class, 'updateMe']);
+    // Luego la ruta genérica por ID
+     Route::get('tutores/{id}', [TutorController::class, 'show']);
 
-  // (Por si acaso) Obtener el perfil de cualquier tutor por su ID
-  Route::get('tutores/{id}', [TutorController::class, 'show']);
+    // Y después el resto de acciones (index, store, update, destroy)
+    Route::apiResource('tutores', TutorController::class)
+         ->only(['index','store','update','destroy']);
 
   //Competidores
   Route::get('competidores/{id}', [CompetidorController::class, 'show']);
   Route::put('competidores/{id}', [CompetidorController::class, 'update']);
   Route::get('competidores/me', [CompetidorController::class, 'me']);
+
 
   //Competencias
   Route::apiResource('competencias', CompetenciaController::class);
@@ -55,6 +59,8 @@ Route::post('inscripciones/competidor', [InscripcionController::class, 'storeCom
     ->only(['index', 'store', 'show', 'update', 'destroy']);
   //Requisitos-competencia
   Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::class);
+
+  Route::get('validarTutor/{validar_id}', [ValidarTutorController::class, 'show']);
 
   //Relacion competidores-tutores
   Route::apiResource('validarTutor', ValidarTutorController::class)
@@ -87,6 +93,4 @@ Route::apiResource('inscripciones', InscripcionController::class)
 //Requisitos-competencia
 Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::class);
 
-//Relacion competidores-tutores
-Route::apiResource('validarTutor', ValidarTutorController::class)
-     ->only(['index', 'store', 'show','update', 'destroy']);
+

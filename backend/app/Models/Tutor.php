@@ -39,7 +39,7 @@ class Tutor extends Model
             'validar_tutor',
             'idtutor',
             'idcompetidor'
-        )->withPivot('idcompetencia', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo');
+        )->withPivot('validar_id', 'idcompetencia', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo');
     }
 
     public function validaciones()

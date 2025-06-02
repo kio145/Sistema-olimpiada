@@ -16,7 +16,6 @@ class BoletaPagoController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'idboleta'        => 'required|integer|unique:boleta_pago,idboleta',
             'idcajero'        => 'required|integer|exists:cajero,idcajero',
             'idcompetidor'    => 'required|integer|exists:competidor,idcompetidor',
             'fecha_emision'   => 'required|date',

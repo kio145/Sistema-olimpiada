@@ -6,6 +6,7 @@ use App\Models\Inscripcion;
 use App\Models\Competidor;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Models\ValidarTutor;
 
 class InscripcionController extends Controller
 {
@@ -13,44 +14,49 @@ class InscripcionController extends Controller
     {
         $query = Inscripcion::with('competencia');
 
+        // Si mandan idcompetidor, lo filtramos
         if ($request->filled('idcompetidor')) {
             $query->where('idcompetidor', $request->input('idcompetidor'));
+        }
+        // Si mandan idcompetencia, lo filtramos también
+        if ($request->filled('idcompetencia')) {
+            $query->where('idcompetencia', $request->input('idcompetencia'));
         }
 
         $inscripciones = $query->get();
         return response()->json($inscripciones, 200);
     }
 
-   // app/Http/Controllers/InscripcionController.php
+    // app/Http/Controllers/InscripcionController.php
 
-public function store(Request $request): JsonResponse
-{
-    $user = $request->user();
-    if (!$user || $user->role !== 'competidor') {
-        return response()->json(['message' => 'No autorizado'], 403);
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if (!$user || $user->role !== 'competidor') {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        // 1) Sólo validamos idcompetencia
+        $data = $request->validate([
+            'idcompetencia' => 'required|integer|exists:competencia,idcompetencia',
+            // 'idtutor' ya no lo pedimos
+        ]);
+
+        // 2) Rellenamos el resto
+        $data['idcompetidor']      = $user->profile_id;
+        $data['estado_inscripcion'] = 'pendiente';
+
+        // 3) Creamos la inscripción
+        $insc = Inscripcion::create($data);
+
+        return response()->json($insc, 201);
     }
 
-    // 1) Sólo validamos idcompetencia
-    $data = $request->validate([
-        'idcompetencia' => 'required|integer|exists:competencia,idcompetencia',
-        // 'idtutor' ya no lo pedimos
-    ]);
-
-    // 2) Rellenamos el resto
-    $data['idcompetidor']      = $user->profile_id;
-    $data['estado_inscripcion'] = 'pendiente';
-
-    // 3) Creamos la inscripción
-    $insc = Inscripcion::create($data);
-
-    return response()->json($insc, 201);
-}
-
- /**
+    /**
      * Crea primero un Competidor y luego su Inscripción
      * POST /api/inscripciones/competidor
      */
-     public function storeCompetidor(Request $request): JsonResponse
+    public function storeCompetidor(Request $request): JsonResponse
     {
         $data = $request->validate([
             'nombrecompetidor'   => 'required|string|max:50',
@@ -63,6 +69,8 @@ public function store(Request $request): JsonResponse
             'departamento'       => 'required|string|max:50',
             'provincia'          => 'required|string|max:50',
             'idcompetencia'      => 'required|integer|exists:competencia,idcompetencia',
+            'idtutor'       => 'required|integer|exists:tutor,idtutor',
+
         ]);
 
         // 1) Buscamos por email; si no existe, creamos uno nuevo
@@ -90,7 +98,16 @@ public function store(Request $request): JsonResponse
             'estado_inscripcion' => 'pendiente',
         ]);
 
-        // 4) Devolvemos ambos recursos
+        // 4) Crear el registro de validación en la tabla pivot
+        ValidarTutor::create([
+            'idcompetencia'     => $data['idcompetencia'],
+            'idcompetidor'      => $competidor->idcompetidor,
+            'idtutor'           => $data['idtutor'],
+            'tipo_tutor'        => 'tutor',
+            'estado_validacion' => 'pendiente',
+        ]);
+
+        // 5) Devolvemos ambos recursos
         return response()->json([
             'competidor'   => $competidor,
             'inscripcion'  => $insc,
