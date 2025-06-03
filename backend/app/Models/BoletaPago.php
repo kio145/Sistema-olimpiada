@@ -2,41 +2,36 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BoletaPago extends Model
 {
-    use HasFactory;
-
-    protected $table = 'boleta_pago';
+    protected $table = 'boleta_pago';    // forzamos el nombre singular
     protected $primaryKey = 'idboleta';
     public $incrementing = true;
     protected $keyType = 'int';
-    public $timestamps = true;
 
     protected $fillable = [
-        'idboleta',
         'idcajero',
-        'id_competidor',
+        'idcompetidor',
         'fecha_emision',
         'montototal',
-        'id_tutor',
+        'id_tutor'
     ];
 
-    public function cajero(): BelongsTo
+      public function competidor()
     {
-        return $this->belongsTo(Cajero::class, 'idcajero', 'idcajero');
+        // Le decimos a Eloquent que la FK en esta tabla es “idcompetidor”
+        return $this->belongsTo(Competidor::class, 'idcompetidor', 'idcompetidor');
     }
 
-    public function competidor(): BelongsTo
-    {
-        return $this->belongsTo(Competidor::class, 'id_competidor', 'idcompetidor');
-    }
-
-    public function tutor(): BelongsTo
+    public function tutor()
     {
         return $this->belongsTo(Tutor::class, 'id_tutor', 'idtutor');
+    }
+
+    public function cajero()
+    {
+        return $this->belongsTo(Cajero::class, 'idcajero', 'idcajero');
     }
 }

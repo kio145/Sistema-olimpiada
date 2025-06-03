@@ -1,71 +1,103 @@
-import { useState } from 'react';
-import imagenCuadro from '/imagenInicio.JPG';
+// src/paginas/competiciones/Area.jsx
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import api from '../../api/api';
 import '../../css/Competiciones.css';
 
 export function Area() {
-  const [mostrarModal, setMostrarModal] = useState(false);
+  const { id }   = useParams();
+  const navigate = useNavigate();
+  const [c, setC]       = useState(null);
+  const [modal, setModal] = useState(false);
 
-  const abrirModal = () => {
-    setMostrarModal(true);
-  };
+  useEffect(() => {
+    api.get(`/competencias/${id}`)
+       .then(res => setC(res.data))
+       .catch(console.error);
+  }, [id]);
 
-  const cerrarModal = () => {
-    setMostrarModal(false);
+  if (!c) return <p>Cargando…</p>;
+
+  const {
+    fechas,
+    areacompetencia,
+    imagencompetencia,
+    preciocompetencia,
+    requisitos,
+    descripcion
+  } = c;
+
+  // Si no hay fechas asociadas, la inscripción NO está abierta
+  let abierta = false;
+  if (fechas?.fecha_inicio_inscripcion && fechas?.fecha_fin_inscripcion) {
+    const hoy        = new Date().setHours(0,0,0,0);
+    const inicio = new Date(fechas.fecha_inicio_inscripcion).setHours(0,0,0,0);
+    const fin    = new Date(fechas.fecha_fin_inscripcion).setHours(0,0,0,0);
+    abierta = hoy >= inicio && hoy <= fin;
+  }
+
+  const handleInscribir = () => {
+    if (!abierta) {
+      setModal(true);
+      return;
+    }
+    // Navegar al formulario de inscripción, pasando el id de competencia
+    navigate('/inscripcion', { state: { competenciaId: id } });
   };
 
   return (
     <main className="main-container">
-      <div className="area-container">
-        <h2>Área : Robótica</h2>
-        <div className="area-content">
-          <div className="area-image">
-            <img src={imagenCuadro} alt="imagen" />
-            <table className="tabla-costo">
-              <tbody>
-                <tr>
-                  <th className="columna-label">Costo por participante</th>
-                  <td className="columna-valor">15 Bs</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      <h2>Área: {areacompetencia}</h2>
 
-          <div className="area-info">
-            <h3>Requisitos</h3>
-            <ul>
-              <li>Nivel Lego P</li>
-              <li>Cursar 5to o 6to de primaria</li>
-              <li>Ser estudiante de nivel primaria en el sistema de Educación Regular del Estado de Bolivia</li>
-              <li>Tener cédula de identidad vigente</li>
-            </ul>
+      {imagencompetencia
+        ? <img
+            src={`${api.defaults.baseURL}/storage/${imagencompetencia}`}
+            alt={areacompetencia}
+            className="area-image"
+          />
+        : <div className="area-image img-placeholder" />
+      }
 
-            <h3>Descripción</h3>
-            <p>
-              Esta categoría está dirigida a los últimos cursos de primaria. Los participantes trabajarán en equipo para construir y programar robots usando kits LEGO, resolviendo divertidos desafíos que estimulan la creatividad, la lógica y el pensamiento crítico.
-            </p>
-          </div>
-        </div>
+      <table className="tabla-costo">
+        <tbody>
+          <tr>
+            <th>Costo por participante</th>
+            <td>{preciocompetencia} Bs</td>
+          </tr>
+        </tbody>
+      </table>
 
-        <div className="area-button">
-          <button className="inscribirse-btn" onClick={abrirModal}>
-            Inscribirse
-          </button>
-          <div class="area-button">
-              <a href="/inscripcion" class="inscribirse-btn">Inscribirse</a>
-            </div>
-        </div>
-      </div>
+      <h3>Requisitos</h3>
+      <ul>
+        {requisitos.map(r =>
+          <li key={r.requisito_id}>{r.curso}</li>
+        )}
+      </ul>
 
-      {mostrarModal && (
+      <h3>Descripción</h3>
+      <p>{descripcion}</p>
+
+      <button
+        onClick={handleInscribir}
+        className="inscribirse-btn"
+      >
+        Inscribirse
+      </button>
+
+      {modal && (
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">Fecha Inválida</div>
             <div className="modal-body">
-              <p>El período de inscripción ha terminado.</p>
-              <p>Usted no puede inscribirse.</p>
+              <p>Se encuentra fuera del periodo de inscripcion</p>
             </div>
             <div className="modal-footer">
-              <button onClick={cerrarModal} className="btn-cerrar">Aceptar</button>
+              <button
+                className="btn-cerrar"
+                onClick={() => setModal(false)}
+              >
+                Aceptar
+              </button>
             </div>
           </div>
         </div>

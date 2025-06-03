@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import '../../css/Inicio.css';
-import { Formulario } from './Formulario';
+import { Formulario } from '../formularios/Formulario';
 
 export function Estudiante() {
   const [mostrarSubmenu, setMostrarSubmenu] = useState(false);

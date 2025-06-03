@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+/* use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory; */
 
-class Tutor extends Model
+class Tutor extends Model 
 {
     use HasFactory;
 
@@ -15,30 +16,34 @@ class Tutor extends Model
     protected $primaryKey = 'idtutor';
     public $incrementing = true;
     protected $keyType = 'int';
-    public $timestamps = true;
 
     protected $fillable = [
-        'idtutor',
+        'user_id',
         'nombretutor',
         'apellidotutor',
-        'tipotutor',
+        'area',
         'telefonotutor',
         'correotutor',
         'citutor',
         'imagentutor',
+    ];
+
+    protected $hidden = [
         'passwordtutor',
     ];
-    protected $hidden = [
-        'passwordcompetidor',
-    ];
 
-    public function competidores(): BelongsToMany
+    public function competidores()
     {
-        return $this->belongsToMany(Competidor::class, 'tiene', 'idtutor', 'idcompetidor');
+        return $this->belongsToMany(
+            Competidor::class,
+            'validar_tutor',
+            'idtutor',
+            'idcompetidor'
+        )->withPivot('validar_id', 'idcompetencia', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo');
     }
 
-    public function boletasPago(): HasMany
+    public function validaciones()
     {
-        return $this->hasMany(BoletaPago::class, 'id_tutor', 'idtutor');
+        return $this->hasMany(ValidarTutor::class, 'idtutor');
     }
 }

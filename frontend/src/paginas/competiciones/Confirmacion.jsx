@@ -1,26 +1,42 @@
+// src/paginas/competiciones/Confirmacion.jsx
 import '../../css/Inicio.css';
-export function Confirmacion(){
-    return (
-        <div class="mensaje-exito">
-        <h2>Inscripción Enviada con Éxito</h2>
-        <h4>Hemos recibido tu inscripción correctamente</h4>
-        
-        <p>Se han enviado tus datos al tutor seleccionado.</p>
-        <p>Para completar el proceso, el tutor deberá:</p>
 
-        <ol>
-            <li><strong>Validar los datos de inscripción</strong> siguiendo las instrucciones del correo</li>
-            <li><strong>Realizar el pago</strong> correspondiente <strong>de forma presencial</strong> en la caja de la Facultad de Ciencias y Tecnología</li>
-        </ol>
+export function Confirmacion() {
+  return (
+    <div className="mensaje-exito">
+      <h2>Inscripción Enviada con Éxito</h2>
+      <h4>Hemos recibido tu inscripción correctamente</h4>
 
-        <div class="advertencia">
-            ⚠️ <em>Recuerda que la inscripción no estará confirmada hasta que se haya validado y efectuado el pago</em>
-        </div>
+      <p>Se han enviado tus datos al tutor seleccionado.</p>
+      <p>Para completar el proceso, el tutor deberá:</p>
 
-        <p class="gracias">¡Gracias por participar en las Olimpiadas Científicas!</p>
+      <ol>
+        <li>
+          <strong>Validar los datos de inscripción</strong> siguiendo las
+          instrucciones del correo
+        </li>
+        <li>
+          <strong>Realizar el pago</strong> correspondiente{' '}
+          <strong>de forma presencial</strong> en la caja de la Facultad de
+          Ciencias y Tecnología
+        </li>
+      </ol>
 
-        <a href="/perfil-estudiante" class="btn-regresar"> ← Regresar a menú de estudiante</a>
-        </div>
+      <div className="advertencia">
+        ⚠️{' '}
+        <em>
+          Recuerda que la inscripción no estará confirmada hasta que se haya
+          validado y efectuado el pago
+        </em>
+      </div>
 
-    )
+      <p className="gracias">¡Gracias por participar en las Olimpiadas Científicas!</p>
+
+      <a href="/perfil-estudiante" className="btn-regresar">
+        ← Regresar a menú de estudiante
+      </a>
+    </div>
+  );
 }
+
+export default Confirmacion;
