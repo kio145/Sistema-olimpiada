@@ -19,7 +19,6 @@ class BoletaPagoSeeder extends Seeder
             'idcompetidor' => 1,
             'fecha_emision' => '2025-05-17',
             'montototal'   => 50,
-            'id_tutor'     => 1,
         ]);
     }
 }
