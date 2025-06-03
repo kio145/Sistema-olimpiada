@@ -110,22 +110,26 @@
   
   .estado-inscripcion.rechazada {
     background-color: #ffe6e6;
-    color: #cc0000;
+    color: #eb1c1c;
   }
   
   /* Estados de validación */
   .estado-validacion.pendiente {
-    background-color: #fff3cd;
-    color: #856404;
+  background-color: #fff3cd;
+  color: #b69d53;
+}
+
+.estado-validacion.aceptado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-validacion.rechazado {
+  background-color: #f8d7da;
+  color: #a3333e;
+}
+
+  .area{
+    color: #333;
+    font-size: 20px;
   }
-  
-  .estado-validacion.aceptada {
-    background-color: #d4edda;
-    color: #155724;
-  }
-  
-  .estado-validacion.rechazada {
-    background-color: #f8d7da;
-    color: #721c24;
-  }
-  

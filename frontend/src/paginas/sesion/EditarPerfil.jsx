@@ -1,5 +1,5 @@
 import '../../css/FormularioIns.css';
-import { FormularioEdicionPerfil } from './FormularioEdicionPerfil';
+import { FormularioEdicionPerfil } from '../formularios/FormularioEdicionPerfil';
 export function EditarPerfil(){
     return (
         <div class="editar-perfil">

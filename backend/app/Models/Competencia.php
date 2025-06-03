@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
+use Illuminate\Database\Eloquent\Builder;
+use App\Models\Administrador;
+use App\Models\Competidor;
+use App\Models\RequisitoCompetencia;
+use App\Models\Fecha;
 class Competencia extends Model
 {
     use HasFactory;
@@ -15,34 +17,80 @@ class Competencia extends Model
     protected $primaryKey = 'idcompetencia';
     public $incrementing = true;
     protected $keyType = 'int';
-    public $timestamps = true;
 
     protected $fillable = [
-        'idcompetencia',
         'idadmi',
         'areacompetencia',
         'nivelcompetencia',
         'preciocompetencia',
-        'estadocompetencia',
-        'fechainicompetencia',
-        'fechafincompetencia',
-        'fechainiinscripcion',
-        'fechafininscripcion',
-        'fechainipago',
-        'fechafinpago',
-        'fechainivalidacion',
-        'fechafinvalidacion',
         'descripcion',
         'imagencompetencia',
     ];
 
-    public function administrador(): BelongsTo
+    /**
+     * Scope para filtrar por área exacta
+     */
+    public function scopeArea(Builder $query, $area)
     {
-        return $this->belongsTo(Administrador::class, 'idadmi', 'idadmi');
+        return $query->when($area, fn(Builder $q) => $q->where('areacompetencia', $area));
     }
 
-    public function competidores(): BelongsToMany
+    
+
+    /**
+     * Scope para filtrar por nivel exacto
+     */
+    public function scopeNivel(Builder $query, $nivel)
     {
-        return $this->belongsToMany(Competidor::class, 'tiene0', 'idcompetencia', 'idcompetidor');
+        return $query->when($nivel, fn(Builder $q) => $q->where('nivelcompetencia', $nivel));
     }
+
+    /**
+     * Scope para rango de precio (min y/o max)
+     */
+    public function scopePrecioBetween(Builder $query, $min, $max)
+    {
+        return $query
+            ->when($min, fn(Builder $q) => $q->where('preciocompetencia', '>=', $min))
+            ->when($max, fn(Builder $q) => $q->where('preciocompetencia', '<=', $max));
+    }
+
+    /**
+     * Scope para búsqueda en descripción (LIKE %texto%)
+     */
+    public function scopeDescripcionLike(Builder $query, $texto)
+    {
+        return $query->when($texto, fn(Builder $q) => $q->where('descripcion', 'like', "%{$texto}%"));
+    }
+
+    /**
+     * Relación con Administrador
+     */
+    public function administrador()
+    {
+        return $this->belongsTo(Administrador::class, 'idadmi');
+    }
+
+    /**
+     * Relación muchos a muchos con Competidor (a través de competidor_tutores)
+     */
+    public function competidores()
+    {
+        return $this->belongsToMany(
+            Competidor::class,
+            'validar_tutor',
+            'idcompetencia',
+            'idcompetidor'
+        )->withPivot('validar_id', 'idtutor', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo');
+    }
+
+    /**
+     * Relación uno a muchos con RequisitoCompetencia
+     */
+    public function requisitos()
+    {
+        return $this->hasMany(RequisitoCompetencia::class, 'idcompetencia');
+    }
+   
+
 }
