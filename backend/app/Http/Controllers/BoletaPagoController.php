@@ -16,16 +16,31 @@ class BoletaPagoController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'idboleta'        => 'required|integer|unique:boleta_pago,idboleta',
             'idcajero'        => 'required|integer|exists:cajero,idcajero',
             'idcompetidor'    => 'required|integer|exists:competidor,idcompetidor',
             'fecha_emision'   => 'required|date',
             'montototal'      => 'required|numeric',
-            'idtutor'         => 'nullable|integer|exists:tutor,idtutor',
+            'inscripciones.*' => 'integer|exists:inscripciones,_inscripcion_id',
         ]);
 
-        $boleta = BoletaPago::create($data);
-        return response()->json($boleta, 201);
+        // 1. Crear la boleta primero
+        $boleta = BoletaPago::create([
+            'idcajero'      => $data['idcajero'],
+            'idcompetidor'  => $data['idcompetidor'],
+            'fecha_emision' => $data['fecha_emision'],
+            'montototal'    => $data['montototal'],
+        ]);
+
+        // 2. Asociar inscripciones a la boleta
+        $boleta->inscripciones()->attach($data['inscripciones']);
+
+        // 3. Actualizar estado de inscripciones
+        \App\Models\Inscripcion::whereIn('_inscripcion_id', $data['inscripciones'])
+            ->update(['estado_inscripcion' => 'inscrito']);
+
+        // 4. Devolver la boleta con relaciones cargadas
+        return response()->json($boleta->load('inscripciones'), 201);
+
     }
 
     public function show(int $id): JsonResponse
@@ -38,7 +53,6 @@ class BoletaPagoController extends Controller
     {
         $boleta = BoletaPago::findOrFail($id);
         $data = $request->validate([
-            'idcajero'      => 'sometimes|integer|exists:cajero,idcajero',
             'idcompetidor'  => 'sometimes|integer|exists:competidor,idcompetidor',
             'fecha_emision' => 'sometimes|date',
             'montototal'    => 'sometimes|numeric',

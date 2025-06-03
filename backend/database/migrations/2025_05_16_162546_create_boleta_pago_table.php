@@ -13,16 +13,22 @@ return new class extends Migration
     {
         Schema::create('boleta_pago', function (Blueprint $table) {
             $table->increments('idboleta');
+             // Referencia al cajero que genera la boleta (asumo tienes tabla cajero)
             $table->unsignedInteger('idcajero')->nullable();
+
+            // Referencia al competidor que paga
             $table->unsignedInteger('idcompetidor')->nullable();
-            $table->unsignedInteger('id_competidor')->nullable();
+
+            
             $table->date('fecha_emision')->nullable();
+
             $table->integer('montototal')->nullable();
-            $table->unsignedInteger('id_tutor')->nullable();
             $table->timestamps();
 
+            // Llaves foráneas
             $table->foreign('idcajero')->references('idcajero')->on('cajero')
                 ->onDelete('restrict')->onUpdate('restrict');
+
             $table->foreign('idcompetidor')->references('idcompetidor')->on('competidor')
                 ->onDelete('restrict')->onUpdate('restrict');
         });

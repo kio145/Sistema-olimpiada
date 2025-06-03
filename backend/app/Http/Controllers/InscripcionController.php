@@ -13,12 +13,18 @@ class InscripcionController extends Controller
     {
         $query = Inscripcion::with('competencia');
 
+        // Si mandan idcompetidor, lo filtramos
         if ($request->filled('idcompetidor')) {
             $query->where('idcompetidor', $request->input('idcompetidor'));
+        }
+        // Si mandan idcompetencia, lo filtramos también
+        if ($request->filled('idcompetencia')) {
+            $query->where('idcompetencia', $request->input('idcompetencia'));
         }
 
         $inscripciones = $query->get();
         return response()->json($inscripciones, 200);
+
     }
 
    // app/Http/Controllers/InscripcionController.php
@@ -40,6 +46,15 @@ public function store(Request $request): JsonResponse
     $data['idcompetidor']      = $user->profile_id;
     $data['estado_inscripcion'] = 'pendiente';
 
+         // Evitar duplicación
+        $existing = Inscripcion::where('idcompetencia', $data['idcompetencia'])
+            ->where('idcompetidor', $data['idcompetidor'])
+            ->first();
+
+        if ($existing) {
+            return response()->json(['message' => 'Ya estás inscrito en esta competencia'], 409);
+        }
+    
     // 3) Creamos la inscripción
     $insc = Inscripcion::create($data);
 
@@ -90,11 +105,21 @@ public function store(Request $request): JsonResponse
             'estado_inscripcion' => 'pendiente',
         ]);
 
-        // 4) Devolvemos ambos recursos
+        // 4) Crear el registro de validación en la tabla pivot
+        ValidarTutor::create([
+            'idcompetencia'     => $data['idcompetencia'],
+            'idcompetidor'      => $competidor->idcompetidor,
+            'idtutor'           => $data['idtutor'],
+            'tipo_tutor'        => 'tutor',
+            'estado_validacion' => 'pendiente',
+        ]);
+
+        // 5) Devolvemos ambos recursos
         return response()->json([
             'competidor'   => $competidor,
             'inscripcion'  => $insc,
         ], 201);
+
     }
 
     public function show($id)

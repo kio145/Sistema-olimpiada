@@ -29,4 +29,19 @@ class Inscripcion extends Model
             'idcompetencia'       // PK en competencia
         );
     }
+    public function competidor()
+    {
+        return $this->belongsTo(Competidor::class, 'idcompetidor');
+    }
+
+    public function boletasPago()
+    {
+        return $this->belongsToMany(
+            BoletaPago::class,
+            'boleta_pago_inscripcion',
+            '_inscripcion_id',
+            'idboleta'
+        )->withTimestamps();
+    }
+
 }

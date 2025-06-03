@@ -71,6 +71,11 @@ class Competidor extends Model
         'passwordcompetidor',
     ];
 
+    public function boletasPago()
+    {
+        return $this->hasMany(BoletaPago::class, 'idcompetidor', 'idcompetidor');
+    }
+
     public function competencias()
     {
         return $this->belongsToMany(Competencia::class,
@@ -85,4 +90,10 @@ class Competidor extends Model
         return $this->belongsToMany(Tutor::class, 'validar_tutor', 'idcompetidor', 'idtutor')
                     ->withPivot('idcompetencia', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo',);
     }
+    
+    public function inscripciones()
+    {
+        return $this->hasMany(Inscripcion::class, 'idcompetidor', 'idcompetidor');
+    }
+
 }
