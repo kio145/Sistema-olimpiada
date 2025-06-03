@@ -43,5 +43,11 @@ class Inscripcion extends Model
             'idboleta'
         )->withTimestamps();
     }
+    // En app/Models/Inscripcion.php
+    public function validaciones()
+    {
+        return $this->hasMany(\App\Models\ValidarTutor::class, 'idcompetidor', 'idcompetidor');
+    }
+    
 
 }

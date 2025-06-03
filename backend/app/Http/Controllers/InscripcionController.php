@@ -138,6 +138,13 @@ public function store(Request $request): JsonResponse
         return response()->json($i);
     }
 
+    public function competidor() {
+    return $this->belongsTo(\App\Models\Competidor::class, 'idcompetidor');
+    }
+    public function competencia() {
+        return $this->belongsTo(\App\Models\Competencia::class, 'idcompetencia');
+    }
+
     public function destroy($id)
     {
         Inscripcion::destroy($id);

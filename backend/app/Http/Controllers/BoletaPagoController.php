@@ -48,6 +48,18 @@ class BoletaPagoController extends Controller
         $boleta = BoletaPago::findOrFail($id);
         return response()->json($boleta, 200);
     }
+   public function habilitados(): JsonResponse
+{
+    $inscripciones = \App\Models\Inscripcion::with(['competidor', 'competencia'])
+        ->where('estado_inscripcion', 'en espera de pago')
+        ->whereHas('validaciones', function ($q) {
+            $q->where('estado_validacion', 'aceptado')
+              ->whereColumn('idcompetencia', 'inscripciones.idcompetencia'); // Asegura que la validación es para esta competencia
+        })
+        ->get();
+
+    return response()->json($inscripciones, 200);
+}
 
     public function update(Request $request, int $id): JsonResponse
     {

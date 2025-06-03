@@ -94,3 +94,6 @@ Route::apiResource('requisitos-competencia', RequisitoCompetenciaController::cla
 //Relacion competidores-tutores
 Route::apiResource('validarTutor', ValidarTutorController::class)
      ->only(['index', 'store', 'show','update', 'destroy']);
+
+Route::apiResource('boleta-pagos', BoletaPagoController::class);
+Route::get('boleta/habilitados', [BoletaPagoController::class, 'habilitados']);
