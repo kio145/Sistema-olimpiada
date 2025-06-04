@@ -1,9 +1,9 @@
 // src/paginas/cajero/VistaCajero.jsx
 
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import api from '../../api/api';
-import '../../css/VistaCajero.css';
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import api from "../../api/api";
+import "../../css/VistaCajero.css";
 
 export function VistaCajero() {
   const { state } = useLocation();
@@ -14,7 +14,7 @@ export function VistaCajero() {
 
   useEffect(() => {
     if (!user?.profile_id) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
@@ -22,19 +22,18 @@ export function VistaCajero() {
     api.get(`/cajeros/${user.profile_id}`)
       .then(res => setProfile(res.data))
       .catch(() => {
-        localStorage.removeItem('token');
-        navigate('/login');
+        localStorage.removeItem("token");
+        navigate("/login");
       });
 
     // 2) Cargo la lista de competidores habilitados para pago
-    api.get('/competidores/habilitados')
+    api.get("/competidores/habilitados")
       .then(res => {
-        // res.data == [ { nombrecompetidor, apellidocompetidor, cicompetidor, area, nivel, costo_inscripcion, validar_id }, … ]
         setHabilitados(res.data);
       })
       .catch(err => {
-        console.error('Error al cargar habilitados: ', err);
-        setHabilitados([]); // en caso de falla, dejamos vacío
+        console.error("Error al cargar habilitados: ", err);
+        setHabilitados([]); // si falla, dejamos vacío
       });
   }, [user, navigate]);
 
@@ -43,8 +42,8 @@ export function VistaCajero() {
   }
 
   const initials = (
-    (profile.nombrecajero?.[0] || '') +
-    (profile.apellidocajero?.[0] || '')
+    (profile.nombrecajero?.[0] || "") +
+    (profile.apellidocajero?.[0] || "")
   ).toUpperCase();
 
   return (
@@ -74,8 +73,8 @@ export function VistaCajero() {
                 to="/inicio"
                 className="btn-cerrar-admin"
                 onClick={() => {
-                  localStorage.removeItem('token');
-                  navigate('/inicio');
+                  localStorage.removeItem("token");
+                  navigate("/inicio");
                 }}
               >
                 Cerrar Sesión
@@ -116,7 +115,7 @@ export function VistaCajero() {
               {habilitados.map((c, i) => (
                 <tr key={i}>
                   <td>
-                    {c.nombrecompetidor} {c.apellidocompetidor}
+                    {c.nombre} {c.apellidos}
                   </td>
                   <td>{c.area}</td>
                   <td>{c.cicompetidor}</td>
