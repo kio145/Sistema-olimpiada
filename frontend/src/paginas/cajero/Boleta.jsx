@@ -10,40 +10,43 @@ export function Boleta() {
   const [ciCompetidor, setCiCompetidor] = useState('');
   const [monto, setMonto] = useState('');
   const [cambio, setCambio] = useState('');
+  const navigate = useNavigate();
 
   // elimina esta línea o ponla dentro de una condición
   // const inscripcionesValidadas = competidor.inscripciones.filter(insc => insc.estado_inscripcion === 'en espera de pago');
 
   const buscarCompetidor = async () => {
-    try {
-      const res = await api.get(`/competidores/ci/${ciCompetidor}`);
-      const competidor = res.data;
+  try {
+    const res = await api.get(`/competidores/ci/${ciCompetidor}`);
+    const competidor = res.data;
 
-      setCompetidor(competidor);
-      setCambio('');
-      setMonto('');
+    setCambio('');
+    setMonto('');
 
-      const inscRes = await api.get(`/inscripciones?idcompetidor=${competidor.idcompetidor}`);
-      const todasInscripciones = inscRes.data;
+    const inscRes = await api.get(`/inscripciones?idcompetidor=${competidor.idcompetidor}`);
+    const todasInscripciones = inscRes.data;
 
-      const inscripcionesValidadas = todasInscripciones.filter(insc =>
-        insc.estado_inscripcion === 'en espera de pago'
-      );
+    const inscripcionesValidadas = todasInscripciones.filter(insc =>
+      insc.estado_inscripcion === 'en espera de pago'
+    );
 
-      const estudiantes = inscripcionesValidadas.map(insc => ({
-        nombre: `${competidor.nombrecompetidor} ${competidor.apellidocompetidor}`,
-        area: insc.competencia?.areacompetencia,
-        nivel: insc.competencia?.nivelcompetencia,
-        costo: insc.competencia?.preciocompetencia || 0,
-      }));
+    const estudiantes = inscripcionesValidadas.map(insc => ({
+      nombre: `${competidor.nombrecompetidor} ${competidor.apellidocompetidor}`,
+      area: insc.competencia?.areacompetencia,
+      nivel: insc.competencia?.nivelcompetencia,
+      costo: insc.competencia?.preciocompetencia || 0,
+    }));
 
-      setCompetidor({ ...competidor, estudiantes });
-    } catch (error) {
-      console.error('Error al buscar competidor', error);
-      setCompetidor(null);
-      alert('No se encontró un competidor con ese C.I.');
-    }
-  };
+    // Guardamos el competidor con las inscripciones completas y las estudiantes filtradas
+    setCompetidor({ ...competidor, estudiantes, inscripciones: todasInscripciones });
+
+  } catch (error) {
+    console.error('Error al buscar competidor', error);
+    setCompetidor(null);
+    alert('No se encontró un competidor con ese C.I.');
+  }
+};
+
 
   const calcularCambio = (e) => {
     const valor = parseFloat(e.target.value);
@@ -54,18 +57,36 @@ export function Boleta() {
 }
   };
 
-  const manejarAceptar = () => {
+  const manejarAceptar = async () => {
     if (!competidor || !competidor.estudiantes) return;
 
     const total = competidor.estudiantes.reduce((sum, e) => sum + e.costo, 0);
-    navigate('/pago-boleta', {
-      state: {
-        competidor,
-        total,
-        monto,
-        cambio
+
+    try {
+      // Para cada inscripcion válida con estado "en espera de pago"
+      // actualizamos su estado a "inscrito"
+      for (const insc of competidor.inscripciones) {
+        // Nos aseguramos que la inscripción esté en "en espera de pago"
+        if (insc.estado_inscripcion === 'en espera de pago') {
+          await api.put(`/inscripciones/${insc._inscripcion_id}`, {
+            estado_inscripcion: 'inscrito',
+          });
+        }
       }
-    });
+
+      // Navegamos a la pantalla de pago con los datos que quieres pasar
+      navigate('/pago-boleta', {
+        state: {
+          competidor,
+          total,
+          monto,
+          cambio,
+        },
+      });
+    } catch (error) {
+      console.error('Error actualizando inscripciones', error);
+      alert('Ocurrió un error al actualizar el estado de las inscripciones.');
+    }
   };
   
   const [mostrarModal, setMostrarModal] = useState(false);
