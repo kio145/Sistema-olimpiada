@@ -128,15 +128,21 @@ public function store(Request $request): JsonResponse
     }
 
     public function update(Request $request, $id)
-    {
-        $i = Inscripcion::findOrFail($id);
-        $data = $request->validate([
-            'estado_inscripcion'  => 'sometimes|string|max:256',
-        ]);
+{
+    $i = Inscripcion::findOrFail($id);
 
-        $i->update($data);
+    $data = $request->only('estado_inscripcion');
+
+    $updated = $i->update($data);
+
+    if ($updated) {
+        $i->refresh();
         return response()->json($i);
+    } else {
+        return response()->json(['message' => 'No se pudo actualizar'], 500);
     }
+}
+
 
     public function competidor() {
     return $this->belongsTo(\App\Models\Competidor::class, 'idcompetidor');
