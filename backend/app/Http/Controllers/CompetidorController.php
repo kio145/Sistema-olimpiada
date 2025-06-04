@@ -17,11 +17,18 @@ class CompetidorController extends Controller
     /**
      * GET /api/competidores
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Competidor::all());
-    }
+        $query = Competidor::query();
 
+        // Si me pasan ?cicompetidor=1234567, lo filtro:
+        if ($request->filled('cicompetidor')) {
+            $query->where('cicompetidor', $request->input('cicompetidor'));
+        }
+
+        $competidores = $query->get();
+        return response()->json($competidores, 200);
+    }
     /**
      * POST /api/competidores
      * Crea un nuevo competidor y su usuario en la tabla users.
@@ -103,7 +110,7 @@ class CompetidorController extends Controller
         // Si suben imagen, la almacenamos
         if ($request->hasFile('imagencompetidor')) {
             $path = $request->file('imagencompetidor')
-                            ->store('competidores', 'public');
+                ->store('competidores', 'public');
             $data['imagencompetidor'] = $path;
         }
 
@@ -112,8 +119,8 @@ class CompetidorController extends Controller
 
         // Sincronizamos con la tabla users si cambió email o password
         $user = User::where('profile_type', Competidor::class)
-                    ->where('profile_id', $id)
-                    ->first();
+            ->where('profile_id', $id)
+            ->first();
 
         if ($user) {
             $u = [];
@@ -168,14 +175,14 @@ class CompetidorController extends Controller
 
         // 4) Traer los Competidor con su relación “validaciones” (solo las validaciones marcadas como 'validado')
         $competidores = Competidor::whereIn('idcompetidor', $idsHabilitados)
-            ->with(['validaciones' => function($q) {
+            ->with(['validaciones' => function ($q) {
                 $q->where('estado_validacion', 'validado')
-                  ->with(['tutor', 'competencia']);
+                    ->with(['tutor', 'competencia']);
             }])
             ->get();
 
         // 5) Mapear al formato que espera el front
-        $resultado = $competidores->map(function($c) {
+        $resultado = $competidores->map(function ($c) {
             // Tomamos la primera (única) validación “validado”
             $val = $c->validaciones->first();
 
@@ -212,5 +219,25 @@ class CompetidorController extends Controller
     {
         Competidor::destroy($id);
         return response()->json(null, 204);
+    }
+
+    public function showByCi(string $ci): JsonResponse
+    {
+        // Busca el primer competidor cuyo cicompetidor coincida exactamente:
+        $competidor = Competidor::where('cicompetidor', $ci)->first();
+
+        if (! $competidor) {
+            return response()->json([
+                'message' => 'No se encontró competidor con CI ' . $ci
+            ], 404);
+        }
+
+        return response()->json($competidor, 200);
+    }
+
+    public function findByCi(string $ci): JsonResponse
+    {
+        $competidor = Competidor::where('cicompetidor', $ci)->firstOrFail();
+        return response()->json($competidor, 200);
     }
 }

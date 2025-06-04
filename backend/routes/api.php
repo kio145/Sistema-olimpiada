@@ -60,6 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('cajeros', [CajeroController::class, 'store']);
     Route::put('cajeros/{id}', [CajeroController::class, 'update']);
     Route::delete('cajeros/{id}', [CajeroController::class, 'destroy']);
+    Route::get('competidores/ci/{ci}', [CompetidorController::class, 'showByCi']);
+
 
     // ------------------------------------------------------------
     // Rutas de VALIDAR TUTOR (pivot)
