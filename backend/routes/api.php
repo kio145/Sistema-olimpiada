@@ -97,3 +97,5 @@ Route::apiResource('validarTutor', ValidarTutorController::class)
 
 Route::apiResource('boleta-pagos', BoletaPagoController::class);
 Route::get('boleta/habilitados', [BoletaPagoController::class, 'habilitados']);
+
+Route::get('/competidores/ci/{ci}', [CompetidorController::class, 'buscarPorCI']);

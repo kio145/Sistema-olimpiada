@@ -135,4 +135,18 @@ class CompetidorController extends Controller
         Competidor::destroy($id);
         return response()->json(null, 204);
     }
+
+    public function buscarPorCI($ci)
+{
+    $competidor = Competidor::with('inscripciones.competencia')
+                    ->where('cicompetidor', $ci)
+                    ->first();
+
+    if (!$competidor) {
+        return response()->json(['error' => 'Competidor no encontrado'], 404);
+    }
+
+    return response()->json($competidor);
+}
+
 }

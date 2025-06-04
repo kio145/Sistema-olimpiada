@@ -2,45 +2,65 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/Boleta.css';
 import { FaSearch } from 'react-icons/fa';
+import api from '../../api/api';  // Ajusta la ruta según donde pongas el archivo api.js
+
 
 export function Boleta() {
-  const [ciTutor, setCiTutor] = useState('');
-  const [tutor, setTutor] = useState(null);
+  const [competidor, setCompetidor] = useState(null);
+  const [ciCompetidor, setCiCompetidor] = useState('');
   const [monto, setMonto] = useState('');
   const [cambio, setCambio] = useState('');
 
-  const navigate = useNavigate(); // <--- Hook de navegación
+  // elimina esta línea o ponla dentro de una condición
+  // const inscripcionesValidadas = competidor.inscripciones.filter(insc => insc.estado_inscripcion === 'en espera de pago');
 
-  const baseDatos = {
-    '1234567': {
-      nombre: 'Juan Daneo Hinojosa',
-      estudiantes: [
-        { nombre: 'Lidia Hinojosa Merlan', area: 'Astrofísica', nivel: '5S', costo: 15 },
-      ]
-    },
-  };
+  const buscarCompetidor = async () => {
+    try {
+      const res = await api.get(`/competidores/ci/${ciCompetidor}`);
+      const competidor = res.data;
 
-  const buscarTutor = () => {
-    const resultado = baseDatos[ciTutor];
-    setTutor(resultado || null);
-    setCambio('');
-    setMonto('');
+      setCompetidor(competidor);
+      setCambio('');
+      setMonto('');
+
+      const inscRes = await api.get(`/inscripciones?idcompetidor=${competidor.idcompetidor}`);
+      const todasInscripciones = inscRes.data;
+
+      const inscripcionesValidadas = todasInscripciones.filter(insc =>
+        insc.estado_inscripcion === 'en espera de pago'
+      );
+
+      const estudiantes = inscripcionesValidadas.map(insc => ({
+        nombre: `${competidor.nombrecompetidor} ${competidor.apellidocompetidor}`,
+        area: insc.competencia?.areacompetencia,
+        nivel: insc.competencia?.nivelcompetencia,
+        costo: insc.competencia?.preciocompetencia || 0,
+      }));
+
+      setCompetidor({ ...competidor, estudiantes });
+    } catch (error) {
+      console.error('Error al buscar competidor', error);
+      setCompetidor(null);
+      alert('No se encontró un competidor con ese C.I.');
+    }
   };
 
   const calcularCambio = (e) => {
     const valor = parseFloat(e.target.value);
     setMonto(valor);
-    if (tutor) {
-      const total = tutor.estudiantes.reduce((sum, e) => sum + e.costo, 0);
-      setCambio((valor - total).toFixed(2));
-    }
+    if (competidor) {
+  const total = (competidor.estudiantes ?? []).reduce((sum, e) => sum + e.costo, 0);
+  setCambio((valor - total).toFixed(2));
+}
   };
 
   const manejarAceptar = () => {
-    const total = tutor.estudiantes.reduce((sum, e) => sum + e.costo, 0);
+    if (!competidor || !competidor.estudiantes) return;
+
+    const total = competidor.estudiantes.reduce((sum, e) => sum + e.costo, 0);
     navigate('/pago-boleta', {
       state: {
-        tutor,
+        competidor,
         total,
         monto,
         cambio
@@ -60,18 +80,16 @@ export function Boleta() {
         <label>C.I. estudiante:</label>
         <input
           type="text"
-          value={ciTutor}
-          onChange={(e) => setCiTutor(e.target.value)}
+          value={ciCompetidor}
+          onChange={(e) => setCiCompetidor(e.target.value)}
           placeholder="Ej. 1234567"
         />
-        <button onClick={buscarTutor}><FaSearch /></button>
+        <button onClick={buscarCompetidor}><FaSearch /></button>
       </div>
 
-      {tutor && (
+      {competidor && (
         <>
           <hr />
-          
-
           <table className="tabla-estudiantes">
             <thead>
               <tr>
@@ -82,19 +100,25 @@ export function Boleta() {
               </tr>
             </thead>
             <tbody>
-              {tutor.estudiantes.map((est, i) => (
-                <tr key={i}>
-                  <td>{est.nombre}</td>
-                  <td>{est.area}</td>
-                  <td>{est.nivel}</td>
-                  <td>{est.costo}</td>
+              {competidor.estudiantes && competidor.estudiantes.length > 0 ? (
+                competidor.estudiantes.map((e, index) => (
+                  <tr key={index}>
+                    <td>{e.nombre}</td>
+                    <td>{e.area}</td>
+                    <td>{e.nivel}</td>
+                    <td>{e.costo} Bs</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">No tiene inscripciones válidas</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
 
           <div className="totales">
-            <p>Total a pagar en Bs <strong>{tutor.estudiantes.reduce((sum, e) => sum + e.costo, 0)}</strong></p>
+            <p>Total a pagar en Bs <strong>{(competidor.estudiantes ?? []).reduce((sum, e) => sum + e.costo, 0)}</strong></p>
           </div>
 
           <div className="pago">
