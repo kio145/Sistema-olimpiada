@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Competidor extends Model
 {
@@ -15,35 +13,45 @@ class Competidor extends Model
     protected $primaryKey = 'idcompetidor';
     public $incrementing = true;
     protected $keyType = 'int';
-    public $timestamps = true;
 
     protected $fillable = [
-        'idcompetidor',
-        'usuariocompetidor',
+        'user_id',
         'nombrecompetidor',
         'apellidocompetidor',
         'emailcompetidor',
-        'passwordcompetidor',
         'cicompetidor',
         'fechanacimiento',
         'colegio',
         'curso',
         'departamento',
         'provincia',
-        'imagencompetidor',
-        'passwordcompetidor',
+        'imagencompetidor'
     ];
-
     protected $hidden = [
         'passwordcompetidor',
     ];
-    public function tutores(): BelongsToMany
+
+    public function competencias()
     {
-        return $this->belongsToMany(Tutor::class, 'tiene', 'idcompetidor', 'idtutor');
+        return $this->belongsToMany(Competencia::class,
+        'validar_tutor',
+        'idcompetidor',
+        'idcompetencia'
+        )->withPivot('idtutor', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo',);
     }
 
-    public function competencias(): BelongsToMany
+    public function tutores()
     {
-        return $this->belongsToMany(Competencia::class, 'tiene0', 'idcompetidor', 'idcompetencia');
+        return $this->belongsToMany(Tutor::class, 'validar_tutor', 'idcompetidor', 'idtutor')
+                    ->withPivot('idcompetencia', 'tipo_tutor', 'estado_validacion', 'motivo_rechazo',);
+    }
+
+     public function validaciones()
+    {
+        return $this->hasMany(
+            ValidarTutor::class,
+            'idcompetidor',    // FK en validar_tutor
+            'idcompetidor'     // PK en competidor
+        );
     }
 }

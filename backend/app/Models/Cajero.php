@@ -1,11 +1,29 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * 
+ *
+ * @property int $idcajero
+ * @property string|null $nombrecajero
+ * @property string|null $apellidocajero
+ * @property string|null $imagencajero
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Cajero newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Cajero newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Cajero query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Cajero whereApellidocajero($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cajero whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cajero whereIdcajero($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cajero whereImagencajero($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cajero whereNombrecajero($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Cajero whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Cajero extends Model
 {
     use HasFactory;
@@ -14,18 +32,15 @@ class Cajero extends Model
     protected $primaryKey = 'idcajero';
     public $incrementing = true;
     protected $keyType = 'int';
-    public $timestamps = true;
 
     protected $fillable = [
-        'idcajero',
+        'user_id',
         'nombrecajero',
         'apellidocajero',
         'imagencajero',
+        'emailcajero',
+    ];
+    protected $hidden = [
         'passwordcajero',
     ];
-
-    public function boletasPago(): HasMany
-    {
-        return $this->hasMany(BoletaPago::class, 'idcajero', 'idcajero');
-    }
 }
