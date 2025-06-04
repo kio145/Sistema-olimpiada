@@ -21,5 +21,13 @@ class ValidarTutorSeeder extends Seeder
             'estado_validacion'=> "pendiente",
             'motivo_rechazo'=> null,
         ]);
+        ValidarTutor::create([
+            'idcompetencia' => 2,
+            'idcompetidor'  => 1,
+            'idtutor'       => 1,
+            'tipo_tutor'    => 'papa',
+            'estado_validacion'=> "pendiente",
+            'motivo_rechazo'=> null,
+        ]);
     }
 }

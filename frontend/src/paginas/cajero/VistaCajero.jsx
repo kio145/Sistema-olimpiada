@@ -97,7 +97,8 @@ export function VistaCajero() {
                     <td>{insc.competidor?.nombrecompetidor} {insc.competidor?.apellidocompetidor}</td>
                     <td>{insc.competencia?.areacompetencia}</td>
                     <td>{insc.competidor?.cicompetidor}</td>
-                    <td>{insc.competencia?.costo || 0} Bs</td>
+                    <td>{insc.competencia?.preciocompetencia || 0} Bs</td>
+
                   </tr>
                 ))
               ) : (

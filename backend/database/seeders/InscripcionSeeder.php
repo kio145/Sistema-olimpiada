@@ -18,7 +18,14 @@ class InscripcionSeeder extends Seeder
             '_inscripcion_id'    => 1,
             'idcompetencia'      => 1,
             'idcompetidor'       => 1,
-            'estado_inscripcion' => 'en espera de validacion',
+            'estado_inscripcion' => 'en espera de pago',
+        ]);
+
+        Inscripcion::create([
+            '_inscripcion_id'    => 2,
+            'idcompetencia'      => 2,
+            'idcompetidor'       => 1,
+            'estado_inscripcion' => 'en espera de pago',
         ]);
     }
 }
