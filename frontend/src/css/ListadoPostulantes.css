@@ -1,89 +1,72 @@
+/* ListadoPostulantes.css */
 .listado-container {
-    padding: 2rem;
-    text-align: center;
-  }
-  
-  .busqueda-postulante input {
-    padding: 0.5rem;
-    max-width: 500px;
-  }
-  
-  .busqueda-postulante button {
-    margin-left: 0.5rem;
-    padding: 0.5rem;
-  }
-  .busqueda-pago input {
-    padding: 0.5rem;
-    max-width: 500px;
-  }
-  
-  .busqueda-pago button {
-    margin-left: 0.5rem;
-    padding: 0.5rem;
-  }
-  .buscar-btn{
-    max-width: 50px;
-  }
-  .tabla-postulantes {
-    width: 100%;
-    margin-top: 1rem;
-    border-collapse: collapse;
-    box-shadow: 0 0 5px #ccc;
-  }
-  
-  .tabla-pagoss th, .tabla-pagos td {
-    border: 1px solid #ccc;
-    padding: 0.6rem;
-    text-align: center;
-  }
-  .tabla-pagos {
-    width: 100%;
-    margin-top: 1rem;
-    border-collapse: collapse;
-    box-shadow: 0 0 5px #ccc;
-  }
-  
-  .tabla-postulantes th, .tabla-postulantes td {
-    border: 1px solid #ccc;
-    padding: 0.6rem;
-    text-align: center;
-  }
-  .acciones-exportar{
-    align-items: rigth;
-  }
-  .accion {
-    margin: 0 0.2rem;
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-size: 1rem;
-    color: black;
-  }
+  padding: 1.5rem;
+}
+.busqueda-postulante {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.buscar-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+}
+.export-buttons {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.export-btn.pdf { background: #dc3545; color: white; }
+.export-btn.excel { background: #28a745; color: white; }
 
-  .pdf {
-    margin-top: 10px;
-    background-color: #e74c3c;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    margin-right: 1rem;
-    max-width: 100px;
-  }
-  
-  .excel {
-    background-color: #27ae60;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    max-width: 100px;
-  }
-  
-  .volver button {
-    margin-top: 2rem;
-    padding: 0.6rem 1rem;
-    background-color: #3498db;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  
+.tabla-postulantes {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+.tabla-postulantes th,
+.tabla-postulantes td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+.tabla-postulantes th {
+  background: #f8f9fa;
+}
+.accion {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 0.3rem;
+}
+.accion.editar { color: #007bff; }
+.accion.eliminar { color: #dc3545; }
+
+.no-data {
+  text-align: center;
+  padding: 1rem;
+  color: #666;
+}
+.volver {
+  margin-top: 1rem;
+}
+.volver button {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}

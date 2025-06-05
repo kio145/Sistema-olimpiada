@@ -1,42 +1,109 @@
-import React, { useState } from 'react';
+// src/paginas/admin/GestionarFechas.jsx
+import React, { useState, useEffect } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import '../../css/GestionarFechas.css';
+import api from '../../api/api';
 
 export function GestionarFechas() {
-  const [fechas, setFechas] = useState([
-    { etapa: 'Inscripciones', inicio: '00/00/2025', fin: '00/00/2025' },
-    { etapa: 'Validaciones', inicio: '00/00/2025', fin: '00/00/2025' },
-    { etapa: 'Pago de inscripciones', inicio: '00/00/2025', fin: '00/00/2025' },
-    { etapa: 'Periodo de competiciones', inicio: '00/00/2025', fin: '00/00/2025' },
-  ]);
+  const [registro, setRegistro] = useState(null);
+  const [etapas, setEtapas]     = useState([]);
+  const [errors, setErrors]     = useState({});
+  const [modal, setModal]       = useState({
+    abierto: false,
+    indice:  null,
+    inicio:  '',
+    fin:     '',
+  });
 
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [indiceEditando, setIndiceEditando] = useState(null);
-  const [nuevaFechaInicio, setNuevaFechaInicio] = useState('');
-  const [nuevaFechaFin, setNuevaFechaFin] = useState('');
+  const config = [
+    { key: 'inscripcion', label: 'Inscripciones', inicioField: 'fecha_inicio_inscripcion', finField: 'fecha_fin_inscripcion' },
+    { key: 'validacion',  label: 'Validaciones',  inicioField: 'fecha_inicio_validacion', finField: 'fecha_fin_validacion' },
+    { key: 'pago',        label: 'Pago de inscripciones', inicioField: 'fecha_inicio_pago', finField: 'fecha_fin_pago' },
+    { key: 'competencia', label: 'Periodo de competiciones', inicioField: 'fecha_inicio_competencia', finField: 'fecha_fin_competencia' },
+  ];
 
-  const abrirModal = (index) => {
-    setIndiceEditando(index);
-    setNuevaFechaInicio('');
-    setNuevaFechaFin('');
-    setMostrarModal(true);
+  // 1) Al montar: cargo el único registro de fechas (si existe)
+  useEffect(() => {
+    api.get('/fechas')
+      .then(res => {
+        const data = res.data;
+        // si me devuelve un array, cojo el primero
+        const f = Array.isArray(data) && data.length > 0 ? data[0] : null;
+        setRegistro(f);
+        // inicializo las etapas (con valores o vacíos)
+        setEtapas(config.map(c => ({
+          label: c.label,
+          inicio: f?.[c.inicioField] ?? '',
+          fin:    f?.[c.finField]    ?? ''
+        })));
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Error al cargar las fechas.');
+      });
+  }, []);
+
+  const abrirModal = idx => {
+    setErrors({});
+    setModal({
+      abierto: true,
+      indice:  idx,
+      inicio:  etapas[idx].inicio,
+      fin:     etapas[idx].fin
+    });
   };
+  const cerrarModal = () => setModal(m => ({ ...m, abierto: false }));
 
-  const aplicarCambios = () => {
-    const nuevasFechas = [...fechas];
-    nuevasFechas[indiceEditando].inicio = nuevaFechaInicio;
-    nuevasFechas[indiceEditando].fin = nuevaFechaFin;
-    setFechas(nuevasFechas);
-    setMostrarModal(false);
-  };
+  const aplicarCambios = async () => {
+    const { indice, inicio, fin } = modal;
+    const { inicioField, finField } = config[indice];
 
-  const volver = () => {
-    window.location.href = '/vista-admin';
+    // validaciones locales
+    if (!inicio || !fin) {
+      setErrors({ modal: 'Ambas fechas son requeridas.' });
+      return;
+    }
+    if (inicio >= fin) {
+      setErrors({ modal: 'La fecha de inicio debe ser anterior a la de fin.' });
+      return;
+    }
+
+    // payload con sólo los campos que cambiaron
+    const payload = { [inicioField]: inicio, [finField]: fin };
+
+    try {
+      let resp;
+      if (registro) {
+        // existe → PUT
+        resp = await api.put(`/fechas/${registro.idfecha}`, payload);
+      } else {
+        // no existe → POST (Laravel llenará idcompetencia con null o lo que definas)
+        resp = await api.post('/fechas', payload);
+      }
+      const nueva = resp.data;
+      setRegistro(nueva);
+
+      // actualizo localmente las etapas
+      setEtapas(es => {
+        const clone = [...es];
+        clone[indice] = { ...clone[indice], inicio, fin };
+        return clone;
+      });
+
+      cerrarModal();
+    } catch (err) {
+      if (err.response?.status === 422) {
+        setErrors(err.response.data.errors || { modal: 'Datos inválidos.' });
+      } else {
+        console.error(err);
+        setErrors({ modal: 'Error inesperado al guardar.' });
+      }
+    }
   };
 
   return (
     <div className="contenedor-fechas">
-      <h2>Gestionar fechas</h2>
+      <h2>Gestionar fechas globales</h2>
       <p>Fechas de inicio y fin actuales:</p>
 
       <table className="tabla-fechas">
@@ -45,15 +112,15 @@ export function GestionarFechas() {
             <th>Etapa</th>
             <th>Fecha de Inicio</th>
             <th>Fecha de Fin</th>
-            <th>Editar fechas</th>
+            <th>Editar</th>
           </tr>
         </thead>
         <tbody>
-          {fechas.map((f, i) => (
+          {etapas.map((e, i) => (
             <tr key={i}>
-              <td>{f.etapa}</td>
-              <td>{f.inicio}</td>
-              <td>{f.fin}</td>
+              <td>{e.label}</td>
+              <td>{e.inicio}</td>
+              <td>{e.fin}</td>
               <td>
                 <button className="editar-btn" onClick={() => abrirModal(i)}>
                   <FaEdit />
@@ -64,42 +131,41 @@ export function GestionarFechas() {
         </tbody>
       </table>
 
-      {mostrarModal && (
+      {modal.abierto && (
         <div className="modal-gestion">
           <div className="modal-contenido">
-          
-          <div className="modal-header">¿Seguro de cambiar las fechas?</div>
-          
-            <p>Estás editando las fechas de: <strong>{fechas[indiceEditando].etapa}</strong></p>
+            <h3>Editar: {etapas[modal.indice].label}</h3>
             <div className="modal-fechas">
               <div>
                 <label>Fecha de Inicio</label>
                 <input
                   type="date"
-                  value={nuevaFechaInicio}
-                  onChange={(e) => setNuevaFechaInicio(e.target.value)}
+                  value={modal.inicio}
+                  onChange={e => setModal(m => ({ ...m, inicio: e.target.value }))}
                 />
               </div>
               <div>
                 <label>Fecha de Fin</label>
                 <input
                   type="date"
-                  value={nuevaFechaFin}
-                  onChange={(e) => setNuevaFechaFin(e.target.value)}
+                  value={modal.fin}
+                  onChange={e => setModal(m => ({ ...m, fin: e.target.value }))}
                 />
               </div>
             </div>
-
+            {errors.modal && <p className="error">{errors.modal}</p>}
             <div className="modal-botones">
-              <button onClick={() => setMostrarModal(false)}>No</button>
-              <button onClick={aplicarCambios}>Sí, aplicar cambios</button>
+              <button onClick={cerrarModal}>Cancelar</button>
+              <button onClick={aplicarCambios}>Guardar cambios</button>
             </div>
           </div>
         </div>
       )}
 
       <div className="volver">
-        <button onClick={volver}>⨯ Regresar a menú de administrador</button>
+        <button onClick={() => window.location.href = '/vista-admin'}>
+          ⨯ Regresar a menú de administrador
+        </button>
       </div>
     </div>
   );
