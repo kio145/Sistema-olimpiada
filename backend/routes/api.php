@@ -116,3 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Puedes dejar rutas públicas de recursos sin autenticación aquí, si las necesitas:
 Route::apiResource('administradores', AdministradorController::class);
+    Route::get('validarTutor', [ValidarTutorController::class, 'index']);
+    Route::get('validarTutor/{validar_id}', [ValidarTutorController::class, 'show']);
+    Route::put('validarTutor/{validar_id}', [ValidarTutorController::class, 'update']);
+    Route::delete('validarTutor/{validar_id}', [ValidarTutorController::class, 'destroy']);

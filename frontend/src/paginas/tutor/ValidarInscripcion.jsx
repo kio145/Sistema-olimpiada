@@ -217,7 +217,7 @@ export function ValidarInscripcion() {
       </div>
 
       <div className="volver">
-        <button className="btn-volver" onClick={() => navigate("/vista-tutor")}>
+        <button className="btn-volver" onClick={() => navigate(-1)}>
           🔙 Volver
         </button>
       </div>

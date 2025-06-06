@@ -125,11 +125,7 @@ export function InscripcionRechazada() {
       </div>
 
       <div className="volver">
-        <button className="btn-volver">
-          <a href="/vista-tutor" className="ruta-tutor">
-            🔙 Regresar a menú de tutor
-          </a>
-        </button>
+        <button className="btn-volver" onClick={() => navigate(-1)}>🔙 Regresar a menú de tutor</button>
       </div>
     </div>
   );

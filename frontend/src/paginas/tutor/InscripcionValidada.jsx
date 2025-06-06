@@ -26,7 +26,7 @@ export function InscripcionValidada() {
       .get(`/validarTutor/${validarId}`)
       .then((res) => {
         const v = res.data;
-        if (v.estado_validacion !== "validado") {
+        if (v.estado_validacion !== "aceptada") {
           // Si alguien accedió manualmente a esta ruta pero no está validada, redirijo al tutor
           navigate("/vista-tutor");
           return null;
@@ -34,18 +34,19 @@ export function InscripcionValidada() {
         return v;
       })
       .then((v) => {
-        if (!v) return;
-        // Ya tenemos idcompetidor y idtutor
-        setInscripcion(v);
-        return Promise.all([
-          api.get(`/competidores/${v.idcompetidor}`),
-          api.get(`/tutores/${v.idtutor}`),
-        ]);
-      })
-      .then(([resC, resT]) => {
-        setCompetidor(resC.data);
-        setTutor(resT.data);
-      })
+  if (!v) return;
+  setInscripcion(v);
+  return Promise.all([
+    api.get(`/competidores/${v.idcompetidor}`),
+    api.get(`/tutores/${v.idtutor}`),
+  ]);
+})
+.then((results) => {
+  if (!results) return;
+  const [resC, resT] = results;
+  setCompetidor(resC.data);
+  setTutor(resT.data);
+})
       .catch((err) => {
         console.error(err);
         setError("No se pudo cargar la información de la inscripción.");
@@ -126,11 +127,7 @@ export function InscripcionValidada() {
       </div>
 
       <div className="volver">
-        <button className="btn-volver">
-          <a href="/vista-tutor" className="ruta-tutor">
-            🔙 Regresar a menú de tutor
-          </a>
-        </button>
+        <button className="btn-volver" onClick={() => navigate(-1)}>🔙 Regresar a menú de tutor</button>
       </div>
     </div>
   );
