@@ -29,6 +29,10 @@ Route::get('competencias/todas', [CompetenciaController::class, 'getTodasLasComp
 // RUTA FIJA: Competidores habilitados (debe ir ANTES de /competidores/{id})
 // ------------------------------------------------------------
 Route::middleware('auth:sanctum')->group(function () {
+     Route::get(
+        'competidores/habilitados-cajero',
+        [CompetidorController::class, 'habilitadosParaCajero']
+    );
     Route::get('competidores/habilitados', [CompetidorController::class, 'habilitados']);
 
     // Rutas “/competidores/me”
@@ -61,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('cajeros/{id}', [CajeroController::class, 'update']);
     Route::delete('cajeros/{id}', [CajeroController::class, 'destroy']);
     Route::get('competidores/ci/{ci}', [CompetidorController::class, 'showByCi']);
+   
 
 
     // ------------------------------------------------------------

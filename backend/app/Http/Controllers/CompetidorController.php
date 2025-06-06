@@ -203,6 +203,52 @@ class CompetidorController extends Controller
         return response()->json($resultado, 200);
     }
 
+     public function habilitadosParaCajero(): JsonResponse
+    {
+        // 1) IDs de competidores con estado_validacion = 'validado'
+        $idsValidos = ValidarTutor::where('estado_validacion', 'validado')
+            ->pluck('idcompetidor')
+            ->unique()
+            ->toArray();
+
+        // 2) IDs de competidores que ya hicieron pago
+        $idsPagaron = BoletaPago::pluck('idcompetidor')
+            ->unique()
+            ->toArray();
+
+        // 3) Intersección: aquellos competidores que están validados Y que pagaron
+        $idsHabilitados = array_intersect($idsValidos, $idsPagaron);
+
+        if (empty($idsHabilitados)) {
+            return response()->json([], 200);
+        }
+
+        // 4) Traer cada Competidor con su validación “validado”, para extraer el área y el costo
+        //    Nota: aprovechamos la relación “validaciones” para acceder a “competencia”
+        $competidores = Competidor::whereIn('idcompetidor', $idsHabilitados)
+            ->with(['validaciones' => function($q) {
+                $q->where('estado_validacion', 'validado')
+                  ->with(['competencia']);
+            }])
+            ->get();
+
+        // 5) Armar el JSON de salida con SOLO los campos requeridos
+        $resultado = $competidores->map(function($c) {
+            // Tomamos la primera (y única) validación “validado” para obtener competencia
+            $val = $c->validaciones->first();
+            $competencia = $val->competencia;
+
+            return [
+                'nombre'            => $c->nombrecompetidor . ' ' . $c->apellidocompetidor,
+                'area'              => $competencia->areacompetencia,
+                'cicompetidor'      => $c->cicompetidor,
+                'costo_inscripcion' => $competencia->preciocompetencia,
+            ];
+        });
+
+        return response()->json($resultado, 200);
+    }
+
     /**
      * GET /api/competidores/{id}
      */

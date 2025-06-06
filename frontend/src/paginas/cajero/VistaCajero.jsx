@@ -26,14 +26,14 @@ export function VistaCajero() {
         navigate("/login");
       });
 
-    // 2) Cargo la lista de competidores habilitados para pago
-    api.get("/competidores/habilitados")
+    // 2) Cargo la lista de competidores habilitados para el cajero
+    api.get("/competidores/habilitados-cajero")
       .then(res => {
         setHabilitados(res.data);
       })
       .catch(err => {
-        console.error("Error al cargar habilitados: ", err);
-        setHabilitados([]); // si falla, dejamos vacío
+        console.error("Error al cargar habilitados para cajero: ", err);
+        setHabilitados([]);
       });
   }, [user, navigate]);
 
@@ -108,15 +108,13 @@ export function VistaCajero() {
                 <th>Nombre y Apellidos del Competidor</th>
                 <th>Área</th>
                 <th>CI del Estudiante</th>
-                <th>Costo de Inscripción</th>
+                <th>Costo de Inscripción (Bs)</th>
               </tr>
             </thead>
             <tbody>
               {habilitados.map((c, i) => (
                 <tr key={i}>
-                  <td>
-                    {c.nombre} {c.apellidos}
-                  </td>
+                  <td>{c.nombre}</td>
                   <td>{c.area}</td>
                   <td>{c.cicompetidor}</td>
                   <td>{c.costo_inscripcion} Bs</td>
