@@ -4,10 +4,12 @@ import "../../css/ValidarInscripcion.css";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../api/api";
+import { Inscripcion } from "../competiciones/Inscripcion";
 
 export function ValidarInscripcion() {
   const { validarId } = useParams();
   const navigate = useNavigate();
+  const [inscripcion, setInscripcion] = useState(null); 
 
   const [validarRegistro, setValidarRegistro] = useState(null);
   const [competidor, setCompetidor]           = useState(null);
@@ -32,6 +34,7 @@ export function ValidarInscripcion() {
     api.get(`/validarTutor/${validarId}`)
       .then(resV => {
         setValidarRegistro(resV.data);
+        setInscripcion(resV.data);
         // a) Ya tenemos idcompetidor: pedimos sus datos
         return api.get(`/competidores/${resV.data.idcompetidor}`);
       })
@@ -192,6 +195,9 @@ export function ValidarInscripcion() {
           </li>
           <li>
             <strong>Área:</strong> {tutor.area}
+          </li>
+          <li>
+            <strong>El tutor es:</strong> {inscripcion?.tipo_tutor || "—"}
           </li>
         </ul>
       </div>

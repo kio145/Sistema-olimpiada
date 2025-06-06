@@ -113,7 +113,7 @@ export function InscripcionValidada() {
             <strong>Correo electrónico:</strong> {tutor.correotutor}
           </li>
           <li>
-            <strong>El tutor es:</strong> {tutor.tipo_tutor || "—"}
+            <strong>El tutor es:</strong> {inscripcion.tipo_tutor || "—"}
           </li>
           <li>
             <strong>Número de Celular:</strong> {tutor.telefonotutor}
