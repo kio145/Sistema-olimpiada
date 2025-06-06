@@ -10,19 +10,48 @@ export function VistaTutor() {
   const navigate   = useNavigate();
   const user       = state?.user;
   const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!user?.profile_id) {
-      navigate("/login");
-      return;
-    }
+  // Función para recargar el perfil (lista de competidores + pivots)
+  const fetchProfile = () => {
+    if (!user?.profile_id) return;
     api.get(`/tutores/${user.profile_id}`)
       .then(res => setProfile(res.data))
       .catch(() => {
         localStorage.removeItem("token");
         navigate("/login");
       });
+  };
+
+  useEffect(() => {
+    if (!user?.profile_id) {
+      navigate("/login");
+      return;
+    }
+    fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, navigate]);
+
+  // Handler para eliminar un registro de validar_tutor
+  const handleEliminar = async (validarId) => {
+    const confirmar = window.confirm(
+      "¿Estás seguro de que deseas eliminar esta validación?"
+    );
+    if (!confirmar) return;
+
+    setLoading(true);
+    try {
+      await api.delete(`/validarTutor/${validarId}`);
+      alert("Validación eliminada correctamente.");
+      // Después de borrar, recargamos el perfil para reflejar cambios
+      fetchProfile();
+    } catch (e) {
+      console.error("Error al eliminar la validación:", e);
+      alert("Ocurrió un error al eliminar. Intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!profile) {
     return <p>Cargando perfil…</p>;
@@ -77,28 +106,28 @@ export function VistaTutor() {
               <th>Nombre y Apellidos del Competidor</th>
               <th>Estado de Inscripción</th>
               <th>Estado de Validación</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {profile.competidores?.map((competidor, index) => {
               const p = competidor.pivot || {};
               const estado = (p.estado_validacion || "").toLowerCase();
-              // p.validar_id es el PK en validar_tutor
               const validarId = p.validar_id;
 
-              // Texto legible:
+              // Texto legible para “inscripción”
               let textoIns = "";
               if (estado === "pendiente") textoIns = "En espera de validación";
               else if (estado === "aceptada") textoIns = "En espera de pago";
               else if (estado === "rechazado") textoIns = "Rechazado";
 
-              // Clases de estilo:
+              // Clases CSS para colorear estado_inscripción
               let claseIns = "estado-inscripcion ";
               if (estado === "pendiente") claseIns += "espera-validacion";
               else if (estado === "aceptada") claseIns += "espera-pago";
               else claseIns += "rechazada";
 
-              // Ruta dinámica según el estado de validación:
+              // Ruta de enlace según estado de validación
               let ruta = "#";
               if (estado === "pendiente") {
                 ruta = `/validar-inscripcion/${validarId}`;
@@ -119,6 +148,24 @@ export function VistaTutor() {
                     <Link to={ruta}>
                       {estado.charAt(0).toUpperCase() + estado.slice(1)}
                     </Link>
+                  </td>
+                  <td>
+                    {/* Botón Editar: lleva a la misma pantalla de validación */}
+                    <Link
+                      to={`/validar-inscripcion/${validarId}`}
+                      className="btn-accion editar"
+                    >
+                      ✎
+                    </Link>
+
+                    {/* Botón Eliminar: llama a handleEliminar */}
+                    <button
+                      className="btn-accion eliminar"
+                      onClick={() => handleEliminar(validarId)}
+                      disabled={loading}
+                    >
+                      🗑️
+                    </button>
                   </td>
                 </tr>
               );

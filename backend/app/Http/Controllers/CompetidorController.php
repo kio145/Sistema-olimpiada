@@ -1,25 +1,38 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Models\Competidor;
 use App\Models\User;
 use App\Models\ValidarTutor;
+use App\Models\BoletaPago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Arr;              
-use Illuminate\Validation\Rule; 
-
+use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
 class CompetidorController extends Controller
 {
-    public function index()
+    /**
+     * GET /api/competidores
+     */
+    public function index(Request $request)
     {
-        return response()->json(Competidor::all());
-    }
+        $query = Competidor::query();
 
+        // Si me pasan ?cicompetidor=1234567, lo filtro:
+        if ($request->filled('cicompetidor')) {
+            $query->where('cicompetidor', $request->input('cicompetidor'));
+        }
+
+        $competidores = $query->get();
+        return response()->json($competidores, 200);
+    }
+    /**
+     * POST /api/competidores
+     * Crea un nuevo competidor y su usuario en la tabla users.
+     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -29,6 +42,7 @@ class CompetidorController extends Controller
             'passwordcompetidor'  => 'required|string|min:6|confirmed',
         ]);
 
+        // 1) Creamos el competidor
         $competidor = Competidor::create([
             'nombrecompetidor'   => $data['nombrecompetidor'],
             'apellidocompetidor' => $data['apellidocompetidor'],
@@ -36,7 +50,8 @@ class CompetidorController extends Controller
             'passwordcompetidor' => Hash::make($data['passwordcompetidor']),
         ]);
 
-                $user = User::create([
+        // 2) Creamos el usuario asociado en la tabla `users`
+        $user = User::create([
             'name'           => $competidor->nombrecompetidor . ' ' . $competidor->apellidocompetidor,
             'email'          => $competidor->emailcompetidor,
             'password'       => Hash::make($data['passwordcompetidor']),
@@ -50,12 +65,11 @@ class CompetidorController extends Controller
             'usuario'    => $user,
         ], 201);
     }
-    public function show(int $id): JsonResponse
-    {
-        $competidor = Competidor::findOrFail((int) $id);
-        return response()->json($competidor, 200);
-    }
 
+    /**
+     * GET /api/competidores/me
+     * Devuelve los datos del competidor autenticado.
+     */
     public function me(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -66,6 +80,10 @@ class CompetidorController extends Controller
         return response()->json($competidor, 200);
     }
 
+    /**
+     * PUT /api/competidores/{id}
+     * Actualiza datos de un competidor dado su ID.
+     */
     public function update(Request $request, int $id): JsonResponse
     {
         $competidor = Competidor::findOrFail($id);
@@ -74,8 +92,9 @@ class CompetidorController extends Controller
             'nombrecompetidor'     => 'sometimes|string|max:50',
             'apellidocompetidor'   => 'sometimes|string|max:50',
             'emailcompetidor'      => [
-                'sometimes','email',
-                Rule::unique('competidor','emailcompetidor')->ignore($id,'idcompetidor')
+                'sometimes',
+                'email',
+                Rule::unique('competidor', 'emailcompetidor')->ignore($id, 'idcompetidor')
             ],
             'cicompetidor'         => 'sometimes|integer',
             'fechanacimiento'      => 'sometimes|date',
@@ -88,16 +107,20 @@ class CompetidorController extends Controller
             'imagencompetidor'     => 'sometimes|image|max:2048',
         ]);
 
+        // Si suben imagen, la almacenamos
         if ($request->hasFile('imagencompetidor')) {
-            $path = $request->file('imagencompetidor')->store('competidores','public');
+            $path = $request->file('imagencompetidor')
+                ->store('competidores', 'public');
             $data['imagencompetidor'] = $path;
         }
 
+        // Actualizamos los campos del competidor (excluyendo password)
         $competidor->update(Arr::except($data, ['passwordcompetidor']));
 
+        // Sincronizamos con la tabla users si cambió email o password
         $user = User::where('profile_type', Competidor::class)
-                    ->where('profile_id', $id)
-                    ->first();
+            ->where('profile_id', $id)
+            ->first();
 
         if ($user) {
             $u = [];
@@ -108,7 +131,7 @@ class CompetidorController extends Controller
             if (isset($data['passwordcompetidor'])) {
                 $u['password'] = Hash::make($data['passwordcompetidor']);
             }
-            if ($u) {
+            if (!empty($u)) {
                 $user->update($u);
             }
         }
@@ -116,33 +139,151 @@ class CompetidorController extends Controller
         return response()->json($competidor, 200);
     }
 
+    /**
+     * GET /api/competidores/habilitados
+     *
+     * Devuelve solo aquellos competidores que:
+     *  1) Tienen al menos una validación con estado='validado' en validar_tutor
+     *  2) Ya registraron un pago en boleta_pago
+     *
+     * El JSON retornado contiene, para cada competidor:
+     *   - id, nombre, apellidos, correo
+     *   - nivel (curso) y área de la competencia validada
+     *   - nombre y apellido del tutor, así como teléfono
+     *   - estado = 'Inscrito'
+     */
     public function habilitados(): JsonResponse
     {
-        // 1) Obtengo todos los registros en validar_tutor donde estado_validacion = 'aceptada'
-        $registros = ValidarTutor::where('estado_validacion', 'validado')
-            ->with(['competidor', 'competencia'])
+        // 1) Recolectar todos los idcompetidor con estado_validacion = 'validado'
+        $idsValidos = ValidarTutor::where('estado_validacion', 'validado')
+            ->pluck('idcompetidor')
+            ->unique()
+            ->toArray();
+
+        // 2) Recolectar todos los idcompetidor que ya hicieron pago (tabla boleta_pago)
+        $idsPagaron = BoletaPago::pluck('idcompetidor')
+            ->unique()
+            ->toArray();
+
+        // 3) Hacer intersección: competidores que están validados Y que han pagado
+        $idsHabilitados = array_intersect($idsValidos, $idsPagaron);
+
+        if (empty($idsHabilitados)) {
+            // No hay ninguno habilitado → devolvemos un array vacío
+            return response()->json([], 200);
+        }
+
+        // 4) Traer los Competidor con su relación “validaciones” (solo las validaciones marcadas como 'validado')
+        $competidores = Competidor::whereIn('idcompetidor', $idsHabilitados)
+            ->with(['validaciones' => function ($q) {
+                $q->where('estado_validacion', 'validado')
+                    ->with(['tutor', 'competencia']);
+            }])
             ->get();
 
-        // 2) Mapeo para devolver solo los campos necesarios
-        $resultado = $registros->map(function($v) {
+        // 5) Mapear al formato que espera el front
+        $resultado = $competidores->map(function ($c) {
+            // Tomamos la primera (única) validación “validado”
+            $val = $c->validaciones->first();
+
             return [
-                'nombrecompetidor'   => $v->competidor->nombrecompetidor,
-                'apellidocompetidor' => $v->competidor->apellidocompetidor,
-                'cicompetidor'       => $v->competidor->cicompetidor,
-                'area'               => $v->competencia->areacompetencia,
-                'nivel'              => $v->competencia->nivelcompetencia,
-                'costo_inscripcion'  => $v->competencia->preciocompetencia,
-                'validar_id'         => $v->validar_id,
+                'id'            => $c->idcompetidor,
+                'nombre'        => $c->nombrecompetidor,
+                'apellidos'     => $c->apellidocompetidor,
+                'correo'        => $c->emailcompetidor,
+                'nivel'         => $c->curso,                              // “nivel” lo asociamos al campo 'curso'
+                'area'          => $val->competencia->areacompetencia,
+                'tutorNombre'   => $val->tutor->nombretutor,
+                'tutorApellido' => $val->tutor->apellidotutor,
+                'telefono'      => $val->tutor->telefonotutor,
+                'estado'        => 'Inscrito',
             ];
         });
 
         return response()->json($resultado, 200);
     }
 
+     public function habilitadosParaCajero(): JsonResponse
+    {
+        // 1) IDs de competidores con estado_validacion = 'validado'
+        $idsValidos = ValidarTutor::where('estado_validacion', 'validado')
+            ->pluck('idcompetidor')
+            ->unique()
+            ->toArray();
 
+        // 2) IDs de competidores que ya hicieron pago
+        $idsPagaron = BoletaPago::pluck('idcompetidor')
+            ->unique()
+            ->toArray();
+
+        // 3) Intersección: aquellos competidores que están validados Y que pagaron
+        $idsHabilitados = array_intersect($idsValidos, $idsPagaron);
+
+        if (empty($idsHabilitados)) {
+            return response()->json([], 200);
+        }
+
+        // 4) Traer cada Competidor con su validación “validado”, para extraer el área y el costo
+        //    Nota: aprovechamos la relación “validaciones” para acceder a “competencia”
+        $competidores = Competidor::whereIn('idcompetidor', $idsHabilitados)
+            ->with(['validaciones' => function($q) {
+                $q->where('estado_validacion', 'validado')
+                  ->with(['competencia']);
+            }])
+            ->get();
+
+        // 5) Armar el JSON de salida con SOLO los campos requeridos
+        $resultado = $competidores->map(function($c) {
+            // Tomamos la primera (y única) validación “validado” para obtener competencia
+            $val = $c->validaciones->first();
+            $competencia = $val->competencia;
+
+            return [
+                'nombre'            => $c->nombrecompetidor . ' ' . $c->apellidocompetidor,
+                'area'              => $competencia->areacompetencia,
+                'cicompetidor'      => $c->cicompetidor,
+                'costo_inscripcion' => $competencia->preciocompetencia,
+            ];
+        });
+
+        return response()->json($resultado, 200);
+    }
+
+    /**
+     * GET /api/competidores/{id}
+     */
+    public function show(int $id): JsonResponse
+    {
+        $competidor = Competidor::findOrFail($id);
+        return response()->json($competidor, 200);
+    }
+
+    /**
+     * DELETE /api/competidores/{id}
+     */
     public function destroy(int $id): JsonResponse
     {
         Competidor::destroy($id);
         return response()->json(null, 204);
+    }
+
+    public function showByCi(string $ci): JsonResponse
+    {
+        // Busca el primer competidor cuyo cicompetidor coincida exactamente:
+        $competidor = Competidor::where('cicompetidor', $ci)->first();
+
+        if (! $competidor) {
+            return response()->json([
+                'message' => 'No se encontró competidor con CI ' . $ci
+            ], 404);
+        }
+
+        return response()->json($competidor, 200);
+    }
+
+    public function findByCi(string $ci): JsonResponse
+    {
+        $competidor = Competidor::where('cicompetidor', $ci)->firstOrFail();
+        return response()->json($competidor, 200);
     }
 }

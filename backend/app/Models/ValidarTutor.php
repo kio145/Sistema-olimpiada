@@ -38,4 +38,12 @@ class ValidarTutor extends Model
             'idcompetencia'      
         );
     }
+
+    public function tutor()
+    {
+        return $this->belongsTo(Tutor::class,
+            'idtutor',
+            'idtutor'
+        );
+    }
 }

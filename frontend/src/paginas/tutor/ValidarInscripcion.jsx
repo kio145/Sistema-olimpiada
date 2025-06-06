@@ -6,7 +6,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../../api/api";
 
 export function ValidarInscripcion() {
-  // 1) Leemos de la URL el parámetro “validarId”
   const { validarId } = useParams();
   const navigate = useNavigate();
 
@@ -17,6 +16,14 @@ export function ValidarInscripcion() {
   const [loading, setLoading]                 = useState(false);
   const [mostrarModal, setMostrarModal]       = useState(false);
   const [razon, setRazon]                     = useState("");
+
+ // ────────────────────────────────────────────────────────────────────
+ // Estados para manejo de rango de fechas de validación
+ const [fechaInicioValidacion, setFechaInicioValidacion] = useState(null);
+ const [fechaFinValidacion, setFechaFinValidacion]       = useState(null);
+ const [mostrarFueraDeRango, setMostrarFueraDeRango]     = useState(false);
+ const [fechasCargadas, setFechasCargadas]               = useState(false);
+  // ────────────────────────────────────────────────────────────────────
 
   // 2) Cargar el registro de ValidarTutor (pivot)
   useEffect(() => {
@@ -48,11 +55,53 @@ export function ValidarInscripcion() {
       });
   }, []);
 
+ // 4) Cargar el rango de fechas de validación desde /fechas
+  useEffect(() => {
+   api.get("/fechas") // asumo que devuelve un array; tomamos el primero
+      .then(res => {
+       if (Array.isArray(res.data) && res.data.length > 0) {
+         const f = res.data[0]; // suponiendo que solo tienes un registro
+         setFechaInicioValidacion(new Date(f.fecha_inicio_validacion));
+         setFechaFinValidacion(new Date(f.fecha_fin_validacion));
+         setFechasCargadas(true);
+        } else {
+         console.warn("No existen fechas configuradas.");
+         setFechasCargadas(true);
+        }
+      })
+      .catch(err => {
+        console.error("No se pudo cargar las fechas:", err);
+        setError("Error al obtener el rango de fechas.");
+       setFechasCargadas(true);
+      });
+   }, []);
+
   const validar = async estado => {
     if (estado === "rechazado" && !razon.trim()) {
       alert("Debes poner un motivo.");
       return;
     }
+
+    // ──────────────────────────────────────────────────────────────
+    // ① Primero: verificamos que las fechas de validación estén cargadas
+    if (!fechasCargadas) {
+      // Aún no sabemos el rango; no hacemos nada
+      return;
+    }
+
+    // ② Si tenemos fechas (fechaInicioValidacion, fechaFinValidacion)
+    const ahora = new Date();
+    if (
+      fechaInicioValidacion instanceof Date &&
+      fechaFinValidacion instanceof Date
+    ) {
+      // Si está fuera del rango, abrimos modal y cortamos la ejecución
+      if (ahora < fechaInicioValidacion || ahora > fechaFinValidacion) {
+        setMostrarFueraDeRango(true);
+        return;
+      }
+    }
+    // ──────────────────────────────────────────────────────────────
 
     setLoading(true);
 
@@ -87,9 +136,13 @@ export function ValidarInscripcion() {
   if (error) {
     return <p className="error">{error}</p>;
   }
-  if (!validarRegistro || !competidor || !tutor) {
+
+  // ──────────────────────────────────────────────────────
+  // Si aún no cargamos las fechas, mostramos “Cargando…”
+  if (!fechasCargadas || !validarRegistro || !competidor || !tutor) {
     return <p>Cargando…</p>;
   }
+  // ──────────────────────────────────────────────────────
 
   return (
     <div className="validar-container">
@@ -169,6 +222,8 @@ export function ValidarInscripcion() {
         </button>
       </div>
 
+      {/* ────────────────────────────────────────────── */}
+      {/* Modal de rechazo (motivo) */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal-contenido">
@@ -176,7 +231,7 @@ export function ValidarInscripcion() {
             <textarea
               rows="4"
               value={razon}
-              onChange={e => setRazon(e.target.value)}
+              onChange={(e) => setRazon(e.target.value)}
               placeholder="Motivo de rechazo..."
             />
             <div className="modal-botones">
@@ -186,6 +241,34 @@ export function ValidarInscripcion() {
           </div>
         </div>
       )}
+
+      {/* ────────────────────────────────────────────── */}
+      {/* Modal “fuera de rango de validación” */}
+      {mostrarFueraDeRango && (
+        <div className="modal-overlay">
+          <div className="modal-contenido">
+            <h3>Fuera de Fecha de Validación</h3>
+            <p>
+              La validación solo está permitida entre{" "}
+              <strong>
+                {fechaInicioValidacion.toLocaleDateString()}
+              </strong>{" "}
+              y{" "}
+              <strong>
+                {fechaFinValidacion.toLocaleDateString()}
+              </strong>
+              .<br />
+              Hoy es <strong>{new Date().toLocaleDateString()}</strong>.
+            </p>
+            <div className="modal-botones">
+              <button onClick={() => setMostrarFueraDeRango(false)}>
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ────────────────────────────────────────────── */}
     </div>
   );
 }

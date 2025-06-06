@@ -4,13 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/Boleta.css';
 import api from '../../api/api'; // Axios configurado con baseURL y token
-
 import { FaSearch } from 'react-icons/fa';
 
 export function Boleta() {
-  const [ciTutor, setCiTutor]           = useState('');
-  const [tutor, setTutor]               = useState(null);
-  const [estudiantes, setEstudiantes]   = useState([]); 
+  const [ciCompetidor, setCiCompetidor] = useState('');
+  const [competidor, setCompetidor]     = useState(null);
+  const [inscripciones, setInscripciones] = useState([]);
   const [monto, setMonto]               = useState('');
   const [cambio, setCambio]             = useState('');
   const [error, setError]               = useState('');
@@ -18,7 +17,7 @@ export function Boleta() {
 
   const navigate = useNavigate();
 
-  // 0) Al montar, consultamos “/cajeros/me” para saber qué cajero está logueado
+  // 0) Al montar, consultamos “/cajeros/me” para identificar al cajero logueado
   useEffect(() => {
     api.get('/cajeros/me')
       .then(res => {
@@ -30,52 +29,45 @@ export function Boleta() {
       });
   }, []);
 
-  const buscarTutor = async () => {
+  const buscarCompetidor = async () => {
     setError('');
-    setTutor(null);
-    setEstudiantes([]);
+    setCompetidor(null);
+    setInscripciones([]);
     setMonto('');
     setCambio('');
 
-    if (!ciTutor.trim()) {
-      setError('Por favor ingresa la cédula del tutor.');
+    if (!ciCompetidor.trim()) {
+      setError('Por favor ingresa la cédula del competidor.');
       return;
     }
 
     try {
-      // 1) Obtener lista completa de tutores
-      const resTutores = await api.get('/tutores');
-      const todosTut   = resTutores.data;
+      // 1) Llamamos al nuevo endpoint que definimos: GET /api/competidores/ci/{ciCompetidor}
+      const resComp = await api.get(`/competidores/ci/${ciCompetidor.trim()}`);
+      const encontrado = resComp.data;
 
-      // Filtrar por “citutor” (string)
-      const encontrado = todosTut.find(t => String(t.citutor) === ciTutor.trim());
-      if (!encontrado) {
-        setError('No se encontró ningún tutor con esa cédula.');
-        return;
-      }
-
-      // 2) Obtener todas las validaciones (con “competidor” y “competencia”)
+      // 2) Obtener todas las validaciones (con “competidor” y “competencia” pre-cargadas)
       const resValidaciones = await api.get('/validarTutor');
-      const allValid        = resValidaciones.data;
+      const allValid = resValidaciones.data;
 
-      // 3) Filtrar solo aquellas filas de este tutor con estado “validado”
-      const validDelTutor = allValid.filter(v =>
-        v.idtutor === encontrado.idtutor && v.estado_validacion === 'validado'
+      // 3) Filtrar solo aquellas filas para este competidor con estado “validado”
+      const validDelCompetidor = allValid.filter(v =>
+        v.idcompetidor === encontrado.idcompetidor && v.estado_validacion === 'validado'
       );
 
-      if (validDelTutor.length === 0) {
-        setError('Este tutor no tiene competidores habilitados para pago.');
+      if (validDelCompetidor.length === 0) {
+        setError('Este competidor no tiene inscripciones validadas para pago.');
         return;
       }
 
       // 4) Por cada validación “validado”, buscar su inscripción exacta
-      const listaEst = [];
-      for (let v of validDelTutor) {
-        // GET /inscripciones?idcompetidor=XX&idcompetencia=YY
+      const listaIns = [];
+      for (let v of validDelCompetidor) {
+        // GET /api/inscripciones?idcompetidor=XX&idcompetencia=YY
         const resInsc = await api.get('/inscripciones', {
           params: {
-            idcompetidor:   v.idcompetidor,
-            idcompetencia:  v.idcompetencia
+            idcompetidor:  v.idcompetidor,
+            idcompetencia: v.idcompetencia
           }
         });
         const inscs = resInsc.data;
@@ -84,26 +76,27 @@ export function Boleta() {
         }
         const insc = inscs[0];
 
-        listaEst.push({
-          nombre:        `${v.competidor.nombrecompetidor} ${v.competidor.apellidocompetidor}`,
+        listaIns.push({
+          nombre:        `${encontrado.nombrecompetidor} ${encontrado.apellidocompetidor}`,
           area:          v.competencia.areacompetencia,
           nivel:         v.competencia.nivelcompetencia,
           costo:         v.competencia.preciocompetencia,
           inscripcionId: insc._inscripcion_id,
-          idcompetidor:  v.idcompetidor
+          idcompetidor:  v.idcompetidor,
+          idtutor:       v.idtutor
         });
       }
 
-      if (listaEst.length === 0) {
-        setError('No hay inscripciones válidas asociadas a este tutor.');
+      if (listaIns.length === 0) {
+        setError('No hay inscripciones válidas asociadas a este competidor.');
         return;
       }
 
-      setTutor(encontrado);
-      setEstudiantes(listaEst);
+      setCompetidor(encontrado);
+      setInscripciones(listaIns);
 
     } catch (e) {
-      console.error('Error al buscar tutor o validaciones:', e);
+      console.error('Error al buscar competidor o validaciones:', e);
       setError('Hubo un problema al conectarse con el servidor.');
     }
   };
@@ -111,12 +104,11 @@ export function Boleta() {
   const calcularCambio = e => {
     const valor = parseFloat(e.target.value);
     setMonto(e.target.value);
-
-    if (isNaN(valor) || estudiantes.length === 0) {
+    if (isNaN(valor) || inscripciones.length === 0) {
       setCambio('');
       return;
     }
-    const total = estudiantes.reduce((sum, est) => sum + est.costo, 0);
+    const total = inscripciones.reduce((sum, ins) => sum + ins.costo, 0);
     setCambio((valor - total).toFixed(2));
   };
 
@@ -127,53 +119,50 @@ export function Boleta() {
       setError('No se ha identificado al cajero.');
       return;
     }
-    if (!tutor || estudiantes.length === 0) {
+    if (!competidor || inscripciones.length === 0) {
       setError('No hay datos para procesar.');
       return;
     }
 
-    const total = estudiantes.reduce((sum, est) => sum + est.costo, 0);
+    const total = inscripciones.reduce((sum, ins) => sum + ins.costo, 0);
     if (parseFloat(monto) < total) {
       setError('El monto depositado es menor al total a pagar.');
       return;
     }
 
     try {
-      // 5) Por cada estudiante, creamos un registro en boleta_pago y actualizamos la inscripción
-      for (let est of estudiantes) {
+      // 5) Por cada inscripción, creamos un registro en boleta_pago y actualizamos inscripción
+      for (let ins of inscripciones) {
         // 5.1) Crear boleta_pago
         await api.post('/boleta-pagos', {
-          // Nota: “idboleta” lo autogenera Eloquent porque es autoincrement
           idcajero:      cajero.idcajero,
-          idcompetidor:  est.idcompetidor,
+          idcompetidor:  ins.idcompetidor,
           fecha_emision: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-          montototal:    est.costo,
-          id_tutor:      tutor.idtutor
+          montototal:    ins.costo,
+          id_tutor:      ins.idtutor
         });
 
         // 5.2) Actualizar la inscripción para que quede “inscrito”
-        await api.put(`/inscripciones/${est.inscripcionId}`, {
+        await api.put(`/inscripciones/${ins.inscripcionId}`, {
           estado_inscripcion: 'inscrito'
         });
       }
 
-      // 6) Una vez creado todo, navegamos a la pantalla de pago exitoso
+      // 6) Redirigimos a la página de confirmación de pago
       navigate('/pago-boleta', {
         state: {
           tutor: {
-            nombre: (tutor.nombrecajero 
-                      ? `${tutor.nombrecajero} ${tutor.apellidocajero}` 
-                      : `${tutor.nombretutor} ${tutor.apellidotutor}`),
-            estudiantes: estudiantes.map(est => ({
-              nombre: est.nombre,
-              area:   est.area,
-              nivel:  est.nivel,
-              costo:  est.costo
+            nombre: `${competidor.nombrecompetidor} ${competidor.apellidocompetidor}`,
+            estudiantes: inscripciones.map(ins => ({
+              nombre: ins.nombre,
+              area:   ins.area,
+              nivel:  ins.nivel,
+              costo:  ins.costo
             }))
           },
           total,
-          monto:   parseFloat(monto),
-          cambio:  parseFloat(monto) - total
+          monto:  parseFloat(monto),
+          cambio: parseFloat(monto) - total
         }
       });
 
@@ -190,23 +179,21 @@ export function Boleta() {
       {error && <p className="error">{error}</p>}
 
       <div className="busqueda">
-        <label>Cédula del Tutor:</label>
+        <label>Cédula del Competidor:</label>
         <input
           type="text"
-          value={ciTutor}
-          onChange={e => setCiTutor(e.target.value)}
+          value={ciCompetidor}
+          onChange={e => setCiCompetidor(e.target.value)}
           placeholder="Ej. 1234567"
         />
-        <button onClick={buscarTutor}><FaSearch /></button>
+        <button onClick={buscarCompetidor}><FaSearch /></button>
       </div>
 
-      {tutor && (
+      {competidor && (
         <>
           <hr />
           <h3>
-            Tutor: {tutor.nombrecajero 
-                      ? `${tutor.nombrecajero} ${tutor.apellidocajero}` 
-                      : `${tutor.nombretutor} ${tutor.apellidotutor}` }
+            Competidor: {competidor.nombrecompetidor} {competidor.apellidocompetidor}
           </h3>
 
           <table className="tabla-estudiantes">
@@ -219,12 +206,12 @@ export function Boleta() {
               </tr>
             </thead>
             <tbody>
-              {estudiantes.map((est, i) => (
+              {inscripciones.map((ins, i) => (
                 <tr key={i}>
-                  <td>{est.nombre}</td>
-                  <td>{est.area}</td>
-                  <td>{est.nivel}</td>
-                  <td>{est.costo}</td>
+                  <td>{ins.nombre}</td>
+                  <td>{ins.area}</td>
+                  <td>{ins.nivel}</td>
+                  <td>{ins.costo}</td>
                 </tr>
               ))}
             </tbody>
@@ -232,9 +219,7 @@ export function Boleta() {
 
           <div className="totales">
             <p>
-              Total a pagar: <strong>
-                {estudiantes.reduce((sum, e) => sum + e.costo, 0)} Bs
-              </strong>
+              Total a pagar: <strong>{inscripciones.reduce((sum, i) => sum + i.costo, 0)} Bs</strong>
             </p>
           </div>
 
