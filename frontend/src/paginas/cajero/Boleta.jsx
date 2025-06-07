@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/Boleta.css';
-import api from '../../api/api'; // Axios configurado con baseURL y token
+import api from '../../api/api';
 import { FaSearch } from 'react-icons/fa';
 
 export function Boleta() {
@@ -15,19 +15,52 @@ export function Boleta() {
   const [error, setError]               = useState('');
   const [cajero, setCajero]             = useState(null);
 
+  // Fechas de pago
+  const [fechaInicioPago, setFechaInicioPago] = useState(null);
+  const [fechaFinPago, setFechaFinPago] = useState(null);
+  const [fechasCargadas, setFechasCargadas] = useState(false);
+  const [mostrarFueraDeRango, setMostrarFueraDeRango] = useState(false);
+
   const navigate = useNavigate();
 
   // 0) Al montar, consultamos “/cajeros/me” para identificar al cajero logueado
   useEffect(() => {
     api.get('/cajeros/me')
-      .then(res => {
-        setCajero(res.data);
-      })
+      .then(res => setCajero(res.data))
       .catch(err => {
         console.error('No se pudo identificar al cajero:', err);
         setError('Error al identificar al cajero. Vuelve a iniciar sesión.');
       });
+    // ① Pedimos las fechas globales
+    api.get('/fechas')
+      .then(res => {
+        // Asumiendo que solo hay un registro
+        const fechas = Array.isArray(res.data) ? res.data[0] : res.data;
+        if (fechas) {
+          setFechaInicioPago(new Date(fechas.fecha_inicio_pago));
+          setFechaFinPago(new Date(fechas.fecha_fin_pago));
+          setFechasCargadas(true);
+        }
+      })
+      .catch(err => {
+        setError('No se pudo obtener el rango de fechas de pago.');
+      });
   }, []);
+
+  // Modal de rango fuera de fechas
+  function verificarRango() {
+    if (!fechasCargadas) return false;
+    const ahora = new Date();
+    if (
+      fechaInicioPago instanceof Date &&
+      fechaFinPago instanceof Date &&
+      (ahora < fechaInicioPago || ahora > fechaFinPago)
+    ) {
+      setMostrarFueraDeRango(true);
+      return false;
+    }
+    return true;
+  }
 
   const buscarCompetidor = async () => {
     setError('');
@@ -35,6 +68,9 @@ export function Boleta() {
     setInscripciones([]);
     setMonto('');
     setCambio('');
+
+    // ── ① Verificar fechas antes de buscar ──
+    if (!verificarRango()) return;
 
     if (!ciCompetidor.trim()) {
       setError('Por favor ingresa la cédula del competidor.');
@@ -63,7 +99,6 @@ export function Boleta() {
       // 4) Por cada validación “validado”, buscar su inscripción exacta
       const listaIns = [];
       for (let v of validDelCompetidor) {
-        // GET /api/inscripciones?idcompetidor=XX&idcompetencia=YY
         const resInsc = await api.get('/inscripciones', {
           params: {
             idcompetidor:  v.idcompetidor,
@@ -71,9 +106,7 @@ export function Boleta() {
           }
         });
         const inscs = resInsc.data;
-        if (inscs.length === 0) {
-          continue; // en teoría, ya debería haber inscripción
-        }
+        if (inscs.length === 0) continue;
         const insc = inscs[0];
 
         listaIns.push({
@@ -115,6 +148,9 @@ export function Boleta() {
   const manejarAceptar = async () => {
     setError('');
 
+    // ── ② Verificar fechas antes de aceptar pago ──
+    if (!verificarRango()) return;
+
     if (!cajero) {
       setError('No se ha identificado al cajero.');
       return;
@@ -133,7 +169,6 @@ export function Boleta() {
     try {
       // 5) Por cada inscripción, creamos un registro en boleta_pago y actualizamos inscripción
       for (let ins of inscripciones) {
-        // 5.1) Crear boleta_pago
         await api.post('/boleta-pagos', {
           idcajero:      cajero.idcajero,
           idcompetidor:  ins.idcompetidor,
@@ -142,13 +177,11 @@ export function Boleta() {
           id_tutor:      ins.idtutor
         });
 
-        // 5.2) Actualizar la inscripción para que quede “inscrito”
         await api.put(`/inscripciones/${ins.inscripcionId}`, {
           estado_inscripcion: 'inscrito'
         });
       }
 
-      // 6) Redirigimos a la página de confirmación de pago
       navigate('/pago-boleta', {
         state: {
           tutor: {
@@ -251,6 +284,34 @@ export function Boleta() {
           </div>
         </>
       )}
+
+      {/* ────────────────────────────────────────────── */}
+      {/* Modal fuera de fecha de pago */}
+      {mostrarFueraDeRango && (
+        <div className="modal-overlay">
+          <div className="modal-contenido">
+            <h3>Fuera de Fecha de Pago</h3>
+            <p>
+              El pago solo está permitido entre{" "}
+              <strong>
+                {fechaInicioPago && fechaInicioPago.toLocaleDateString()}
+              </strong>{" "}
+              y{" "}
+              <strong>
+                {fechaFinPago && fechaFinPago.toLocaleDateString()}
+              </strong>
+              .<br />
+              Hoy es <strong>{new Date().toLocaleDateString()}</strong>.
+            </p>
+            <div className="modal-botones">
+              <button onClick={() => setMostrarFueraDeRango(false)}>
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ────────────────────────────────────────────── */}
     </div>
   );
 }

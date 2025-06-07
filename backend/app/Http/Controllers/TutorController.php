@@ -90,73 +90,68 @@ class TutorController extends Controller
 
    public function update(Request $request, int $id)
 {
+    // Validar los datos
     $validated = $request->validate([
-        'nombretutor'   => 'nullable|string|max:100',
-        'apellidotutor' => 'nullable|string|max:100',
+        'nombretutor'   => 'required|string|max:50',
+        'apellidotutor' => 'required|string|max:50',
         'correotutor'   => [
-            'nullable',
+            'required',
             'email',
             Rule::unique('tutor', 'correotutor')->ignore($id, 'idtutor'),
-            Rule::unique('users', 'email')->ignore($this->getUserId($id), 'id')
+            Rule::unique('users', 'email')->ignore($this->getUserId($id), 'id'),
         ],
-        'area'          => 'nullable|string|max:100',
+        'area'          => 'required|string|max:100',
         'telefonotutor' => 'nullable|string|max:20',
-        'citutor'       => 'nullable|string|max:30',
-        'passwordtutor' => 'nullable|string|min:6',
-        'imagentutor'   => 'nullable|image|max:2048',
+        'citutor'       => 'nullable|string|max:20',
+        'imagentutor'   => 'sometimes|image|max:2048',
+        // No valides passwordtutor si no viene en el request
+        'passwordtutor' => 'sometimes|string|min:6',
     ]);
 
     $tutor = Tutor::findOrFail($id);
 
-    // Imagen
-    if ($request->hasFile('imagentutor')) {
-        if ($tutor->imagentutor) {
-            Storage::disk('public')->delete($tutor->imagentutor);
-        }
-        $path = $request->file('imagentutor')->store('tutores', 'public');
-        $validated['imagentutor'] = $path;
-    }
-
-    // Contraseña
-    if (!empty($validated['passwordtutor'])) {
-        $validatedPassword = Hash::make($validated['passwordtutor']);
-        // Actualiza también el usuario relacionado
-        $user = User::where('profile_id', $id)
-                    ->where('profile_type', Tutor::class)
-                    ->firstOrFail();
-        $user->update(['password' => $validatedPassword]);
-    }
-    unset($validated['passwordtutor']); // No guardes en Tutor, sólo en users
-
     DB::beginTransaction();
     try {
+        // Si hay imagen, guárdala
+        if ($request->hasFile('imagentutor')) {
+            if ($tutor->imagentutor) {
+                \Storage::disk('public')->delete($tutor->imagentutor);
+            }
+            $validated['imagentutor'] = $request->file('imagentutor')->store('tutores', 'public');
+        }
+
+        // Actualizar el tutor
         $tutor->update($validated);
-        // Actualiza correo/nombre en users
+
+        // Actualizar datos de usuario asociado
         $user = User::where('profile_id', $id)
-                    ->where('profile_type', Tutor::class)
-                    ->firstOrFail();
-        $user->update([
-            'name'  => "{$validated['nombretutor']} {$validated['apellidotutor']}",
-            'email' => $validated['correotutor']
-        ]);
+            ->where('profile_type', Tutor::class)
+            ->firstOrFail();
+
+        $user->name = "{$validated['nombretutor']} {$validated['apellidotutor']}";
+        $user->email = $validated['correotutor'];
+        if ($request->filled('passwordtutor')) {
+            $user->password = Hash::make($request->input('passwordtutor'));
+        }
+        $user->save();
+
         DB::commit();
         return response()->json(['tutor' => $tutor, 'user' => $user], 200);
+
     } catch (\Exception $e) {
         DB::rollBack();
-        return response()->json([
-            'message' => 'Error al actualizar',
-            'error'   => $e->getMessage()
-        ], 500);
+        return response()->json(['message' => 'Error al actualizar', 'error' => $e->getMessage()], 500);
     }
 }
 
-// Método auxiliar para obtener el id de usuario
-private function getUserId($idtutor)
+// Helper para obtener el ID de usuario
+private function getUserId(int $tutorId): int
 {
-    return User::where('profile_id', $idtutor)
-               ->where('profile_type', Tutor::class)
-               ->value('id');
+    return User::where('profile_id', $tutorId)
+        ->where('profile_type', Tutor::class)
+        ->value('id');
 }
+
 
 
     public function destroy($id)

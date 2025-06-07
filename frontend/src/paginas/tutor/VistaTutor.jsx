@@ -111,10 +111,17 @@ export function VistaTutor() {
             </tr>
           </thead>
           <tbody>
-            {profile.competidores?.map((competidor, index) => {
-              const p = competidor.pivot || {};
-              const estado = (p.estado_validacion || "").toLowerCase();
-              const validarId = p.validar_id;
+        {profile.competidores
+    ?.filter(competidor => {
+      // Solo mostrar los que aún NO están validados
+      const estado = (competidor.pivot?.estado_validacion || "").toLowerCase();
+      // Si es pendiente o vacío (no validado aún)
+      return estado === "pendiente" || estado === "";
+    })
+    .map((competidor, index) => {
+      const p = competidor.pivot || {};
+      const estado = (p.estado_validacion || "").toLowerCase();
+      const validarId = p.validar_id;
 
               // Texto legible para “inscripción”
               let textoIns = "";

@@ -62,9 +62,15 @@ export function Pago() {
         </p>
       </div>
 
-      <button className="btn-pago" onClick={() => navigate('/vista-cajero')}>
-        ← Regresar al menú de cajero
-      </button>
+      <button 
+            className="btn-pago" 
+             onClick={() => {
+               const user = JSON.parse(localStorage.getItem('user'));
+               navigate('/vista-cajero', { state: { user } });
+             }}
+            >
+            ← Regresar al menú de cajero
+        </button>
     </div>
   );
 }

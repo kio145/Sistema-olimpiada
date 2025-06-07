@@ -77,58 +77,52 @@ export function ValidarInscripcion() {
    }, []);
 
   const validar = async estado => {
-    if (estado === "rechazado" && !razon.trim()) {
-      alert("Debes poner un motivo.");
+  if (estado === "rechazado" && !razon.trim()) {
+    alert("Debes poner un motivo.");
+    return;
+  }
+  if (!fechasCargadas) return;
+
+  const ahora = new Date();
+  if (
+    fechaInicioValidacion instanceof Date &&
+    fechaFinValidacion instanceof Date
+  ) {
+    if (ahora < fechaInicioValidacion || ahora > fechaFinValidacion) {
+      setMostrarFueraDeRango(true);
       return;
     }
+  }
 
-    // ──────────────────────────────────────────────────────────────
-    // ① Primero: verificamos que las fechas de validación estén cargadas
-    if (!fechasCargadas) {
-      // Aún no sabemos el rango; no hacemos nada
-      return;
-    }
+  setLoading(true);
 
-    // ② Si tenemos fechas (fechaInicioValidacion, fechaFinValidacion)
-    const ahora = new Date();
-    if (
-      fechaInicioValidacion instanceof Date &&
-      fechaFinValidacion instanceof Date
-    ) {
-      // Si está fuera del rango, abrimos modal y cortamos la ejecución
-      if (ahora < fechaInicioValidacion || ahora > fechaFinValidacion) {
-        setMostrarFueraDeRango(true);
-        return;
-      }
-    }
-    // ──────────────────────────────────────────────────────────────
+  try {
+    const res = await api.post("/validarTutor", {
+      idcompetencia:     validarRegistro.idcompetencia,
+      idcompetidor:      validarRegistro.idcompetidor,
+      idtutor:           tutor.idtutor,
+      tipo_tutor:        "tutor",
+      estado_validacion: estado,
+      motivo_rechazo:    estado === "rechazado" ? razon : null,
+    });
 
-    setLoading(true);
-
-    try {
-      await api.post("/validarTutor", {
-        idcompetencia:     validarRegistro.idcompetencia,
-        idcompetidor:      validarRegistro.idcompetidor,
-        idtutor:           tutor.idtutor,
-        tipo_tutor:        "tutor", // fijo “tutor”
-        estado_validacion: estado,
-        motivo_rechazo:    estado === "rechazado" ? razon : null,
-      });
-
-      alert(
-        estado === "validado"
-          ? "✅ Inscripción validada"
-          : `❌ Inscripción rechazada\nMotivo: ${razon}`
-      );
+    if (estado === "validado") {
+      // Redirecciona a la pantalla de éxito con el ID retornado por el backend
+      const idValidar = res.data?.id || res.data?.validar_tutor?.id || res.data?.validar_id || validarRegistro.idvalidar || validarId;
+      navigate(`/inscripcion-aceptada/${idValidar}`);
+    } else {
+      alert(`❌ Inscripción rechazada\nMotivo: ${razon}`);
       navigate("/vista-tutor");
-    } catch (e) {
-      console.error(e);
-      setError("Error al enviar la validación.");
-    } finally {
-      setLoading(false);
-      setMostrarModal(false);
     }
-  };
+  } catch (e) {
+    console.error(e);
+    setError("Error al enviar la validación.");
+  } finally {
+    setLoading(false);
+    setMostrarModal(false);
+  }
+};
+
 
   if (!validarId) {
     return <p className="error">No se especificó la validación a procesar.</p>;
