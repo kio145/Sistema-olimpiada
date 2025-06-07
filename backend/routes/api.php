@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // ------------------------------------------------------------
     // Rutas de TUTORES
     // ------------------------------------------------------------
+    Route::get('/tutores', [TutorController::class, 'index']);
     Route::get('tutores/me', [TutorController::class, 'me']);
     Route::put('tutores/me', [TutorController::class, 'updateMe']);
     Route::get('tutores/{id}', [TutorController::class, 'show']);
@@ -63,6 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('cajeros/{id}', [CajeroController::class, 'show']);
     Route::post('cajeros', [CajeroController::class, 'store']);
     Route::put('cajeros/{id}', [CajeroController::class, 'update']);
+    Route::post('cajeros/{id}', [CajeroController::class, 'update']);
     Route::delete('cajeros/{id}', [CajeroController::class, 'destroy']);
     Route::get('competidores/ci/{ci}', [CompetidorController::class, 'showByCi']);
    

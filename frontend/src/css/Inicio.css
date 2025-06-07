@@ -95,20 +95,21 @@
   }
   
   .btn-regresar {
-    display: inline-block;
-    margin-top: 20px;
-    background-color: #3d8ac2;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-  }
-  
-  .btn-regresar:hover {
-    background-color: #3377aa;
-  }
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #359bdf;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-regresar:hover {
+  background-color: #2a7bb8;
+}
   .menu-boton{
     display: flex;
     position: relative;

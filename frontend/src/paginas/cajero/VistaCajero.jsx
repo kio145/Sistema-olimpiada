@@ -1,9 +1,8 @@
-// src/paginas/cajero/VistaCajero.jsx
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import api from "../../api/api";
 import "../../css/VistaCajero.css";
+
 
 export function VistaCajero() {
   const { state } = useLocation();
@@ -63,7 +62,7 @@ export function VistaCajero() {
             </h2>
             <div className="botones-admin">
               <Link
-                to="/editar-perfil"
+                to="/editar-perfil-cajero"  // Ruta modificada
                 className="btn-editar-admin"
                 state={{ user }}
               >

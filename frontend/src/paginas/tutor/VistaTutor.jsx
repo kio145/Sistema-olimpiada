@@ -75,24 +75,25 @@ export function VistaTutor() {
           <h2 className="nombre">
             {profile.nombretutor} {profile.apellidotutor}
           </h2>
-          <div className="botones-admin">
-            <Link
-              to="/editar-perfil"
-              className="btn-editar-admin"
-              state={{ user }}
-            >
-              Editar perfil ✎
-            </Link>
-            <button
-              className="btn-cerrar-admin"
-              onClick={() => {
-                localStorage.removeItem("token");
-                navigate("/inicio");
-              }}
-            >
-              Cerrar Sesión
-            </button>
-          </div>
+         <div className="botones-admin">
+  <Link
+    to="/editar-perfil-tutor"  
+    className="btn-editar-admin"
+    state={{ user }} 
+  >
+    Editar perfil ✎
+  </Link>
+  <button
+    className="btn-cerrar-admin"
+    onClick={() => {
+      localStorage.removeItem("token");
+      navigate("/inicio");
+    }}
+  >
+    Cerrar Sesión
+  </button>
+</div>
+
         </div>
       </div>
 

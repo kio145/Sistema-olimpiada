@@ -1,38 +1,50 @@
 // src/paginas/competiciones/Area.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import '../../css/Competiciones.css';
 
 export function Area() {
-  const { id }   = useParams();
+  const { id } = useParams();       // { id } coincide con la parte /area/:id
   const navigate = useNavigate();
-  const [c, setC]       = useState(null);
+  const [c, setC] = useState(null);
   const [modal, setModal] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Ya no pedimos '/competencias/todas'; pedimos '/competencias/{id}'
     api.get(`/competencias/${id}`)
-       .then(res => setC(res.data))
-       .catch(console.error);
+      .then(res => setC(res.data))
+      .catch(err => {
+        console.error('Error al cargar la competencia:', err);
+        setError('No se pudo cargar los datos del área.');
+      });
   }, [id]);
 
+  if (error) return <p className="error">{error}</p>;
   if (!c) return <p>Cargando…</p>;
 
+  // Extraigo los campos necesarios de la respuesta
   const {
-    fechas,
     areacompetencia,
     imagencompetencia,
     preciocompetencia,
-    requisitos,
-    descripcion
+    descripcion,
+    requisitos,  // suponiendo que tu relación en el modelo sea `requisitos()`
+    fechas       // suponiendo que tu relación en el modelo sea `fechas()`
   } = c;
 
-  // Si no hay fechas asociadas, la inscripción NO está abierta
+  // Determino si la inscripción está abierta según fechas.fecha_inicio_inscripcion y fecha_fin_inscripcion
   let abierta = false;
-  if (fechas?.fecha_inicio_inscripcion && fechas?.fecha_fin_inscripcion) {
-    const hoy        = new Date().setHours(0,0,0,0);
-    const inicio = new Date(fechas.fecha_inicio_inscripcion).setHours(0,0,0,0);
-    const fin    = new Date(fechas.fecha_fin_inscripcion).setHours(0,0,0,0);
+  if (
+    fechas &&
+    fechas.fecha_inicio_inscripcion &&
+    fechas.fecha_fin_inscripcion
+  ) {
+    const hoy    = new Date().setHours(0, 0, 0, 0);
+    const inicio = new Date(fechas.fecha_inicio_inscripcion).setHours(0, 0, 0, 0);
+    const fin    = new Date(fechas.fecha_fin_inscripcion).setHours(0, 0, 0, 0);
     abierta = hoy >= inicio && hoy <= fin;
   }
 
@@ -41,22 +53,28 @@ export function Area() {
       setModal(true);
       return;
     }
-    // Navegar al formulario de inscripción, pasando el id de competencia
-    navigate('/inscripcion', { state: { competenciaId: id } });
+    // Si está en período, iremos a /inscripcion (tu formulario de inscripción)
+    navigate('/inscripcion', {
+    state: {
+       competenciaId: id,
+       area: areacompetencia    // lo capturamos aquí
+    }
+   });
   };
 
   return (
-    <main className="main-container">
+    <main className="area-container">
       <h2>Área: {areacompetencia}</h2>
 
-      {imagencompetencia
-        ? <img
-            src={`${api.defaults.baseURL}/storage/${imagencompetencia}`}
-            alt={areacompetencia}
-            className="area-image"
-          />
-        : <div className="area-image img-placeholder" />
-      }
+      {imagencompetencia ? (
+        <img
+          src={`${api.defaults.baseURL}/storage/${imagencompetencia}`}
+          alt={areacompetencia}
+          className="area-image"
+        />
+      ) : (
+        <div className="area-image img-placeholder" />
+      )}
 
       <table className="tabla-costo">
         <tbody>
@@ -68,19 +86,16 @@ export function Area() {
       </table>
 
       <h3>Requisitos</h3>
-      <ul>
-        {requisitos.map(r =>
+      <ul className="lista-requisitos">
+        {requisitos.map(r => (
           <li key={r.requisito_id}>{r.curso}</li>
-        )}
+        ))}
       </ul>
 
       <h3>Descripción</h3>
       <p>{descripcion}</p>
 
-      <button
-        onClick={handleInscribir}
-        className="inscribirse-btn"
-      >
+      <button onClick={handleInscribir} className="inscribirse-btn">
         Inscribirse
       </button>
 
@@ -89,13 +104,10 @@ export function Area() {
           <div className="modal">
             <div className="modal-header">Fecha Inválida</div>
             <div className="modal-body">
-              <p>Se encuentra fuera del periodo de inscripcion</p>
+              <p>Se encuentra fuera del período de inscripción.</p>
             </div>
             <div className="modal-footer">
-              <button
-                className="btn-cerrar"
-                onClick={() => setModal(false)}
-              >
+              <button className="btn-cerrar" onClick={() => setModal(false)}>
                 Aceptar
               </button>
             </div>
@@ -105,3 +117,5 @@ export function Area() {
     </main>
   );
 }
+
+export default Area;

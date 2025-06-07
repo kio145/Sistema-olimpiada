@@ -67,19 +67,28 @@
     max-width: 110px;
     padding: 2%;
   }
-  .regresar-btn{
-    border-color: black;
-    max-width: 150px;
-    background-color: #359bdf;
-    border-radius: 8px;
-    padding: 2%;
-    width: 80%;
-    margin: 0 auto;
-    font: bolder;
-    font-size: medium;
-    cursor: pointer;
-    min-width: 190px;
-  }
+  /* Reemplaza o modifica los estilos existentes para .regresar-btn y .regresar-btn button */
+.regresar-btn {
+  margin: 20px auto 0;
+  text-align: center;
+}
+
+.regresar-btn button {
+  background-color: #359bdf;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: medium;
+  cursor: pointer;
+  min-width: 190px;
+  transition: background-color 0.3s;
+}
+
+.regresar-btn button:hover {
+  background-color: #2a7bb8;
+}
   .regresar{
     color:white;
 

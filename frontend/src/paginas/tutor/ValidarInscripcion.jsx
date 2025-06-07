@@ -215,12 +215,19 @@ export function ValidarInscripcion() {
           </button>
         </div>
       </div>
-
-      <div className="volver">
-        <button className="btn-volver" onClick={() => navigate("/vista-tutor")}>
-          🔙 Volver
-        </button>
-      </div>
+     <button 
+  className="btn-volver" 
+  onClick={() => navigate("/vista-tutor", { 
+    state: { 
+      user: { 
+        profile_id: tutor.idtutor, // Asegúrate de que tutor.idtutor exista
+        ...tutor 
+      } 
+    } 
+  })}
+>
+  🔙 Volver
+</button>
 
       {/* ────────────────────────────────────────────── */}
       {/* Modal de rechazo (motivo) */}

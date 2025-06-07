@@ -1,7 +1,10 @@
-// src/paginas/competiciones/Confirmacion.jsx
+// Confirmacion.jsx
+import { useNavigate } from 'react-router-dom';
 import '../../css/Inicio.css';
 
 export function Confirmacion() {
+  const navigate = useNavigate();
+
   return (
     <div className="mensaje-exito">
       <h2>Inscripción Enviada con Éxito</h2>
@@ -32,9 +35,15 @@ export function Confirmacion() {
 
       <p className="gracias">¡Gracias por participar en las Olimpiadas Científicas!</p>
 
-      <a href="/perfil-estudiante" className="btn-regresar">
+      <button 
+      onClick={() => {
+    const user = JSON.parse(localStorage.getItem('user')); 
+    navigate('/perfil-estudiante', { state: { user } });
+       }} 
+        className="btn-regresar"
+       >
         ← Regresar a menú de estudiante
-      </a>
+        </button>
     </div>
   );
 }

@@ -9,9 +9,9 @@ export function FormularioIns() {
   const { state } = useLocation();
   const { competenciaId } = state || {};
 
-  // Lista de tutores traída del backend
   const [tutores, setTutores] = useState([]);
-
+  const [area, setArea] = useState('');
+  const [error, setError] = useState('');
   // Formulario ahora incluye idtutor
   const [form, setForm] = useState({
     nombrecompetidor:   '',
@@ -24,21 +24,38 @@ export function FormularioIns() {
     departamento:      '',
     provincia:         '',
     idtutor:           '',
+    idcompetencia: competenciaId || '',
   });
-  const [error, setError] = useState('');
 
+  // 1. Cargar el área de la competencia seleccionada (una sola vez)
   useEffect(() => {
-    // Traer tutores disponibles
-    api.get('/tutores')
-      .then(res => setTutores(res.data))
-      .catch(() => {
-        // No detener el formulario por fallo aquí
+    if (!competenciaId) return;
+    api.get(`/competencias/${competenciaId}`)
+      .then(res => {
+        setArea(res.data.areacompetencia);
+      })
+      .catch(err => {
+        setError('No se pudo obtener el área de la competencia.');
+        console.error(err);
       });
-  }, []);
+  }, [competenciaId]);
+
+  // 2. Cargar tutores de ese área (cuando se tenga el área)
+  useEffect(() => {
+    if (!area) return;
+    api.get('/tutores', { params: { area } })
+      .then(res => setTutores(res.data))
+      .catch(err => {
+        setError('No se pudieron cargar los tutores de esta área.');
+        console.error(err);
+      });
+  }, [area]);
 
   const handleChange = e => {
-    const { name, value } = e.target;
-    setForm(f => ({ ...f, [name]: value }));
+    setForm(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
   };
 
   const validar = () => {
@@ -106,9 +123,9 @@ export function FormularioIns() {
   return (
     <div className="form-container">
       <h2>Registro de Inscripción</h2>
+      {area && <p><b>Área seleccionada:</b> {area}</p>}
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit} noValidate>
-
         {/* Nombre y Apellidos */}
         <div className="grupo">
           <div className="campo">
@@ -248,13 +265,14 @@ export function FormularioIns() {
             value={form.idtutor}
             onChange={handleChange}
             required
+            disabled={!tutores.length}
           >
             <option value="">— Elige un tutor —</option>
             {tutores.map(t => (
-               <option key={t.idtutor} value={t.idtutor}>
-                 {t.nombretutor} {t.apellidotutor}
-                  </option>
-                  ))}
+              <option key={t.idtutor} value={t.idtutor}>
+                {t.nombretutor} {t.apellidotutor}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -271,3 +289,5 @@ export function FormularioIns() {
     </div>
   );
 }
+
+export default FormularioIns;

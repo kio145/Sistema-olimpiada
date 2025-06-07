@@ -34,6 +34,8 @@ import { InscripcionRechazada } from './paginas/tutor/InscripcionRechazada';
 import { Login } from './componentes/Login';
 import { FormularioEdicionPerfil } from './paginas/formularios/FormularioEdicionPerfil';
 import { FormularioIns } from './paginas/competiciones/FormularioIns';
+import { EditarPerfilCajero } from './paginas/cajero/EditarPerfilCajero';
+import EditarPerfilTutor from './paginas/tutor/EditarPerfilTutor';
 
 function App() {
   return (
@@ -80,6 +82,7 @@ function App() {
         {/* Cajero */}
         <Route path="/generar-boleta" element={<Boleta />} />
         <Route path="/pago-boleta" element={<Pago />} />
+        <Route path="/editar-perfil-cajero" element={<EditarPerfilCajero />} />
 
         {/* Admin */}
         <Route path="/listado-postulantes" element={<ListadoPostulantes />} />
@@ -93,6 +96,7 @@ function App() {
         <Route path="/validar-inscripcion/:validarId" element={<ValidarInscripcion />} />
         <Route path="/inscripcion-aceptada/:validarId" element={<InscripcionValidada />} />
         <Route path="/inscripcion-rechazada/:validarId" element={<InscripcionRechazada />} />
+        <Route path="/editar-perfil-tutor" element={<EditarPerfilTutor />} />
 
         <Route path="/vista-tutor" element={<VistaTutor />} />
 

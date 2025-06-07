@@ -7,15 +7,24 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 
 class TutorController extends Controller
 {
-    public function index()
+     public function index(Request $request): JsonResponse
     {
-        return response()->json(Tutor::all());
+        $query = Tutor::query();
+
+        if ($area = $request->query('area')) {
+            $query->where('area', $area);
+        }
+
+        $tutores = $query->get();
+        return response()->json($tutores, 200);
     }
 
     public function store(Request $request)
@@ -79,53 +88,75 @@ class TutorController extends Controller
         return response()->json($tutor, 200);
     }
 
-    public function update(Request $request, int $id): JsonResponse
-    {
-        \Log::info('Update payload:', $request->all());
-        $tutor = Tutor::findOrFail($id);
+   public function update(Request $request, int $id)
+{
+    $validated = $request->validate([
+        'nombretutor'   => 'nullable|string|max:100',
+        'apellidotutor' => 'nullable|string|max:100',
+        'correotutor'   => [
+            'nullable',
+            'email',
+            Rule::unique('tutor', 'correotutor')->ignore($id, 'idtutor'),
+            Rule::unique('users', 'email')->ignore($this->getUserId($id), 'id')
+        ],
+        'area'          => 'nullable|string|max:100',
+        'telefonotutor' => 'nullable|string|max:20',
+        'citutor'       => 'nullable|string|max:30',
+        'passwordtutor' => 'nullable|string|min:6',
+        'imagentutor'   => 'nullable|image|max:2048',
+    ]);
 
-        $data = $request->validate([
-            'nombretutor'   => 'sometimes|string|max:50',
-            'apellidotutor' => 'sometimes|string|max:50',
-            'area'          => 'sometimes|string|max:100',
-            'telefonotutor' => 'sometimes|numeric',
-            'correotutor'   => [
-                'sometimes',
-                'email',
-                Rule::unique('tutor', 'correotutor')->ignore($id, 'idtutor')
-            ],
-            'citutor'       => 'sometimes|numeric',
-            'passwordtutor' => 'sometimes|string|min:6|confirmed',
-            'imagentutor'   => 'sometimes|image|max:2048',
-        ]);
+    $tutor = Tutor::findOrFail($id);
 
-        if ($request->hasFile('imagentutor')) {
-            $data['imagentutor'] = $request->file('imagentutor')->store('tutores', 'public');
+    // Imagen
+    if ($request->hasFile('imagentutor')) {
+        if ($tutor->imagentutor) {
+            Storage::disk('public')->delete($tutor->imagentutor);
         }
-
-        $tutor->update(Arr::except($data, ['passwordtutor']));
-
-        // ⚠️ Busca al user sobre Tutor::class, no Competidor::class
-        $user = User::where('profile_type', Tutor::class)
-            ->where('profile_id', $id)
-            ->first();
-
-        if ($user) {
-            $userUpdates = [];
-            if (isset($data['correotutor'])) {
-                $userUpdates['email'] = $data['correotutor'];
-                $userUpdates['name']  = "{$tutor->nombretutor} {$tutor->apellidotutor}";
-            }
-            if (isset($data['passwordtutor'])) {
-                $userUpdates['password'] = Hash::make($data['passwordtutor']);
-            }
-            if ($userUpdates) {
-                $user->update($userUpdates);
-            }
-        }
-
-        return response()->json($tutor, 200);
+        $path = $request->file('imagentutor')->store('tutores', 'public');
+        $validated['imagentutor'] = $path;
     }
+
+    // Contraseña
+    if (!empty($validated['passwordtutor'])) {
+        $validatedPassword = Hash::make($validated['passwordtutor']);
+        // Actualiza también el usuario relacionado
+        $user = User::where('profile_id', $id)
+                    ->where('profile_type', Tutor::class)
+                    ->firstOrFail();
+        $user->update(['password' => $validatedPassword]);
+    }
+    unset($validated['passwordtutor']); // No guardes en Tutor, sólo en users
+
+    DB::beginTransaction();
+    try {
+        $tutor->update($validated);
+        // Actualiza correo/nombre en users
+        $user = User::where('profile_id', $id)
+                    ->where('profile_type', Tutor::class)
+                    ->firstOrFail();
+        $user->update([
+            'name'  => "{$validated['nombretutor']} {$validated['apellidotutor']}",
+            'email' => $validated['correotutor']
+        ]);
+        DB::commit();
+        return response()->json(['tutor' => $tutor, 'user' => $user], 200);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'message' => 'Error al actualizar',
+            'error'   => $e->getMessage()
+        ], 500);
+    }
+}
+
+// Método auxiliar para obtener el id de usuario
+private function getUserId($idtutor)
+{
+    return User::where('profile_id', $idtutor)
+               ->where('profile_type', Tutor::class)
+               ->value('id');
+}
 
 
     public function destroy($id)
