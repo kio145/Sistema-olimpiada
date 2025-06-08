@@ -13,7 +13,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: process.env.PORT || 8080,
     allowedHosts: [
-      'innovative-creation-production.up.railway.app'
+      'sistama-olimpiada-production-bcbf.up.railway.app/'
       // Si luego tienes un dominio propio, agrégalo aquí también.
     ]
   }
