@@ -11,10 +11,6 @@ use Database\Seeders\FechaSeeder;
 use Database\Seeders\InscripcionSeeder;
 use Database\Seeders\RequisitoCompetenciaSeeder;
 
-use Illuminate\Support\Facades\DB;
-
-
-DB::table('competencia')->truncate();
 class DatabaseSeeder extends Seeder
 {
     /**
