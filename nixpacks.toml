@@ -1,8 +1,9 @@
 [phases.setup]
-aptPkgs = ['php', 'php-cli', 'php-mysql', 'php-xml', 'php-mbstring', 'php-zip', 'composer', 'nodejs', 'npm']
+aptPkgs = ['php8212', 'php-cli', 'php-mysql', 'php-xml', 'php-mbstring', 'php-zip', 'composer', 'nodejs', 'npm']
 
 [phases.install]
 cmds = [
+    'cd backend && composer clear-cache',
     'cd backend && composer install --no-interaction --prefer-dist --optimize-autoloader',
     'cd frontend && npm install && npm run build'
 ]
