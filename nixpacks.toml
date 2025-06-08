@@ -1,30 +1,33 @@
 [phases.setup]
 nixPkgs = [
-  'php82',
-  'php82Packages.composer',
-  'php82Packages.extensions.mbstring',
-  'php82Packages.extensions.zip',
-  'php82Packages.extensions.xml',
-  'php82Packages.extensions.pdo_mysql',
-  'nodejs',
-  'nodePackages.npm'
+  "php82",
+  "php82Packages.composer",
+  "php82Packages.extensions.mbstring",
+  "php82Packages.extensions.zip",
+  "php82Packages.extensions.xml",
+  "php82Packages.extensions.pdo_mysql",
+  "nodejs",
+  "nodePackages.npm"
 ]
 
 [phases.install]
 cmds = [
-    'cd backend && composer install --ignore-platform-reqs --no-interaction --prefer-dist --optimize-autoloader',
-    'cd frontend && npm install && npm run build'
+  "cd backend && composer clear-cache",
+  "cd backend && composer install --no-interaction --prefer-dist --optimize-autoloader",
+  "cd backend && npm install",
+  "cd frontend && npm install"
 ]
 
 [phases.build]
 cmds = [
-    'cd backend && php artisan optimize',
-    'cd backend && php artisan config:cache',
-    'cd backend && php artisan route:cache',
-    'cd backend && php artisan view:cache',
-    'cd backend && php artisan migrate --force',
-    'cd backend && php artisan db:seed --force'
+  "cd backend && npm run build",        
+  "cd frontend && npm run build",        
+  "cd backend && php artisan config:cache",
+  "cd backend && php artisan route:cache",
+  "cd backend && php artisan view:cache",
+  "cd backend && php artisan migrate --force",
+  "cd backend && php artisan db:seed --force"
 ]
 
 [start]
-cmd = 'cd backend && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}'
+cmd = "cd backend && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
