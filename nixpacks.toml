@@ -1,7 +1,13 @@
 [phases.setup]
-aptPkgs = [
-  'php8.2', 'php8.2-cli', 'php8.2-mysql', 'php8.2-xml', 'php8.2-mbstring', 'php8.2-zip', 
-  'composer', 'nodejs', 'npm'
+nixPkgs = [
+  'php82',
+  'php82Packages.composer',
+  'php82Packages.extensions.mbstring',
+  'php82Packages.extensions.zip',
+  'php82Packages.extensions.xml',
+  'php82Packages.extensions.pdo_mysql',
+  'nodejs',
+  'nodePackages.npm'
 ]
 
 [phases.install]
