@@ -2,10 +2,10 @@
 nixPkgs = [
   "php82",
   "php82Packages.composer",
-  "php82Packages.extensions.mbstring",
-  "php82Packages.extensions.zip",
-  "php82Packages.extensions.xml",
-  "php82Packages.extensions.pdo_mysql",
+  "php82Packages.mbstring",
+  "php82Packages.zip",
+  "php82Packages.xml",
+  "php82Packages.pdo_mysql",
   "nodejs",
   "nodePackages.npm"
 ]
@@ -14,14 +14,13 @@ nixPkgs = [
 cmds = [
   "cd backend && composer clear-cache",
   "cd backend && composer install --no-interaction --prefer-dist --optimize-autoloader",
-  "cd backend && npm install",
   "cd frontend && npm install"
 ]
 
 [phases.build]
 cmds = [
-  "cd backend && npm run build",        
-  "cd frontend && npm run build",        
+  "cd backend && npm run build",
+  "cd frontend && npm run build",
   "cd backend && php artisan config:cache",
   "cd backend && php artisan route:cache",
   "cd backend && php artisan view:cache",
