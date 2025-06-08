@@ -12,8 +12,7 @@ nixPkgs = [
 
 [phases.install]
 cmds = [
-    'cd backend && composer clear-cache',
-    'cd backend && composer install --no-interaction --prefer-dist --optimize-autoloader',
+    'cd backend && composer install --ignore-platform-reqs --no-interaction --prefer-dist --optimize-autoloader',
     'cd frontend && npm install && npm run build'
 ]
 
