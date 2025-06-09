@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['https://sistama-olimpiada-production-bcbf.up.railway.app'],
 
     'allowed_origins_patterns' => [],
 
