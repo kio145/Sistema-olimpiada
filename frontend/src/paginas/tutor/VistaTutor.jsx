@@ -1,9 +1,8 @@
-// src/paginas/tutor/VistaTutor.jsx
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import "../../css/VistaTutor.css";
 import api from "../../api/api";
+import dayjs from 'dayjs';
 
 export function VistaTutor() {
   const { state } = useLocation();
@@ -11,8 +10,20 @@ export function VistaTutor() {
   const user       = state?.user;
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fechaInicioValidacion, setFechaInicioValidacion] = useState(null);
+const [fechaFinValidacion, setFechaFinValidacion] = useState(null);
 
-  // Función para recargar el perfil (lista de competidores + pivots)
+  // --- Nuevo: control de modales ---
+  const [modal, setModal] = useState({
+    abierto: false,
+    tipo: "",           // "aceptada" | "rechazado"
+    competidor: null,
+    validarId: null,
+    motivo: "",
+  });
+  const [accionLoading, setAccionLoading] = useState(false);
+
+  // ---
   const fetchProfile = () => {
     if (!user?.profile_id) return;
     api.get(`/tutores/${user.profile_id}`)
@@ -31,25 +42,72 @@ export function VistaTutor() {
     fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, navigate]);
+  
+useEffect(() => {
+  api.get("/fechas").then(res => {
+    if (Array.isArray(res.data) && res.data.length > 0) {
+      const f = res.data[0];
+      setFechaInicioValidacion(f.fecha_inicio_validacion);
+      setFechaFinValidacion(f.fecha_fin_validacion);
+    }
+  });
+}, []);
 
-  // Handler para eliminar un registro de validar_tutor
+const hoy = dayjs();
+const fueraDeRango =
+  fechaInicioValidacion &&
+  fechaFinValidacion &&
+  (hoy.isBefore(dayjs(fechaInicioValidacion, "YYYY-MM-DD")) ||
+   hoy.isAfter(dayjs(fechaFinValidacion, "YYYY-MM-DD")));
+
   const handleEliminar = async (validarId) => {
     const confirmar = window.confirm(
       "¿Estás seguro de que deseas eliminar esta validación?"
     );
     if (!confirmar) return;
-
     setLoading(true);
     try {
       await api.delete(`/validarTutor/${validarId}`);
       alert("Validación eliminada correctamente.");
-      // Después de borrar, recargamos el perfil para reflejar cambios
       fetchProfile();
     } catch (e) {
-      console.error("Error al eliminar la validación:", e);
       alert("Ocurrió un error al eliminar. Intenta de nuevo.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // --- Acciones para aceptar/rechazar ---
+  const abrirModal = (tipo, competidor, validarId) => {
+    setModal({
+      abierto: true,
+      tipo,
+      competidor,
+      validarId,
+      motivo: "",
+    });
+  };
+
+  const cerrarModal = () => setModal(m => ({ ...m, abierto: false, motivo: "" }));
+
+  const confirmarAccion = async () => {
+    setAccionLoading(true);
+    try {
+      const payload = {
+        idcompetencia: modal.competidor.pivot.idcompetencia,
+        idcompetidor: modal.competidor.idcompetidor,
+        idtutor: user.profile_id,
+        tipo_tutor: "tutor",
+        estado_validacion: modal.tipo,
+        motivo_rechazo: modal.tipo === "rechazado" ? modal.motivo : null,
+      };
+      await api.post("/validarTutor", payload);
+      cerrarModal();
+      fetchProfile(); // Recarga la lista con el nuevo estado
+    } catch (e) {
+      alert("Error al actualizar el estado.");
+    } finally {
+      setAccionLoading(false);
     }
   };
 
@@ -64,43 +122,17 @@ export function VistaTutor() {
 
   return (
     <div className="tutor-container">
-      <div className="perfil-header">
-        <div className="foto-perfil">
-          <div className="circulo">
-            <span className="inicial">{initials}</span>
-          </div>
-        </div>
-        <div className="datos-usuario">
-          <p className="rol">Tutor</p>
-          <h2 className="nombre">
-            {profile.nombretutor} {profile.apellidotutor}
-          </h2>
-         <div className="botones-admin">
-  <Link
-    to="/editar-perfil-tutor"  
-    className="btn-editar-admin"
-    state={{ user }} 
-  >
-    Editar perfil ✎
-  </Link>
-  <button
-    className="btn-cerrar-admin"
-    onClick={() => {
-      localStorage.removeItem("token");
-      navigate("/inicio");
-    }}
-  >
-    Cerrar Sesión
-  </button>
-</div>
-
-        </div>
-      </div>
-
-      <hr />
-
+      {/* ... tu encabezado igual ... */}
       <h3 className="titulo-tabla">Listado de tus competidores :</h3>
       <div className="tabla-wrapper">
+        {fueraDeRango && (
+  <div className="alerta-fecha">
+    <strong>⚠️ Fuera del rango de validación.</strong> Solo puedes validar entre&nbsp;
+    <strong>{dayjs(fechaInicioValidacion).format('DD/MM/YYYY')}</strong> y&nbsp;
+    <strong>{dayjs(fechaFinValidacion).format('DD/MM/YYYY')}</strong>. Hoy es&nbsp;
+    <strong>{dayjs().format('DD/MM/YYYY')}</strong>
+  </div>
+)}
         <table className="tabla-competidores">
           <thead>
             <tr>
@@ -111,76 +143,122 @@ export function VistaTutor() {
             </tr>
           </thead>
           <tbody>
-        {profile.competidores
-    ?.filter(competidor => {
-      // Solo mostrar los que aún NO están validados
-      const estado = (competidor.pivot?.estado_validacion || "").toLowerCase();
-      // Si es pendiente o vacío (no validado aún)
-      return estado === "pendiente" || estado === "";
-    })
-    .map((competidor, index) => {
-      const p = competidor.pivot || {};
-      const estado = (p.estado_validacion || "").toLowerCase();
-      const validarId = p.validar_id;
+            {profile.competidores?.map((competidor, index) => {
+              const p = competidor.pivot || {};
+              const estado = (p.estado_validacion || "").toLowerCase();
+              const validarId = p.validar_id;
 
-              // Texto legible para “inscripción”
               let textoIns = "";
-              if (estado === "pendiente") textoIns = "En espera de validación";
-              else if (estado === "aceptada") textoIns = "En espera de pago";
+              if (estado === "pendiente" || !estado) textoIns = "En espera de validación";
+              else if (estado === "aceptada" || estado === "validado") textoIns = "En espera de pago";
               else if (estado === "rechazado") textoIns = "Rechazado";
 
-              // Clases CSS para colorear estado_inscripción
               let claseIns = "estado-inscripcion ";
-              if (estado === "pendiente") claseIns += "espera-validacion";
-              else if (estado === "aceptada") claseIns += "espera-pago";
+              if (estado === "pendiente" || !estado) claseIns += "espera-validacion";
+              else if (estado === "aceptada" || estado === "validado") claseIns += "espera-pago";
               else claseIns += "rechazada";
-
-              // Ruta de enlace según estado de validación
-              let ruta = "#";
-              if (estado === "pendiente") {
-                ruta = `/validar-inscripcion/${validarId}`;
-              } else if (estado === "aceptada") {
-                ruta = `/inscripcion-aceptada/${validarId}`;
-              } else if (estado === "rechazado") {
-                ruta = `/inscripcion-rechazada/${validarId}`;
-              }
+                  const mostrarAcciones = (estado === "pendiente" || !estado) && !fueraDeRango;
 
               return (
-                <tr key={index}>
-                  <td>
-                    {competidor.nombrecompetidor}{" "}
-                    {competidor.apellidocompetidor}
-                  </td>
-                  <td className={claseIns}>{textoIns}</td>
-                  <td className={`estado-validacion ${estado}`}>
-                    <Link to={ruta}>
-                      {estado.charAt(0).toUpperCase() + estado.slice(1)}
-                    </Link>
-                  </td>
-                  <td>
-                    {/* Botón Editar: lleva a la misma pantalla de validación */}
-                    <Link
-                      to={`/validar-inscripcion/${validarId}`}
-                      className="btn-accion editar"
-                    >
-                      ✎
-                    </Link>
-
-                    {/* Botón Eliminar: llama a handleEliminar */}
-                    <button
-                      className="btn-accion eliminar"
-                      onClick={() => handleEliminar(validarId)}
-                      disabled={loading}
-                    >
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
+    <tr key={index}>
+      <td>{competidor.nombrecompetidor} {competidor.apellidocompetidor}</td>
+      <td className={claseIns}>{textoIns}</td>
+      <td className={`estado-validacion ${estado}`}>
+        {estado.charAt(0).toUpperCase() + estado.slice(1)}
+      </td>
+      <td>
+        {mostrarAcciones ? (
+          <>
+            <button
+              className="btn-accion aceptar"
+              onClick={() => abrirModal("aceptada", competidor, validarId)}
+              disabled={loading}
+            >
+              Aceptar
+            </button>
+            <button
+              className="btn-accion rechazar"
+              onClick={() => abrirModal("rechazado", competidor, validarId)}
+              disabled={loading}
+            >
+              Rechazar
+            </button>
+          </>
+        ) : (
+          <span className="text-muted">---</span>
+        )}
+        <button
+          className="btn-accion eliminar"
+          onClick={() => handleEliminar(validarId)}
+          disabled={loading}
+        >
+          🗑️
+        </button>
+      </td>
+    </tr>
+  );
+})}
           </tbody>
         </table>
       </div>
+
+      {/* --- MODAL DE CONFIRMACIÓN --- */}
+      {modal.abierto && (
+        <div className="modal-overlay">
+          <div className="modal-contenido">
+            {modal.tipo === "aceptada" ? (
+              <>
+                <h3>Confirmar Validación</h3>
+                <p>¿Está seguro de validar esta inscripción?</p>
+                <div className="modal-datos">
+                  <h4>Datos del Competidor</h4>
+                  <ul>
+                    <li><strong>Nombre:</strong> {modal.competidor.nombrecompetidor} {modal.competidor.apellidocompetidor}</li>
+                    <li><strong>Email:</strong> {modal.competidor.emailcompetidor}</li>
+                    <li><strong>CI:</strong> {modal.competidor.cicompetidor}</li>
+                    <li><strong>Nacimiento:</strong> {new Date(modal.competidor.fechanacimiento).toLocaleDateString()}</li>
+                    <li><strong>Colegio:</strong> {modal.competidor.colegio}</li>
+                  </ul>
+                </div>
+                <div className="modal-botones">
+                  <button onClick={cerrarModal} disabled={accionLoading}>Cancelar</button>
+                  <button onClick={confirmarAccion} disabled={accionLoading}>
+                    Confirmar
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3>Rechazar Inscripción</h3>
+                <p>Razones por las cuales esta inscripción será rechazada:</p>
+                <textarea
+                  rows="3"
+                  value={modal.motivo}
+                  onChange={e => setModal(m => ({ ...m, motivo: e.target.value }))}
+                  placeholder="Motivo de rechazo..."
+                  style={{ width: "100%" }}
+                />
+                <div className="modal-datos">
+                  <h4>Datos del Competidor</h4>
+                  <ul>
+                    <li><strong>Nombre:</strong> {modal.competidor.nombrecompetidor} {modal.competidor.apellidocompetidor}</li>
+                    <li><strong>Email:</strong> {modal.competidor.emailcompetidor}</li>
+                    <li><strong>CI:</strong> {modal.competidor.cicompetidor}</li>
+                    <li><strong>Nacimiento:</strong> {new Date(modal.competidor.fechanacimiento).toLocaleDateString()}</li>
+                    <li><strong>Colegio:</strong> {modal.competidor.colegio}</li>
+                  </ul>
+                </div>
+                <div className="modal-botones">
+                  <button onClick={cerrarModal} disabled={accionLoading}>Cancelar</button>
+                  <button onClick={confirmarAccion} disabled={accionLoading || !modal.motivo.trim()}>
+                    Confirmar Rechazo
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

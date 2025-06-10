@@ -7,6 +7,11 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
   }
+  .perfil-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
   
   .perfil-header {
     display: flex;
@@ -25,10 +30,7 @@
     object-fit: cover;
   }
   
-  .datos-usuario {
-    text-align: left;
-  }
-  
+ 
   .rol {
     color: #3d8ac2;
     margin: 0;
@@ -67,6 +69,9 @@
     color: white;
   }
   
+  .tabla-wrapper {
+    overflow-x: auto;
+  }
   .titulo-tabla {
     margin: 30px 0 10px;
     text-align: left;
@@ -74,9 +79,6 @@
     color: #333;
   }
   
-  .tabla-wrapper {
-    overflow-x: auto;
-  }
   
   .tabla-competidores {
     width: 100%;

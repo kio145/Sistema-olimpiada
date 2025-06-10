@@ -129,5 +129,4 @@ export function Area() {
     </main>
   );
 }
-
 export default Area;

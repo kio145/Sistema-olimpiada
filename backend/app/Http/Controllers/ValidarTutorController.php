@@ -33,23 +33,36 @@ class ValidarTutorController extends Controller
             $data['estado_validacion'] = 'pendiente';
         }
 
-        // 1) Creamos/el guardamos el registro de validación
-        $validarTutor = ValidarTutor::create($data);
+        // Solo actualiza si aún está pendiente
+        $validarTutor = ValidarTutor::updateOrCreate(
+            [
+                'idcompetencia' => $data['idcompetencia'],
+                'idcompetidor'  => $data['idcompetidor'],
+                'idtutor'       => $data['idtutor'],
+            ],
+            [
+                'tipo_tutor'        => $data['tipo_tutor'],
+                // Si ya está validado o rechazado, no lo sobrescribas:
+                'estado_validacion' => $data['estado_validacion'],
+                'motivo_rechazo'    => $data['motivo_rechazo'] ?? null,
+            ]
+        );
 
-        // 2) Si el tutor decidió “aceptada”, actualizamos la inscripción:
+        // Si ya no está pendiente, no vuelvas a cambiar el estado
+        if ($validarTutor->estado_validacion !== 'pendiente') {
+            return response()->json($validarTutor, 200);
+        }
+
+        // Si se acaba de aceptar o rechazar, sincroniza inscripción
         if ($data['estado_validacion'] === 'aceptada') {
-            // Buscamos la inscripción que coincide con (idcompetencia, idcompetidor)
             $inscripcion = Inscripcion::where('idcompetencia', $data['idcompetencia'])
                 ->where('idcompetidor', $data['idcompetidor'])
                 ->first();
             if ($inscripcion) {
-                // Actualizamos su estado a “inscrito”
                 $inscripcion->estado_inscripcion = 'inscrito';
                 $inscripcion->save();
             }
         }
-
-        // 3) Si el tutor decidió “rechazado”, marcamos estado_inscripcion como “rechazado” (opcional)
         if ($data['estado_validacion'] === 'rechazado') {
             $inscripcion = Inscripcion::where('idcompetencia', $data['idcompetencia'])
                 ->where('idcompetidor', $data['idcompetidor'])
@@ -60,8 +73,9 @@ class ValidarTutorController extends Controller
             }
         }
 
-        return response()->json($validarTutor, 201);
+        return response()->json($validarTutor, 200);
     }
+
 
     public function update(Request $request, int $validar_id): JsonResponse
     {

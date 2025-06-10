@@ -3,6 +3,7 @@
 import "../../css/ValidarInscripcion.css";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import dayjs from 'dayjs';
 import api from "../../api/api";
 
 export function ValidarInscripcion() {
@@ -57,17 +58,16 @@ export function ValidarInscripcion() {
 
  // 4) Cargar el rango de fechas de validación desde /fechas
   useEffect(() => {
-   api.get("/fechas") // asumo que devuelve un array; tomamos el primero
-      .then(res => {
-       if (Array.isArray(res.data) && res.data.length > 0) {
-         const f = res.data[0]; // suponiendo que solo tienes un registro
-         setFechaInicioValidacion(new Date(f.fecha_inicio_validacion));
-         setFechaFinValidacion(new Date(f.fecha_fin_validacion));
-         setFechasCargadas(true);
-        } else {
-         console.warn("No existen fechas configuradas.");
-         setFechasCargadas(true);
-        }
+  api.get("/fechas")
+    .then(res => {
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        const f = res.data[0];
+        setFechaInicioValidacion(f.fecha_inicio_validacion);
+        setFechaFinValidacion(f.fecha_fin_validacion);
+        setFechasCargadas(true);
+      } else {
+        setFechasCargadas(true);
+      }
       })
       .catch(err => {
         console.error("No se pudo cargar las fechas:", err);
@@ -83,15 +83,15 @@ export function ValidarInscripcion() {
   }
   if (!fechasCargadas) return;
 
-  const ahora = new Date();
-  if (
-    fechaInicioValidacion instanceof Date &&
-    fechaFinValidacion instanceof Date
-  ) {
-    if (ahora < fechaInicioValidacion || ahora > fechaFinValidacion) {
-      setMostrarFueraDeRango(true);
-      return;
-    }
+  // Usa dayjs para comparar fechas
+  const ahora = dayjs();
+  const inicio = dayjs(fechaInicioValidacion);
+  const fin    = dayjs(fechaFinValidacion);
+
+  // Ahora sí, verifica el rango correctamente
+  if (ahora.isBefore(inicio) || ahora.isAfter(fin)) {
+    setMostrarFueraDeRango(true);
+    return;
   }
 
   setLoading(true);
@@ -106,7 +106,7 @@ export function ValidarInscripcion() {
       motivo_rechazo:    estado === "rechazado" ? razon : null,
     });
 
-    if (estado === "validado") {
+    if (estado === "aceptada") {
       // Redirecciona a la pantalla de éxito con el ID retornado por el backend
       const idValidar = res.data?.id || res.data?.validar_tutor?.id || res.data?.validar_id || validarRegistro.idvalidar || validarId;
       navigate(`/inscripcion-aceptada/${idValidar}`);
@@ -196,7 +196,7 @@ export function ValidarInscripcion() {
           <button
             className="btn btn-aceptar"
             disabled={loading}
-            onClick={() => validar("validado")}
+            onClick={() => validar("aceptada")}
           >
             Sí
           </button>
@@ -252,14 +252,14 @@ export function ValidarInscripcion() {
             <p>
               La validación solo está permitida entre{" "}
               <strong>
-                {fechaInicioValidacion.toLocaleDateString()}
+                {dayjs(fechaInicioValidacion).format('DD/MM/YYYY')}
               </strong>{" "}
               y{" "}
               <strong>
-                {fechaFinValidacion.toLocaleDateString()}
+               {dayjs(fechaFinValidacion).format('DD/MM/YYYY')}
               </strong>
               .<br />
-              Hoy es <strong>{new Date().toLocaleDateString()}</strong>.
+              Hoy es <strong>{dayjs().format('DD/MM/YYYY')}</strong>.
             </p>
             <div className="modal-botones">
               <button onClick={() => setMostrarFueraDeRango(false)}>

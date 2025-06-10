@@ -26,7 +26,7 @@ export function InscripcionValidada() {
       .get(`/validarTutor/${validarId}`)
       .then((res) => {
         const v = res.data;
-        if (v.estado_validacion !== "validado") {
+        if (v.estado_validacion !== "aceptada") {
           // Si alguien accedió manualmente a esta ruta pero no está validada, redirijo al tutor
           navigate("/vista-tutor");
           return null;
