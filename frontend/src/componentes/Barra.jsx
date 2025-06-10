@@ -21,11 +21,6 @@ export function Barra() {
             </Link>
           </li>
           <li>
-            <Link to="/competiciones" className="opcion">
-              Competiciones
-            </Link>
-          </li>
-          <li>
             <CircleUser />
             <Link to="/login" className="opcion">
               Iniciar Sesión

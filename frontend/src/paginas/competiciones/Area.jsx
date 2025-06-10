@@ -5,15 +5,21 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import '../../css/Competiciones.css';
 
+// Función para mostrar fecha en formato DD/MM/YYYY
+function formatoFecha(fecha) {
+  if (!fecha) return '';
+  const d = new Date(fecha);
+  return d.toLocaleDateString('es-BO', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
+
 export function Area() {
-  const { id } = useParams();       // { id } coincide con la parte /area/:id
+  const { id } = useParams();
   const navigate = useNavigate();
   const [c, setC] = useState(null);
   const [modal, setModal] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Ya no pedimos '/competencias/todas'; pedimos '/competencias/{id}'
     api.get(`/competencias/${id}`)
       .then(res => setC(res.data))
       .catch(err => {
@@ -31,8 +37,8 @@ export function Area() {
     imagencompetencia,
     preciocompetencia,
     descripcion,
-    requisitos,  // suponiendo que tu relación en el modelo sea `requisitos()`
-    fechas       // suponiendo que tu relación en el modelo sea `fechas()`
+    requisitos,
+    fechas
   } = c;
 
   // Determino si la inscripción está abierta según fechas.fecha_inicio_inscripcion y fecha_fin_inscripcion
@@ -53,13 +59,12 @@ export function Area() {
       setModal(true);
       return;
     }
-    // Si está en período, iremos a /inscripcion (tu formulario de inscripción)
     navigate('/inscripcion', {
-    state: {
-       competenciaId: id,
-       area: areacompetencia    // lo capturamos aquí
-    }
-   });
+      state: {
+        competenciaId: id,
+        area: areacompetencia
+      }
+    });
   };
 
   return (
@@ -105,6 +110,13 @@ export function Area() {
             <div className="modal-header">Fecha Inválida</div>
             <div className="modal-body">
               <p>Se encuentra fuera del período de inscripción.</p>
+              {fechas?.fecha_inicio_inscripcion && fechas?.fecha_fin_inscripcion && (
+                <p>
+                  El período de inscripción es del{' '}
+                  <b>{formatoFecha(fechas.fecha_inicio_inscripcion)}</b> al{' '}
+                  <b>{formatoFecha(fechas.fecha_fin_inscripcion)}</b>
+                </p>
+              )}
             </div>
             <div className="modal-footer">
               <button className="btn-cerrar" onClick={() => setModal(false)}>

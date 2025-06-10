@@ -1,28 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../css/Inicio.css';
 import imagenCuadro from '/imagenInicio.JPG';
+import api from '@/api/api';
 
 export function Inicio() {
-  const [mostrarSubmenu, setMostrarSubmenu] = useState(false);
-  const submenuRef = useRef(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [fechas, setFechas] = useState({ inicio: '', fin: '' });
 
-  const toggleSubmenu = e => {
-    e.preventDefault();
-    setMostrarSubmenu(prev => !prev);
-  };
-
-  const handleClickOutside = event => {
-    if (submenuRef.current && !submenuRef.current.contains(event.target)) {
-      setMostrarSubmenu(false);
-    }
-  };
-
+  // Cargar fechas de inscripción
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    api.get('/fechas')
+      .then(res => {
+        const f = Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : {};
+        setFechas({
+          inicio: f.fecha_inicio_inscripcion ?? '',
+          fin:    f.fecha_fin_inscripcion ?? ''
+        });
+      })
+      .catch(() => setFechas({ inicio: '', fin: '' }));
   }, []);
-
 
   return (
     <div className="contenedorInicio">
@@ -44,33 +41,43 @@ export function Inicio() {
           <p className="titulo3">¿Quieres ser parte?</p>
           <div className="parrafo">
             Para inscribirse a algunas de las áreas de competencia, solo necesitas
-            <a href="sesion-estudiante" className="enlace"> Iniciar Sesión</a> o{' '}
-            <span
-                ref={submenuRef}
-                style={{ position: 'relative', display: 'inline-block' }}
-                >
-                <a href="/registro" className="opcion" onClick={toggleSubmenu}>
-                    Crear cuenta
-                </a>
-                {mostrarSubmenu && (
-                    <ul className="submenu">
-                    <li><a href="/registro">Estudiante</a></li>
-                    <li><a href="/registro-tutor">Tutor</a></li>
-                    </ul>
-                )}
-                </span>
-
-            </div>
-
+            <Link to="/login" className="enlace"> Iniciar Sesión</Link> o{' '}
+            <button
+              className="opcion boton-registrarse"
+              type="button"
+              onClick={() => setMostrarModal(true)}
+            >
+              Registrarse
+            </button>
+          </div>
         </div>
-        
         <div>
           <p className="titulo3">Fecha de Inscripciones</p>
-          <p className="parrafo">Inicio:</p>
-          <p className="parrafo">Fin:</p>
+          <p className="parrafo">
+            Inicio: <b>{fechas.inicio ? fechas.inicio : 'Por definir'}</b>
+          </p>
+          <p className="parrafo">
+            Fin: <b>{fechas.fin ? fechas.fin : 'Por definir'}</b>
+          </p>
         </div>
         <div className="prueba"></div>
       </div>
+
+      {/* MODAL REGISTRO */}
+      {mostrarModal && (
+        <div className="modal-overlay" onClick={() => setMostrarModal(false)}>
+          <div className="modal-menu" onClick={e => e.stopPropagation()}>
+            <h3>¿Registrar como?</h3>
+            <Link to="/registro" className="modal-link" onClick={() => setMostrarModal(false)}>
+              Estudiante
+            </Link>
+            <Link to="/registro-tutor" className="modal-link" onClick={() => setMostrarModal(false)}>
+              Tutor
+            </Link>
+            <button className="modal-cerrar" onClick={() => setMostrarModal(false)}>Cancelar</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

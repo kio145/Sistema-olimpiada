@@ -172,31 +172,99 @@
   cursor: pointer;
 }
 
-
-.submenu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  z-index: 9999;
-  min-width: 150px;
-  list-style: none;
-  padding: 0;
-  margin: 4px 0 0 0;
+.modal-overlay {
+  position: fixed;
+  z-index: 5000;
+  inset: 0;
+  background: rgba(44,74,100,0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: modalFadeIn .2s;
 }
-
-.submenu li a {
-  display: block;
-  padding: 10px 15px;
-  color: #333;
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.modal-menu {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 38px rgba(34,60,120,0.14);
+  padding: 2.2rem 2.2rem 1.5rem 2.2rem;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.2rem;
+  text-align: center;
+  animation: submenuFadeIn .22s;
+}
+.modal-menu h3 {
+  margin: 0 0 0.3em 0;
+  color: #266b9b;
+  font-size: 1.23rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.modal-link {
+  background: #e7f3fa;
+  color: #14507b;
+  border-radius: 7px;
+  font-weight: bold;
   text-decoration: none;
+  font-size: 1.09rem;
+  padding: 0.75em 0;
+  margin: 0.1em 0;
+  transition: background 0.15s, color 0.15s;
+}
+.modal-link:hover,
+.modal-link:focus {
+  background: #359bdf;
+  color: #fff;
+}
+.modal-cerrar {
+  margin-top: 0.7rem;
+  border: none;
+  background: none;
+  color: #777;
+  font-size: 1em;
+  cursor: pointer;
+  padding: 0.3em;
+  border-radius: 4px;
+  transition: background 0.13s;
+}
+.modal-cerrar:hover {
+  background: #f0f4fa;
 }
 
-.submenu li a:hover {
-  background-color: #f0f0f0;
+.boton-registrarse {
+  background: none;
+  border: none;
+  color: #359bdf;
+  font-weight: normal;
+  font-size: 1em;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  outline: none;
+  vertical-align: baseline;
+  text-decoration: underline dotted transparent; /* Sin subrayado visible pero alineado con links */
+  transition: color 0.15s;
+  display: inline;
+  width: auto;
 }
+
+.boton-registrarse:hover,
+.boton-registrarse:focus {
+  color: #14507b;
+  text-decoration: underline;
+  background: none;
+}
+
+
+
 
 
 
