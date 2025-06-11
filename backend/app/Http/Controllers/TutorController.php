@@ -15,12 +15,13 @@ use Illuminate\Validation\Rule;
 
 class TutorController extends Controller
 {
-     public function index(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $query = Tutor::query();
 
-        if ($area = $request->query('area')) {
-            $query->where('area', $area);
+        if ($request->filled('area')) {
+            $area = trim($request->input('area'));
+            $query->whereRaw('LOWER(area) LIKE ?', ['%' . strtolower($area) . '%']);
         }
 
         $tutores = $query->get();
@@ -88,69 +89,75 @@ class TutorController extends Controller
         return response()->json($tutor, 200);
     }
 
-   public function update(Request $request, int $id)
-{
-    // Validar los datos
-    $validated = $request->validate([
-        'nombretutor'   => 'required|string|max:50',
-        'apellidotutor' => 'required|string|max:50',
-        'correotutor'   => [
-            'required',
-            'email',
-            Rule::unique('tutor', 'correotutor')->ignore($id, 'idtutor'),
-            Rule::unique('users', 'email')->ignore($this->getUserId($id), 'id'),
-        ],
-        'area'          => 'required|string|max:100',
-        'telefonotutor' => 'nullable|string|max:20',
-        'citutor'       => 'nullable|string|max:20',
-        'imagentutor'   => 'sometimes|image|max:2048',
-        // No valides passwordtutor si no viene en el request
-        'passwordtutor' => 'sometimes|string|min:6',
-    ]);
+    public function update(Request $request, int $id)
+    {
+        \Log::info($request->all());
+        $validated = $request->validate([
+            'nombretutor'   => 'sometimes|string|max:50',
+            'apellidotutor' => 'sometimes|string|max:50',
+            'correotutor'   => [
+                'sometimes',
+                'email',
+                Rule::unique('tutor', 'correotutor')->ignore($id, 'idtutor'),
+                Rule::unique('users', 'email')->ignore($this->getUserId($id), 'id'),
+            ],
+            'area'          => 'sometimes|string|max:100',
+            'telefonotutor' => 'sometimes|string|max:20',
+            'citutor'       => 'sometimes|string|max:20',
+            'imagentutor'   => 'sometimes|image|max:2048',
+            'passwordtutor' => 'sometimes|string|min:6',
+        ]);
 
-    $tutor = Tutor::findOrFail($id);
+        $tutor = Tutor::findOrFail($id);
 
-    DB::beginTransaction();
-    try {
-        // Si hay imagen, guárdala
-        if ($request->hasFile('imagentutor')) {
-            if ($tutor->imagentutor) {
-                \Storage::disk('public')->delete($tutor->imagentutor);
+        DB::beginTransaction();
+        try {
+            if ($request->hasFile('imagentutor')) {
+                if ($tutor->imagentutor) {
+                    Storage::disk('public')->delete($tutor->imagentutor);
+                }
+                $validated['imagentutor'] = $request->file('imagentutor')->store('tutores', 'public');
             }
-            $validated['imagentutor'] = $request->file('imagentutor')->store('tutores', 'public');
+
+            $tutor->update(Arr::except($validated, ['passwordtutor'])); // Así como competidor
+
+            $user = User::where('profile_id', $id)
+                ->where('profile_type', Tutor::class)
+                ->first();
+
+            if ($user) {
+                $u = [];
+                if (isset($validated['correotutor'])) {
+                    $u['email'] = $validated['correotutor'];
+                }
+                if (isset($validated['nombretutor']) || isset($validated['apellidotutor'])) {
+                    $u['name'] =
+                        ($validated['nombretutor'] ?? $tutor->nombretutor) . ' ' .
+                        ($validated['apellidotutor'] ?? $tutor->apellidotutor);
+                }
+                if (isset($validated['passwordtutor'])) {
+                    $u['password'] = Hash::make($validated['passwordtutor']);
+                }
+                if (!empty($u)) {
+                    $user->update($u);
+                }
+            }
+
+            DB::commit();
+            return response()->json(['tutor' => $tutor, 'user' => $user], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al actualizar', 'error' => $e->getMessage()], 500);
         }
-
-        // Actualizar el tutor
-        $tutor->update($validated);
-
-        // Actualizar datos de usuario asociado
-        $user = User::where('profile_id', $id)
-            ->where('profile_type', Tutor::class)
-            ->firstOrFail();
-
-        $user->name = "{$validated['nombretutor']} {$validated['apellidotutor']}";
-        $user->email = $validated['correotutor'];
-        if ($request->filled('passwordtutor')) {
-            $user->password = Hash::make($request->input('passwordtutor'));
-        }
-        $user->save();
-
-        DB::commit();
-        return response()->json(['tutor' => $tutor, 'user' => $user], 200);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json(['message' => 'Error al actualizar', 'error' => $e->getMessage()], 500);
     }
-}
 
-// Helper para obtener el ID de usuario
-private function getUserId(int $tutorId): int
-{
-    return User::where('profile_id', $tutorId)
-        ->where('profile_type', Tutor::class)
-        ->value('id');
-}
+    // Helper para obtener el ID de usuario
+    private function getUserId(int $tutorId): int
+    {
+        return User::where('profile_id', $tutorId)
+            ->where('profile_type', Tutor::class)
+            ->value('id');
+    }
 
 
 

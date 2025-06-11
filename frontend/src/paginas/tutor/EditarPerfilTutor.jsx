@@ -65,8 +65,15 @@ export function EditarPerfilTutor() {
     e.preventDefault();
     setError('');
     setLoading(true);
+if (!form.nombretutor || !form.apellidotutor || !form.correotutor || !form.area || !form.citutor) {
+  setError('Por favor completa todos los campos obligatorios.');
+  setLoading(false);
+  return;
+}
+
 
     const data = new FormData();
+    data.append('_method', 'PUT'); 
     data.append('nombretutor', form.nombretutor);
     data.append('apellidotutor', form.apellidotutor);
     data.append('correotutor', form.correotutor);
@@ -79,8 +86,8 @@ export function EditarPerfilTutor() {
     if (file) data.append('imagentutor', file);
 
     try {
-      await api.put(`/tutores/${user.profile_id}`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      await api.post(`/tutores/${user.profile_id}`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' }
       });
       alert('Perfil actualizado con éxito');
       navigate('/perfil-tutor', { state: { user: { ...user, name: `${form.nombretutor} ${form.apellidotutor}` } } });

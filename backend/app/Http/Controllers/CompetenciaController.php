@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\RequisitoCompetencia;
-use App\Models\Fecha; 
+use App\Models\Fecha;
 use App\Models\Competencia;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -94,19 +94,29 @@ class CompetenciaController extends Controller
      * GET /api/competencias/{id}
      * Mostrar una competencia específica.
      */
-   public function show(int $id): JsonResponse
-{
-     // Cargo competencia con sus requisitos (pero NO con 'fechas')
+    public function show($id): JsonResponse
+    {
+        // Carga competencia con sus requisitos
         $competencia = Competencia::with('requisitos')->findOrFail($id);
 
-        // Traigo el único registro de fechas (asumo que siempre hay uno)
-        $fechasGlobal = Fecha::first();
+        // Trae el único registro de fechas globales
+        $fechas = Fecha::first();
 
-        // Adjuntarlo como atributo “fechas” al JSON
-        $competencia->setAttribute('fechas', $fechasGlobal);
+        // Adjunta SOLO los campos que usa el frontend
+        $competencia->setAttribute('fechas', [
+            'fecha_inicio_inscripcion' => $fechas->fecha_inicio_inscripcion,
+            'fecha_fin_inscripcion'    => $fechas->fecha_fin_inscripcion,
+            'fecha_inicio_validacion'  => $fechas->fecha_inicio_validacion,
+            'fecha_fin_validacion'     => $fechas->fecha_fin_validacion,
+            'fecha_inicio_pago'        => $fechas->fecha_inicio_pago,
+            'fecha_fin_pago'           => $fechas->fecha_fin_pago,
+            'fecha_inicio_competencia' => $fechas->fecha_inicio_competencia,
+            'fecha_fin_competencia'    => $fechas->fecha_fin_competencia,
+        ]);
 
         return response()->json($competencia, 200);
-}
+    }
+
 
     /**
      * PUT /api/competencias/{id}
@@ -144,10 +154,10 @@ class CompetenciaController extends Controller
      * GET /api/competencias/todas
      * Obtener todas las competencias con sus relaciones.
      */
-   public function getTodasLasCompetencias(): JsonResponse
+    public function getTodasLasCompetencias(): JsonResponse
     {
-        $competencias = Competencia::with(['administrador','competidores','requisitos'])
-            ->orderBy('areacompetencia','asc')
+        $competencias = Competencia::with(['administrador', 'competidores', 'requisitos'])
+            ->orderBy('areacompetencia', 'asc')
             ->get();
 
         $fechasGlobal = Fecha::first();

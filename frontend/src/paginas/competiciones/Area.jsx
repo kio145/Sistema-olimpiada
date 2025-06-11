@@ -6,11 +6,13 @@ import api from '../../api/api';
 import '../../css/Competiciones.css';
 
 // Función para mostrar fecha en formato DD/MM/YYYY
+// Nueva función: no usa new Date, solo formatea la cadena
 function formatoFecha(fecha) {
   if (!fecha) return '';
-  const d = new Date(fecha);
-  return d.toLocaleDateString('es-BO', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  const [y, m, d] = fecha.split('-');
+  return `${d}/${m}/${y}`;
 }
+
 
 export function Area() {
   const { id } = useParams();
@@ -43,16 +45,20 @@ export function Area() {
 
   // Determino si la inscripción está abierta según fechas.fecha_inicio_inscripcion y fecha_fin_inscripcion
   let abierta = false;
-  if (
-    fechas &&
-    fechas.fecha_inicio_inscripcion &&
-    fechas.fecha_fin_inscripcion
-  ) {
-    const hoy    = new Date().setHours(0, 0, 0, 0);
-    const inicio = new Date(fechas.fecha_inicio_inscripcion).setHours(0, 0, 0, 0);
-    const fin    = new Date(fechas.fecha_fin_inscripcion).setHours(0, 0, 0, 0);
-    abierta = hoy >= inicio && hoy <= fin;
-  }
+if (
+  fechas &&
+  fechas.fecha_inicio_inscripcion &&
+  fechas.fecha_fin_inscripcion
+) {
+  // Forzamos la hora a medianoche para evitar desfase de zona horaria
+  const hoy    = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const inicio = new Date(fechas.fecha_inicio_inscripcion + 'T00:00:00');
+  const fin    = new Date(fechas.fecha_fin_inscripcion + 'T00:00:00');
+  abierta = hoy >= inicio && hoy <= fin;
+}
+
 
   const handleInscribir = () => {
     if (!abierta) {

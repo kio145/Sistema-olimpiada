@@ -63,22 +63,19 @@ class InscripcionController extends Controller
             'apellidocompetidor' => 'required|string|max:50',
             'emailcompetidor'    => 'required|email',
             'cedulacompetidor'   => 'required|integer',
-            'fechanacimiento'     => 'required|date',
+            'fechanacimiento'    => 'required|date',
             'colegio'            => 'nullable|string|max:100',
             'curso'              => 'required|string|max:50',
             'departamento'       => 'required|string|max:50',
             'provincia'          => 'required|string|max:50',
             'idcompetencia'      => 'required|integer|exists:competencia,idcompetencia',
-            'idtutor'       => 'required|integer|exists:tutor,idtutor',
-
+            'idtutor'            => 'required|integer|exists:tutor,idtutor',
         ]);
 
-        // 1) Buscamos por email; si no existe, creamos uno nuevo
+        // 1. Busca al competidor por email
         $competidor = Competidor::firstOrNew([
             'emailcompetidor' => $data['emailcompetidor']
         ]);
-
-        // 2) Rellenamos/actualizamos los demás campos
         $competidor->fill([
             'nombrecompetidor'   => $data['nombrecompetidor'],
             'apellidocompetidor' => $data['apellidocompetidor'],
@@ -91,15 +88,39 @@ class InscripcionController extends Controller
         ]);
         $competidor->save();
 
-        // 3) Creamos la inscripción
-        $insc = Inscripcion::create([
+        // 2. Verifica inscripciones distintas áreas
+        // Toma todas las inscripciones del competidor (diferentes idcompetencia)
+        $inscripciones = \App\Models\Inscripcion::where('idcompetidor', $competidor->idcompetidor)->get();
+
+        // Contar cuántas inscripciones en áreas distintas tiene
+        // (asume que el área es por competencia)
+        $areaCompetencia = \App\Models\Competencia::findOrFail($data['idcompetencia'])->areacompetencia;
+        $areasYaInscritas = $inscripciones
+            ->map(function ($i) {
+                return $i->competencia->areacompetencia;
+            })->unique();
+
+        // Si ya tiene 2 áreas y quiere inscribirse a una nueva
+        if ($areasYaInscritas->count() >= 2 && !$areasYaInscritas->contains($areaCompetencia)) {
+            return response()->json([
+                'message' => 'Solo puedes inscribirte en un máximo de 2 áreas diferentes.',
+            ], 422);
+        }
+
+        // Si ya está inscrito a esta área, tampoco permitas inscribirse 2 veces en la misma
+        if ($areasYaInscritas->contains($areaCompetencia)) {
+            return response()->json([
+                'message' => 'Ya estás inscrito en esta área.',
+            ], 422);
+        }
+
+        // 3. Crear la inscripción y la validación (como ya tienes)
+        $insc = \App\Models\Inscripcion::create([
             'idcompetidor'       => $competidor->idcompetidor,
             'idcompetencia'      => $data['idcompetencia'],
             'estado_inscripcion' => 'pendiente',
         ]);
-
-        // 4) Crear el registro de validación en la tabla pivot
-        ValidarTutor::create([
+        \App\Models\ValidarTutor::create([
             'idcompetencia'     => $data['idcompetencia'],
             'idcompetidor'      => $competidor->idcompetidor,
             'idtutor'           => $data['idtutor'],
@@ -107,12 +128,12 @@ class InscripcionController extends Controller
             'estado_validacion' => 'pendiente',
         ]);
 
-        // 5) Devolvemos ambos recursos
         return response()->json([
-            'competidor'   => $competidor,
-            'inscripcion'  => $insc,
+            'competidor'  => $competidor,
+            'inscripcion' => $insc,
         ], 201);
     }
+
 
     public function show($id)
     {

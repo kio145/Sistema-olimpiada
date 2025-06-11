@@ -154,56 +154,63 @@ class CompetidorController extends Controller
      */
     public function habilitados(): JsonResponse
     {
-        // 1) Recolectar todos los idcompetidor con estado_validacion = 'validado'
-        $idsValidos = ValidarTutor::where('estado_validacion', 'validado')
-            ->pluck('idcompetidor')
-            ->unique()
-            ->toArray();
+        // 1. Trae todos los competidores que tengan al menos una inscripción
+        $competidores = \App\Models\Competidor::all();
 
-        // 2) Recolectar todos los idcompetidor que ya hicieron pago (tabla boleta_pago)
-        $idsPagaron = BoletaPago::pluck('idcompetidor')
-            ->unique()
-            ->toArray();
-
-        // 3) Hacer intersección: competidores que están validados Y que han pagado
-        $idsHabilitados = array_intersect($idsValidos, $idsPagaron);
-
-        if (empty($idsHabilitados)) {
-            // No hay ninguno habilitado → devolvemos un array vacío
-            return response()->json([], 200);
-        }
-
-        // 4) Traer los Competidor con su relación “validaciones” (solo las validaciones marcadas como 'validado')
-        $competidores = Competidor::whereIn('idcompetidor', $idsHabilitados)
-            ->with(['validaciones' => function ($q) {
-                $q->where('estado_validacion', 'validado')
-                    ->with(['tutor', 'competencia']);
-            }])
-            ->get();
-
-        // 5) Mapear al formato que espera el front
         $resultado = $competidores->map(function ($c) {
-            // Tomamos la primera (única) validación “validado”
-            $val = $c->validaciones->first();
+            // Busco la última o única validación de tutor para ese competidor
+            $validacion = \App\Models\ValidarTutor::where('idcompetidor', $c->idcompetidor)
+                ->orderByDesc('validar_id')
+                ->first();
+
+            // Estado validación tutor
+            $estadoValidacion = $validacion ? $validacion->estado_validacion : 'pendiente';
+
+            // Busco si tiene pago registrado
+            $pago = \App\Models\BoletaPago::where('idcompetidor', $c->idcompetidor)->first();
+            $estadoPago = $pago ? 'pagado' : 'en espera de pago';
+
+            // Determino estado global (solo para referencia, el frontend arma el texto)
+            $estadoFinal = '';
+            if ($estadoValidacion !== 'validado') {
+                $estadoFinal = $estadoValidacion === 'rechazado'
+                    ? 'Validación Tutor: Rechazado'
+                    : 'Validación Tutor: En espera';
+            } elseif ($estadoPago !== 'pagado') {
+                $estadoFinal = 'Pago: En espera';
+            } else {
+                $estadoFinal = 'Inscrito';
+            }
+
+            // Busco el tutor y competencia relacionados a la validación (si existe)
+            $tutorNombre = $validacion && $validacion->tutor ? $validacion->tutor->nombretutor : '';
+            $tutorApellido = $validacion && $validacion->tutor ? $validacion->tutor->apellidotutor : '';
+            $telefono = $validacion && $validacion->tutor ? $validacion->tutor->telefonotutor : '';
+            $area = $validacion && $validacion->competencia ? $validacion->competencia->areacompetencia : '';
+            $nivel = $c->curso;
 
             return [
                 'id'            => $c->idcompetidor,
                 'nombre'        => $c->nombrecompetidor,
                 'apellidos'     => $c->apellidocompetidor,
                 'correo'        => $c->emailcompetidor,
-                'nivel'         => $c->curso,                              // “nivel” lo asociamos al campo 'curso'
-                'area'          => $val->competencia->areacompetencia,
-                'tutorNombre'   => $val->tutor->nombretutor,
-                'tutorApellido' => $val->tutor->apellidotutor,
-                'telefono'      => $val->tutor->telefonotutor,
-                'estado'        => 'Inscrito',
+                'nivel'         => $nivel,
+                'area'          => $area,
+                'tutorNombre'   => $tutorNombre,
+                'tutorApellido' => $tutorApellido,
+                'telefono'      => $telefono,
+                // ESTADOS que necesita el frontend
+                'estado_validacion_tutor' => $estadoValidacion,
+                'estado_pago'             => $estadoPago,
+                'estado'                  => $estadoFinal, // opcional, para mostrar de una vez
             ];
         });
 
         return response()->json($resultado, 200);
     }
 
-     public function habilitadosParaCajero(): JsonResponse
+
+    public function habilitadosParaCajero(): JsonResponse
     {
         // 1) IDs de competidores con estado_validacion = 'validado'
         $idsValidos = ValidarTutor::where('estado_validacion', 'validado')
@@ -211,30 +218,27 @@ class CompetidorController extends Controller
             ->unique()
             ->toArray();
 
-        // 2) IDs de competidores que ya hicieron pago
+        // 2) IDs de competidores que YA hicieron pago
         $idsPagaron = BoletaPago::pluck('idcompetidor')
             ->unique()
             ->toArray();
 
-        // 3) Intersección: aquellos competidores que están validados Y que pagaron
-        $idsHabilitados = array_intersect($idsValidos, $idsPagaron);
+        // 3) COMPETIDORES válidos que TODAVÍA NO pagaron (NO están en boleta_pago)
+        $idsHabilitados = array_diff($idsValidos, $idsPagaron);
 
         if (empty($idsHabilitados)) {
             return response()->json([], 200);
         }
 
         // 4) Traer cada Competidor con su validación “validado”, para extraer el área y el costo
-        //    Nota: aprovechamos la relación “validaciones” para acceder a “competencia”
         $competidores = Competidor::whereIn('idcompetidor', $idsHabilitados)
-            ->with(['validaciones' => function($q) {
+            ->with(['validaciones' => function ($q) {
                 $q->where('estado_validacion', 'validado')
-                  ->with(['competencia']);
+                    ->with(['competencia']);
             }])
             ->get();
 
-        // 5) Armar el JSON de salida con SOLO los campos requeridos
-        $resultado = $competidores->map(function($c) {
-            // Tomamos la primera (y única) validación “validado” para obtener competencia
+        $resultado = $competidores->map(function ($c) {
             $val = $c->validaciones->first();
             $competencia = $val->competencia;
 
@@ -248,6 +252,7 @@ class CompetidorController extends Controller
 
         return response()->json($resultado, 200);
     }
+
 
     /**
      * GET /api/competidores/{id}

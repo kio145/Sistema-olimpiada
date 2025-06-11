@@ -28,14 +28,13 @@ import { ListadoPagos } from './paginas/admin/ListadoPagos';
 import { ListadoCompeticiones } from './paginas/admin/ListadoCompeticiones';
 import { NuevaCompetencia } from './paginas/admin/NuevaCompetencia';
 import { GestionarFechas } from './paginas/admin/GestionarFechas';
-import { ValidarInscripcion } from "./paginas/tutor/ValidarInscripcion";
-import { InscripcionValidada } from './paginas/tutor/InscripcionValidada';
-import { InscripcionRechazada } from './paginas/tutor/InscripcionRechazada';
 import { Login } from './componentes/Login';
 import { FormularioEdicionPerfil } from './paginas/formularios/FormularioEdicionPerfil';
 import { FormularioIns } from './paginas/competiciones/FormularioIns';
 import { EditarPerfilCajero } from './paginas/cajero/EditarPerfilCajero';
-import EditarPerfilTutor from './paginas/tutor/EditarPerfilTutor';
+import {EditarPerfilTutor} from './paginas/tutor/EditarPerfilTutor';
+import {EditarPerfilAdmin} from './paginas/admin/EditarPerfilAdmin';
+
 
 function App() {
   return (
@@ -85,6 +84,7 @@ function App() {
         <Route path="/editar-perfil-cajero" element={<EditarPerfilCajero />} />
 
         {/* Admin */}
+        <Route path="/editar-perfil-admin" element={<EditarPerfilAdmin />} />
         <Route path="/listado-postulantes" element={<ListadoPostulantes />} />
         <Route path="/listado-pagos" element={<ListadoPagos />} />
         <Route path="/listado-competiciones" element={<ListadoCompeticiones />} />
@@ -92,10 +92,6 @@ function App() {
         <Route path="/gestionar-fechas" element={<GestionarFechas />} />
 
         {/* Tutor: validación con parámetro dinámico */}
-        
-        <Route path="/validar-inscripcion/:validarId" element={<ValidarInscripcion />} />
-        <Route path="/inscripcion-aceptada/:validarId" element={<InscripcionValidada />} />
-        <Route path="/inscripcion-rechazada/:validarId" element={<InscripcionRechazada />} />
         <Route path="/editar-perfil-tutor" element={<EditarPerfilTutor />} />
 
         <Route path="/vista-tutor" element={<VistaTutor />} />

@@ -5,6 +5,9 @@ import '../../css/ListadoPostulantes.css';
 import { FaSearch, FaEdit, FaTrash, FaFilePdf, FaFileExcel } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import api from '@/api/api';
+import jsPDF from "jspdf";
+import autoTable from 'jspdf-autotable';
+import logo from '/logo.JPG'; 
 
 export function ListadoPostulantes() {
   const [busqueda, setBusqueda]       = useState('');
@@ -44,39 +47,93 @@ export function ListadoPostulantes() {
     navigate(`/editar-competidor/${id}`);
   };
 
+  // ==========================
+  // AQUÍ LA FUNCIÓN PDF FORMAL
+  // ==========================
   const exportarPDF = async () => {
-    try {
-      const res = await api.get('/competidores/exportar/pdf', { responseType: 'blob' });
-      const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'postulantes_habilitados.pdf');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (e) {
-      console.error('Error al exportar PDF:', e);
-      alert('No se pudo exportar a PDF.');
-    }
+    const doc = new jsPDF('landscape');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    // Logo (opcional, ajusta el tamaño según tu imagen)
+    try { doc.addImage(logo, 'JPEG', 15, 6, 25, 18); } catch (e) {}
+
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('REPORTE DE POSTULANTES HABILITADOS', pageWidth / 2, 20, { align: 'center' });
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Fecha de generación: ${new Date().toLocaleDateString()}`, pageWidth - 70, 28);
+
+    // Tabla de datos
+    const head = [[
+      "ID", "Nombre", "Apellidos", "Correo", "Nivel", "Área",
+      "Nombre Tutor", "Apellido Tutor", "Teléfono Tutor", "Estado"
+    ]];
+
+    const body = filtrados.map(p => [
+      p.id,
+      p.nombre,
+      p.apellidos,
+      p.correo,
+      p.nivel,
+      p.area,
+      p.tutorNombre,
+      p.tutorApellido,
+      p.telefono,
+      p.estado_validacion_tutor !== 'validado'
+        ? (p.estado_validacion_tutor === 'rechazado'
+            ? 'Validación Tutor: Rechazado'
+            : 'Validación Tutor: En espera'
+          )
+        : (p.estado_pago !== 'pagado'
+            ? 'Pago: En espera'
+            : 'Inscrito'
+          )
+    ]);
+
+    autoTable(doc,{
+      head,
+      body,
+      startY: 34,
+      theme: 'grid',
+      headStyles: {
+        fillColor: [33, 97, 140],
+        textColor: 255,
+        fontStyle: 'bold',
+        halign: 'center',
+        valign: 'middle',
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 2,
+        overflow: 'linebreak',
+        halign: 'center',
+        valign: 'middle',
+      },
+      alternateRowStyles: {
+        fillColor: [240, 240, 240],
+      },
+      margin: { left: 7, right: 7 },
+      didDrawPage: (data) => {
+        // Pie de página con paginación
+        const pageCount = doc.internal.getNumberOfPages();
+        doc.setFontSize(9);
+        doc.text(`Página ${pageCount}`, pageWidth - 20, doc.internal.pageSize.getHeight() - 10);
+      }
+    });
+
+    // Pie institucional
+    doc.setFontSize(10);
+    doc.text('Este reporte fue generado automáticamente desde el sistema.', pageWidth / 2, doc.internal.pageSize.getHeight() - 5, { align: 'center' });
+
+    doc.save('reporte_postulantes_habilitados.pdf');
   };
 
-  const exportarExcel = async () => {
-    try {
-      const res = await api.get('/competidores/exportar/excel', { responseType: 'blob' });
-      const url = URL.createObjectURL(new Blob([res.data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'postulantes_habilitados.xlsx');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (e) {
-      console.error('Error al exportar Excel:', e);
-      alert('No se pudo exportar a Excel.');
-    }
-  };
+  // ==========================
+  // FIN DE LA FUNCIÓN PDF
+  // ==========================
+
+  
 
   const volver = () => {
     navigate('/vista-admin');
@@ -103,9 +160,6 @@ export function ListadoPostulantes() {
       <div className="export-buttons">
         <button onClick={exportarPDF} className="export-btn pdf">
           <FaFilePdf /> PDF
-        </button>
-        <button onClick={exportarExcel} className="export-btn excel">
-          <FaFileExcel /> Excel
         </button>
       </div>
 
@@ -137,16 +191,26 @@ export function ListadoPostulantes() {
               <td>{p.tutorNombre}</td>
               <td>{p.tutorApellido}</td>
               <td>{p.telefono}</td>
-              <td>{p.estado}</td>
               <td>
-                <button 
-                  className="accion editar" 
+                {p.estado_validacion_tutor !== 'validado' ? (
+                  p.estado_validacion_tutor === 'rechazado'
+                    ? 'Validación Tutor: Rechazado'
+                    : 'Validación Tutor: En espera'
+                ) : (
+                  p.estado_pago !== 'pagado'
+                    ? 'Pago: En espera'
+                    : 'Inscrito'
+                )}
+              </td>
+              <td>
+                <button
+                  className="accion editar"
                   onClick={() => editarPostulante(p.id)}
                 >
                   <FaEdit />
                 </button>
-                <button 
-                  className="accion eliminar" 
+                <button
+                  className="accion eliminar"
                   onClick={() => eliminarPostulante(p.id)}
                 >
                   <FaTrash />

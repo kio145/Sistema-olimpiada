@@ -44,7 +44,7 @@ export function VistaAdmin() {
           <p className="rol-admin">Administrador</p>
           <h2 className="nombre-admin">{nombre}</h2>
           <div className="botones-admin">
-            <Link to="/editar-perfil" className="btn-editar-admin">
+            <Link to="/editar-perfil-admin" className="btn-editar-admin">
               Editar perfil ✎
             </Link>
             <button className="btn-cerrar-admin" onClick={handleLogout}>

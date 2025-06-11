@@ -8,11 +8,27 @@ use Illuminate\Http\JsonResponse;
 
 class BoletaPagoController extends Controller
 {
-    public function index(): JsonResponse
-    {
-        return response()->json(BoletaPago::all(), 200);
+   public function index(): JsonResponse
+{
+    // Carga la relación con competidor y tutor
+    $pagos = BoletaPago::with(['competidor', 'tutor'])->get();
+ if ($pagos->count()) {
+        \Log::info('Primer pago:', ['pago' => $pagos[0], 'competidor' => $pagos[0]->competidor]);
     }
-
+    // Transforma para devolver los datos en formato amigable
+    $resultado = $pagos->map(function ($pago) {
+        return [
+            'idboleta'    => $pago->idboleta,
+            'nombre'      => $pago->competidor->nombrecompetidor ?? '',
+            'apellidos'   => $pago->competidor->apellidocompetidor ?? '',
+            'ci'          => $pago->competidor->cicompetidor ?? '',
+            'fechaPago'   => $pago->fecha_emision,
+            'montoTotal'  => $pago->montototal,
+        ];
+    });
+ \Log::info('Pagos enviados al frontend:', ['resultado' => $resultado]);
+    return response()->json($resultado, 200);
+}
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([

@@ -58,6 +58,18 @@ export function FormularioIns() {
     }));
   };
 
+  useEffect(() => {
+  const datosGuardados = localStorage.getItem('datosCompetidor');
+  if (datosGuardados) {
+    setForm(prev => ({
+      ...prev,
+      ...JSON.parse(datosGuardados),
+      idcompetencia: competenciaId || '',
+      idtutor: '', // siempre pedir nuevo tutor
+    }));
+  }
+}, [competenciaId]);
+
   const validar = () => {
     const req = [
       'nombrecompetidor',
@@ -107,7 +119,9 @@ export function FormularioIns() {
         ...form,
         idcompetencia: competenciaId
       });
-      navigate('/confirmacion');
+      const { idtutor, idcompetencia, ...resto } = form;
+  localStorage.setItem('datosCompetidor', JSON.stringify(resto));
+  navigate('/confirmacion');
     } catch (e) {
       console.error(e);
       if (e.response?.data?.errors) {

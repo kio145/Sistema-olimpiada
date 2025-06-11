@@ -54,7 +54,7 @@ class ValidarTutorController extends Controller
         }
 
         // Si se acaba de aceptar o rechazar, sincroniza inscripción
-        if ($data['estado_validacion'] === 'aceptada') {
+        if ($data['estado_validacion'] === 'validado') {
             $inscripcion = Inscripcion::where('idcompetencia', $data['idcompetencia'])
                 ->where('idcompetidor', $data['idcompetidor'])
                 ->first();
@@ -91,7 +91,7 @@ class ValidarTutorController extends Controller
         $validarTutor = ValidarTutor::findOrFail($validar_id);
         $validarTutor->update($data);
 
-        // Al actualizar una validación, si cambió a “aceptada” o “rechazado”, de nuevo sincronizamos la inscripción:
+        // Al actualizar una validación, si cambió a “validado” o “rechazado”, de nuevo sincronizamos la inscripción:
         if (isset($data['estado_validacion'])) {
             $estado = $data['estado_validacion'];
             // Buscamos la inscripción correspondiente:
@@ -99,7 +99,7 @@ class ValidarTutorController extends Controller
                 ->where('idcompetidor', $validarTutor->idcompetidor)
                 ->first();
             if ($inscripcion) {
-                if ($estado === 'aceptada') {
+                if ($estado === 'validado') {
                     $inscripcion->estado_inscripcion = 'inscrito';
                 } elseif ($estado === 'rechazado') {
                     $inscripcion->estado_inscripcion = 'rechazado';

@@ -24,6 +24,8 @@ Route::post('login', [LoginController::class, 'login']);
 
 // Rutas públicas (sin middleware)
 Route::get('competencias/todas', [CompetenciaController::class, 'getTodasLasCompetencias']);
+    Route::post('tutores', [TutorController::class, 'store']);
+
 
 // ------------------------------------------------------------
 // RUTA FIJA: Competidores habilitados (debe ir ANTES de /competidores/{id})
@@ -53,7 +55,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('tutores/me', [TutorController::class, 'me']);
     Route::put('tutores/me', [TutorController::class, 'updateMe']);
     Route::get('tutores/{id}', [TutorController::class, 'show']);
-    Route::post('tutores', [TutorController::class, 'store']);
     Route::put('tutores/{id}', [TutorController::class, 'update']);
     Route::delete('tutores/{id}', [TutorController::class, 'destroy']);
 
@@ -118,3 +119,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Puedes dejar rutas públicas de recursos sin autenticación aquí, si las necesitas:
 Route::apiResource('administradores', AdministradorController::class);
+Route::post('administradores/{id}', [AdministradorController::class, 'update']);
+

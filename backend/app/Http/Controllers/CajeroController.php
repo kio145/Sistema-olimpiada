@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Cajero;
@@ -66,67 +67,80 @@ class CajeroController extends Controller
     }
 
     public function update(Request $request, int $id): JsonResponse
-{
-    dd($request->all());
-    // Validación de datos
-    $validated = $request->validate([
-        'nombrecajero' => 'required|string|max:50',
-        'apellidocajero' => 'required|string|max:50',
-        'emailcajero' => [
-            'required',
-            'email',
-            Rule::unique('cajero', 'emailcajero')->ignore($id, 'idcajero'),
-            Rule::unique('users', 'email')->ignore($this->getUserId($id), 'id')
-        ],
-        'imagencajero' => 'sometimes|image|max:2048',
-    ]);
+    {
+        \Log::info('CAJERO_UPDATE:', $request->all());
+        // Validación de datos (nota: todos los campos son opcionales en un update salvo que quieras forzar lo contrario)
+        $validated = $request->validate([
+            'nombrecajero'    => 'sometimes|string|max:50',
+            'apellidocajero'  => 'sometimes|string|max:50',
+            'emailcajero'     => [
+                'sometimes',
+                'email',
+                Rule::unique('cajero', 'emailcajero')->ignore($id, 'idcajero'),
+                Rule::unique('users', 'email')->ignore($this->getUserId($id), 'id')
+            ],
+            'imagencajero'    => 'sometimes|image|max:2048',
+            'passwordcajero'  => 'sometimes|string|min:6',
+        ]);
 
-    // Obtener el cajero
-    $cajero = Cajero::findOrFail($id);
+        $cajero = Cajero::findOrFail($id);
 
-    // Manejo de imagen
-    if ($request->hasFile('imagencajero')) {
-        // Eliminar imagen anterior si existe
-        if ($cajero->imagencajero) {
-            Storage::disk('public')->delete($cajero->imagencajero);
+        try {
+            // Manejo de imagen (opcional)
+            if ($request->hasFile('imagencajero')) {
+                if ($cajero->imagencajero) {
+                    \Storage::disk('public')->delete($cajero->imagencajero);
+                }
+                $path = $request->file('imagencajero')->store('cajeros', 'public');
+                $validated['imagencajero'] = $path;
+            }
+
+            // Actualizamos el cajero (sin password)
+            $cajero->update(Arr::except($validated, ['passwordcajero']));
+
+            // Update usuario relacionado
+            $user = User::where('profile_id', $id)
+                ->where('profile_type', Cajero::class)
+                ->first();
+
+            if ($user) {
+                $userData = [];
+
+                if (isset($validated['nombrecajero']) || isset($validated['apellidocajero'])) {
+                    $userData['name'] =
+                        ($validated['nombrecajero'] ?? $cajero->nombrecajero) . ' ' .
+                        ($validated['apellidocajero'] ?? $cajero->apellidocajero);
+                }
+                if (isset($validated['emailcajero'])) {
+                    $userData['email'] = $validated['emailcajero'];
+                }
+                if (isset($validated['passwordcajero'])) {
+                    $userData['password'] = Hash::make($validated['passwordcajero']);
+                }
+                if (!empty($userData)) {
+                    $user->update($userData);
+                }
+            }
+
+            return response()->json([
+                'cajero' => $cajero,
+                'user'   => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        $path = $request->file('imagencajero')->store('cajeros', 'public');
-        $validated['imagencajero'] = $path;
     }
 
- $cajero = Cajero::findOrFail($id);
-    $cajero->update($validated);
-
-    // Update User
-    $user = User::where('profile_id', $id)
-        ->where('profile_type', Cajero::class)
-        ->firstOrFail();
-
-    $userData = [
-        'name' => "{$validated['nombrecajero']} {$validated['apellidocajero']}",
-        'email' => $validated['emailcajero']
-    ];
-
-    if ($request->filled('passwordcajero')) {
-        $userData['password'] = Hash::make($request->input('passwordcajero'));
+    // Método auxiliar para obtener el ID de usuario
+    private function getUserId(int $cajeroId): int
+    {
+        return User::where('profile_id', $cajeroId)
+            ->where('profile_type', Cajero::class)
+            ->value('id');
     }
-
-    $user->update($userData);
-
-    return response()->json([
-        'cajero' => $cajero,
-        'user' => $user
-    ], 200);
-}
-
-
-// Método auxiliar para obtener el ID de usuario
-private function getUserId(int $cajeroId): int
-{
-    return User::where('profile_id', $cajeroId)
-             ->where('profile_type', Cajero::class)
-             ->value('id');
-}
 
     public function destroy(int $id): JsonResponse
     {

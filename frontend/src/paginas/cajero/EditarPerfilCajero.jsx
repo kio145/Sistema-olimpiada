@@ -60,35 +60,36 @@ export function EditarPerfilCajero() {
 
     try {
       const formData = new FormData();
-      formData.append('nombrecajero', form.nombrecajero);
-      formData.append('apellidocajero', form.apellidocajero);
-      formData.append('emailcajero', form.emailcajero);
+formData.append('nombrecajero', form.nombrecajero);
+formData.append('apellidocajero', form.apellidocajero);
+formData.append('emailcajero', form.emailcajero);
+if (form.passwordcajero) {
+  formData.append('passwordcajero', form.passwordcajero);
+  formData.append('passwordcajero_confirmation', form.passwordcajero);
+}
+if (file) {
+  formData.append('imagencajero', file);
+}
+formData.append('_method', 'PUT'); // Importante
 
-      if (form.passwordcajero) {
-        formData.append('passwordcajero', form.passwordcajero);
-        formData.append('passwordcajero_confirmation', form.passwordcajero);
-      }
+await api.post(`/cajeros/${user.profile_id}`, formData, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
+});
 
-      if (file) {
-        formData.append('imagencajero', file);
-      }
-
-      formData.append('_method', 'PUT');
-      await api.put(`/cajeros/${user.profile_id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
 
       // Si se cambió el correo o la contraseña, actualiza el token
-      if (form.passwordcajero || form.emailcajero !== originalEmail) {
-        const loginResponse = await api.post('/login', {
-          email: form.emailcajero,
-          password: form.passwordcajero || user.password
-        });
-        localStorage.setItem('token', loginResponse.data.token);
-      }
+      // Solo relogea si se cambió la contraseña
+if (form.passwordcajero) {
+  const loginResponse = await api.post('/login', {
+    email: form.emailcajero,
+    password: form.passwordcajero
+  });
+  localStorage.setItem('token', loginResponse.data.token);
+}
+
 
       alert('Perfil actualizado correctamente');
       navigate('/vista-cajero', {
