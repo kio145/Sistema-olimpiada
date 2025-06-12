@@ -57,6 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('tutores/{id}', [TutorController::class, 'show']);
     Route::put('tutores/{id}', [TutorController::class, 'update']);
     Route::delete('tutores/{id}', [TutorController::class, 'destroy']);
+    
 
     // ------------------------------------------------------------
     // Rutas de CAJEROS
@@ -80,6 +81,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('validarTutor/{validar_id}', [ValidarTutorController::class, 'show']);
     Route::put('validarTutor/{validar_id}', [ValidarTutorController::class, 'update']);
     Route::delete('validarTutor/{validar_id}', [ValidarTutorController::class, 'destroy']);
+    Route::get('/tutores/{idtutor}/areas-fijas', [TutorController::class, 'areasFijas']);
+
 
     // ------------------------------------------------------------
     // Rutas de INSCRIPCIONES

@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
-dayjs.extend(isSameOrAfter);
+ dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 export function VistaTutor() {
   const { state } = useLocation();
@@ -92,9 +92,7 @@ const fueraDeRango = !dentroDeRango;
       motivo: "",
     });
   };
-
   const cerrarModal = () => setModal(m => ({ ...m, abierto: false, motivo: "" }));
-
   const confirmarAccion = async () => {
     setAccionLoading(true);
     try {

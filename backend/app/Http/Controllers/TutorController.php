@@ -178,4 +178,18 @@ class TutorController extends Controller
 
         return response()->json($tutor, 200);
     }
+
+    public function areasFijas($idtutor)
+    {
+        // Busca áreas donde el tutor ya fue validado por al menos un competidor
+        $areas = DB::table('validar_tutor')
+            ->join('competencias', 'validar_tutor.idcompetencia', '=', 'competencias.idcompetencia')
+            ->where('validar_tutor.idtutor', $idtutor)
+            ->where('validar_tutor.estado_validacion', 'validado')
+            ->pluck('competencias.areacompetencia')
+            ->unique()
+            ->values();
+
+        return response()->json($areas, 200);
+    }
 }

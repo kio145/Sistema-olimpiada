@@ -51,29 +51,29 @@ export function ListadoPagos() {
             <th>Cod.Boleta</th>
             <th>Nombre</th>
             <th>Apellidos</th>
-            <th>CI Competidor</th>
+            <th>Ci</th>
             <th>Fecha pago</th>
             <th>Monto total</th>
           </tr>
         </thead>
         <tbody>
-          {filtrados.length === 0 ? (
-            <tr>
-              <td colSpan="6" style={{ textAlign: 'center' }}>No hay pagos para mostrar</td>
-            </tr>
-          ) : (
-            filtrados.map((p, i) => (
-              <tr key={p.idboleta}>
-                <td>{p.idboleta}</td>
-                <td>{p.nombre}</td>
-                <td>{p.apellidos}</td>
-                <td>{p.competidor}</td>
-                <td>{p.fechaPago}</td>
-                <td>{p.montoTotal}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
+  {filtrados.length === 0 ? (
+    <tr>
+      <td colSpan="6" style={{ textAlign: 'center' }}>No hay pagos para mostrar</td>
+    </tr>
+  ) : (
+    filtrados.map((p, i) => (
+      <tr key={p.idboleta}>
+        <td>{p.idboleta}</td>
+        <td>{p.nombre}</td>
+        <td>{p.apellidos}</td>
+        <td>{p.ci}</td>
+        <td>{p.fechaPago}</td>
+        <td>{p.montoTotal}</td>
+      </tr>
+    ))
+  )}
+</tbody>
       </table>
       )}
 

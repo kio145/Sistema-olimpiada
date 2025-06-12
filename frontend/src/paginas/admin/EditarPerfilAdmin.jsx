@@ -15,15 +15,16 @@ export function EditarPerfilAdmin() {
     correoadmi: '',
     passwordadmi: ''
   });
+  const [erroresCampos, setErroresCampos] = useState({});
 
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
 
-  const [cargado, setCargado] = useState(false); // <-- flag aquí
+  const [cargado, setCargado] = useState(false);
 
   useEffect(() => {
     if (!user.profile_id) return navigate('/login');
-    if (cargado) return; // <-- Solo carga una vez
+    if (cargado) return;
     api.get(`/administradores/${user.profile_id}`)
       .then(res => {
         const admin = res.data;
@@ -35,17 +36,57 @@ export function EditarPerfilAdmin() {
         });
         setPreview(
           admin.imagenadmin
-            ? `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/storage/${admin.imagenadmi}`
+            ? `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/storage/${admin.imagenadmin}`
             : null
         );
-        setCargado(true); // <-- ya no vuelve a cargar
+        setCargado(true);
       })
       .catch(() => navigate('/login'));
   }, [user, navigate, cargado]);
 
+  // Validaciones individuales
+  const validarCampo = (name, value) => {
+    switch (name) {
+      case 'nombreadmi':
+      case 'apellidoadmi':
+        if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(value))
+          return 'Solo se permiten letras y espacios';
+        break;
+      case 'correoadmi':
+        if (!/^[\w\-.]+@[\w\-]+\.(com)$/.test(value))
+          return 'Debe ser un correo válido ejemplo@dominio.com';
+        break;
+      case 'passwordadmi':
+        if (value && value.length < 6)
+          return 'La contraseña debe tener al menos 6 caracteres';
+        break;
+      default:
+        break;
+    }
+    return '';
+  };
+
+  const validarFormulario = () => {
+    const errores = {};
+    if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(form.nombreadmi))
+      errores.nombreadmi = 'Solo se permiten letras y espacios';
+    if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(form.apellidoadmi))
+      errores.apellidoadmi = 'Solo se permiten letras y espacios';
+    if (!/^[\w\-.]+@[\w\-]+\.(com)$/.test(form.correoadmi))
+      errores.correoadmi = 'Debe ser un correo válido ejemplo@dominio.com';
+    if (form.passwordadmi && form.passwordadmi.length < 6)
+      errores.passwordadmi = 'La contraseña debe tener al menos 6 caracteres';
+    setErroresCampos(errores);
+    return Object.keys(errores).length === 0;
+  };
+
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+
+    // Validación en tiempo real
+    const msg = validarCampo(name, value);
+    setErroresCampos(prev => ({ ...prev, [name]: msg }));
   };
 
   const handleFile = e => {
@@ -57,6 +98,11 @@ export function EditarPerfilAdmin() {
   const handleSubmit = async e => {
     e.preventDefault();
     setError(null);
+
+    if (!validarFormulario()) {
+      setError('Revisa los campos marcados en rojo.');
+      return;
+    }
 
     const formData = new FormData();
     formData.append('nombreadmi', form.nombreadmi);
@@ -99,11 +145,13 @@ export function EditarPerfilAdmin() {
       <form className="formulario-edicion" onSubmit={handleSubmit}>
         <h2>Editar Perfil de Administrador</h2>
         {error && <div className="error-message">{error}</div>}
+
         <div className="campo centrado">
           <label>Foto de perfil</label>
           {preview && <img src={preview} alt="Preview" className="imagen-perfil" />}
           <input type="file" accept="image/*" onChange={handleFile} />
         </div>
+
         <div className="grupo">
           <div className="campo">
             <label>Nombre *</label>
@@ -113,7 +161,9 @@ export function EditarPerfilAdmin() {
               value={form.nombreadmi}
               onChange={handleChange}
               required
+              className={erroresCampos.nombreadmi ? "input-error" : ""}
             />
+            {erroresCampos.nombreadmi && <span className="error">{erroresCampos.nombreadmi}</span>}
           </div>
           <div className="campo">
             <label>Apellido *</label>
@@ -123,7 +173,9 @@ export function EditarPerfilAdmin() {
               value={form.apellidoadmi}
               onChange={handleChange}
               required
+              className={erroresCampos.apellidoadmi ? "input-error" : ""}
             />
+            {erroresCampos.apellidoadmi && <span className="error">{erroresCampos.apellidoadmi}</span>}
           </div>
         </div>
         <div className="campo">
@@ -134,7 +186,9 @@ export function EditarPerfilAdmin() {
             value={form.correoadmi}
             onChange={handleChange}
             required
+            className={erroresCampos.correoadmi ? "input-error" : ""}
           />
+          {erroresCampos.correoadmi && <span className="error">{erroresCampos.correoadmi}</span>}
         </div>
         <div className="campo">
           <label>Nueva contraseña (opcional)</label>
@@ -144,7 +198,9 @@ export function EditarPerfilAdmin() {
             value={form.passwordadmi}
             onChange={handleChange}
             placeholder="Dejar vacío para mantener la actual"
+            className={erroresCampos.passwordadmi ? "input-error" : ""}
           />
+          {erroresCampos.passwordadmi && <span className="error">{erroresCampos.passwordadmi}</span>}
         </div>
         <div className="grupo">
           <button type="submit" className="submit-btn enviar-form">

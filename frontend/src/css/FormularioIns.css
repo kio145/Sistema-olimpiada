@@ -123,3 +123,10 @@
   .btn-tutor{
     min-width: 150px;
   }
+  .input-error {
+  border: 1px solid red !important;
+}
+.error {
+  color: red;
+  font-size: 0.9em;
+}
