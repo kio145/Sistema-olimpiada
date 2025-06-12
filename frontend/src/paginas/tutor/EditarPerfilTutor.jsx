@@ -23,7 +23,7 @@ export function EditarPerfilTutor() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [errores, setErrores] = useState({});
-  const [areasFijas, setAreasFijas] = useState([]);
+const [areasFijas, setAreasFijas] = useState([]);
   const bloqueoTotalAreas = areasFijas.length === 2;
 
   // Cargar áreas disponibles
@@ -38,10 +38,11 @@ export function EditarPerfilTutor() {
       .catch(() => setAreasDisponibles([]));
   }, []);
 useEffect(() => {
-  if (!user?.profile_id) return;
   api.get(`/tutores/${user.profile_id}/areas-fijas`)
-    .then(res => setAreasFijas(res.data)) 
-    .catch(() => setAreasFijas([]));
+    .then(res => {
+      // Convierte todas las áreas fijas a mayúsculas para comparar bien
+      setAreasFijas(res.data.map(a => a.trim().toUpperCase()));
+    });
 }, [user]);
   // Cargar datos actuales del tutor
   useEffect(() => {
@@ -268,26 +269,24 @@ useEffect(() => {
           <label>Áreas (máximo 2) *</label>
           <div className="campo">
   {areasDisponibles.map(ar => {
-    const yaFija = areasFijas.includes(ar);
-    return (
-      <div key={ar}>
-        <input
-  type="checkbox"
-  id={ar}
-  checked={form.areas.includes(ar)}
-  onChange={() => toggleArea(ar)}
-  disabled={yaFija || bloqueoTotalAreas}
-/>
-{bloqueoTotalAreas && (
-  <p style={{color:'crimson', fontWeight:'bold'}}>No puedes cambiar tus áreas porque ya fuiste elegido en ambas.</p>
-)}
+  const areaMayus = ar.trim().toUpperCase();
+  const deshabilitado = areasFijas.includes(areaMayus);
+  return (
+    <div key={ar}>
+      <input
+        type="checkbox"
+        id={ar}
+        checked={form.areas.includes(ar)}
+        onChange={() => toggleArea(ar)}
+        disabled={deshabilitado}
+      />
+      <label htmlFor={ar} style={deshabilitado ? { color: "#aaa" } : {}}>
+        {ar} {deshabilitado && "(Bloqueado)"}
+      </label>
+    </div>
+  );
+})}
 
-        <label htmlFor={ar}>
-          {ar} {yaFija && <span style={{color:'crimson', fontSize:'0.9em'}}>(No editable)</span>}
-        </label>
-      </div>
-    )
-  })}
   {errores.areas && <span className="error">{errores.areas}</span>}
 </div>
 
